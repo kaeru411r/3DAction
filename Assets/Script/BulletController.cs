@@ -36,11 +36,7 @@ public class BulletController : MonoBehaviour
     {
         if (_isFired && HitCheck() && _hit.collider.gameObject != _go)   //ここにレイで着弾を観測する部分を書く
         {
-            GameObject go = _hit.collider.gameObject;
-            if(go.tag == "Character")
-            {
-                Hit(go);
-            }
+            Hit(_hit.collider.gameObject);
         }
         _lastPosition = transform.position;
     }

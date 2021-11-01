@@ -19,6 +19,6 @@ public class CharacterBase : MonoBehaviour
 
     public void Shot(float damage)
     {
-
+        Debug.Log($"{damage}のダメージ");
     }
 }
