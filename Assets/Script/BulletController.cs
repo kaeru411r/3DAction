@@ -20,7 +20,10 @@ public class BulletController : MonoBehaviour
     event Action OnHit;
     /// <summary>前フレームでの座標</summary>
     Vector3 _lastPosition;
+    /// <summary>着弾した相手</summary>
     RaycastHit _hit;
+    [Tooltip("弾が消滅するまでの時間")]
+    [SerializeField] float _destroyTime;
 
 
 
@@ -29,6 +32,7 @@ public class BulletController : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         _lastPosition = transform.position;
         Fire(gameObject);
+        Destroy(gameObject, _destroyTime);
     }
 
 
