@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMoveController : MonoBehaviour
+public class PlayerController : CharacterBase
 {
-    [Tooltip("移動速度")]
-    [SerializeField] float m_speed;
     /// <summary>プレイヤーのリジッドボディ</summary>
     Rigidbody m_rb;
 
