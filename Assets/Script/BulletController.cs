@@ -16,9 +16,7 @@ public class BulletController : MonoBehaviour
     [SerializeField] float _power;
     /// <summary>発砲したオブジェクト</summary>
     GameObject _go;
-    /// <summary>着弾時に呼ぶ関数</summary>
-    event Action OnHit;
-    /// <summary>前フレームでの座標</summary>
+    /// <summary>前物理フレームでの座標</summary>
     Vector3 _lastPosition;
     /// <summary>着弾した相手</summary>
     RaycastHit _hit;
@@ -29,16 +27,15 @@ public class BulletController : MonoBehaviour
 
     private void Start()
     {
-        _rb = GetComponent<Rigidbody>();
         _lastPosition = transform.position;
-        Fire(gameObject);
+        //Fire(gameObject);
         Destroy(gameObject, _destroyTime);
     }
 
 
     private void FixedUpdate()
     {
-        if (_isFired && HitCheck() && _hit.collider.gameObject != _go)   //ここにレイで着弾を観測する部分を書く
+        if (_isFired && HitCheck())   //ここにレイで着弾を観測する部分を書く
         {
             Hit(_hit.collider.gameObject);
         }
@@ -51,11 +48,15 @@ public class BulletController : MonoBehaviour
         var vector = transform.position - _lastPosition;
         var distance = vector.magnitude;
         var direction = vector / distance;
-        Ray ray = new Ray(_lastPosition, direction);
-        if(Physics.Raycast(ray, out _hit, distance))
+        RaycastHit[] rays;
+        rays = Physics.RaycastAll(_lastPosition, direction, distance);
+        foreach(var r in rays)
         {
-            Debug.Log($"{_hit.collider.name}に着弾");
-            return true;  
+            if (r.collider.gameObject != _go)
+            {
+                _hit = r;
+                return true;
+            }
         }
         return false;
     }
@@ -63,6 +64,7 @@ public class BulletController : MonoBehaviour
     /// <summary>発砲時に呼ぶ</summary>
     public void Fire(GameObject go)
     {
+        _rb = GetComponent<Rigidbody>();
         _isFired = true;
         _rb.velocity = (_speed * transform.forward);
         _go = go;
@@ -73,7 +75,7 @@ public class BulletController : MonoBehaviour
     /// <param name="go"></param>
     void Hit(GameObject go)
     {
-        //OnHit();
+        Debug.Log($"{go.name}に着弾");
         go.GetComponent<CharacterBase>()?.Shot(_power);
         Destroy(gameObject);
     }
