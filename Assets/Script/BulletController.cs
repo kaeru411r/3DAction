@@ -22,13 +22,15 @@ public class BulletController : MonoBehaviour
     RaycastHit _hit;
     [Tooltip("弾が消滅するまでの時間")]
     [SerializeField] float _destroyTime;
+    [Tooltip("リロードにかかる時間")]
+    [SerializeField] float _reloadTime;
+    /// <summary>リロードにかかる時間</summary>
+    public float ReloadTime { get { return _reloadTime; } }
 
 
 
     private void Start()
     {
-        _lastPosition = transform.position;
-        //Fire(gameObject);
         Destroy(gameObject, _destroyTime);
     }
 
@@ -68,6 +70,7 @@ public class BulletController : MonoBehaviour
         _isFired = true;
         _rb.velocity = (_speed * transform.forward);
         _go = go;
+        _lastPosition = transform.position;
     }
 
 
@@ -79,4 +82,5 @@ public class BulletController : MonoBehaviour
         go.GetComponent<CharacterBase>()?.Shot(_power);
         Destroy(gameObject);
     }
+
 }

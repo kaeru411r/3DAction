@@ -5,9 +5,12 @@ using UnityEngine.Events;
 
 public class Tester : CharacterBase
 {
-    [SerializeField] UnityEvent unityEvent;
-    private void Start()
+    [SerializeField] GameObject _bullet;
+
+    public void Fire()
     {
-        unityEvent.Invoke();
+        var go = Instantiate(_bullet, transform.position, transform.rotation);
+        go.GetComponent<BulletController>()?.Fire(gameObject);
     }
+    
 }
