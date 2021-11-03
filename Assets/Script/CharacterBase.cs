@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// 全キャラクターの共通部分の基底クラス
+/// </summary>
 [RequireComponent(typeof(Rigidbody))]
 public class CharacterBase : MonoBehaviour
 {

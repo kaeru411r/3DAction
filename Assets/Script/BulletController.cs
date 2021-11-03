@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-
+/// <summary>
+/// 砲弾の発射以降の操作を行うコンポーネント
+/// </summary>
 [RequireComponent(typeof(Rigidbody))]
 public class BulletController : MonoBehaviour
 {
