@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 /// <summary>
-/// プレイヤー向けの砲操作コンポーネント
+/// 砲動作コンポーネント
 /// 砲塔以下の操作を行う
 /// </summary>
 public class GunController : MonoBehaviour
