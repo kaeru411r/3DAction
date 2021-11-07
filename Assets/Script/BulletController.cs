@@ -28,6 +28,7 @@ public class BulletController : MonoBehaviour
     [SerializeField] float _reloadTime;
     /// <summary>リロードにかかる時間</summary>
     public float ReloadTime { get { return _reloadTime; } }
+    Transform _t;
 
 
 
@@ -56,7 +57,7 @@ public class BulletController : MonoBehaviour
         rays = Physics.RaycastAll(_lastPosition, direction, distance);
         foreach(var r in rays)
         {
-            if (r.collider.gameObject != _go)
+            if (r.collider.gameObject != _t.gameObject)
             {
                 _hit = r;
                 return true;
@@ -66,12 +67,17 @@ public class BulletController : MonoBehaviour
     }
 
     /// <summary>発砲時に呼ぶ</summary>
-    public void Fire(GameObject go)
+    public void Fire(Transform t)
     {
+        Debug.Log($"name = {name}{t}");
+        foreach(var tr in t)
+        {
+            Debug.Log($"trnsform = {tr}");
+        }
         _rb = GetComponent<Rigidbody>();
         _isFired = true;
         _rb.velocity = (_speed * transform.forward);
-        _go = go;
+        _t = t;
         _lastPosition = transform.position;
     }
 

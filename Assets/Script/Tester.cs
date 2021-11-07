@@ -10,7 +10,7 @@ public class Tester : CharacterBase
     public void Fire()
     {
         var go = Instantiate(_bullet, transform.position, transform.rotation);
-        go.GetComponent<BulletController>()?.Fire(gameObject);
+        go.GetComponent<BulletController>()?.Fire(transform);
     }
     
 }

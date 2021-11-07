@@ -15,11 +15,17 @@ public class CharacterBase : MonoBehaviour
     Rigidbody _rb;
     [Tooltip("移動速度")]
     [SerializeField] float _speed;
+    [Tooltip("車両の旋回速度")] 
+    [SerializeField] float _vehicleTurnSpeed;
 
     /// <summary>スタート関数で必ず呼ぶ</summary>
     public void Start()
     {
         _rb = GetComponent<Rigidbody>();
+        foreach(var t in transform)
+        {
+            Debug.Log(t);
+        }
     }
 
     /// <summary>被弾時の処理</summary>
@@ -47,12 +53,13 @@ public class CharacterBase : MonoBehaviour
     }
 
     /// <summary>移動</summary>
-    /// <param name="x"></param>
     /// <param name="z"></param>
-    public void Move(float x, float z)
+    /// <param name="y"></param>
+    public void Move(float z, float y)
     {
-        Vector3 vector = new Vector3(x, 0, z);
+        Vector3 vector = new Vector3(z, 0, y);
         vector = vector.normalized;
-        _rb.AddForce(vector, ForceMode.Impulse);
+        _rb.AddForce(transform.forward * z, ForceMode.Impulse);
+        _rb.angularVelocity = new Vector3(0 , y * _vehicleTurnSpeed, 0);
     }
 }
