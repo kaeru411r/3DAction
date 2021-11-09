@@ -11,7 +11,6 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] GunController _gunController;
     [SerializeField] CharacterBase _characterBase;
-    Transform _transform;
 
 
     // Update is called once per frame
@@ -22,7 +21,7 @@ public class PlayerController : MonoBehaviour
         _characterBase.Move(z, y);
         if (Input.GetButtonDown("Fire1"))
         {
-            _gunController.Fire(_transform);
+            _gunController.Fire(transform.root);
         }
         float f = Input.GetAxisRaw("Mouse ScrollWheel");
         if (f != 0)
@@ -31,9 +30,5 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        _transform = transform.GetComponentInChildren<Transform>();
-    }
 
 }

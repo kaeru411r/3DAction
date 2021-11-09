@@ -18,14 +18,10 @@ public class CharacterBase : MonoBehaviour
     [Tooltip("車両の旋回速度")] 
     [SerializeField] float _vehicleTurnSpeed;
 
-    /// <summary>スタート関数で必ず呼ぶ</summary>
+
     public void Start()
     {
         _rb = GetComponent<Rigidbody>();
-        foreach(var t in transform)
-        {
-            Debug.Log(t);
-        }
     }
 
     /// <summary>被弾時の処理</summary>
@@ -59,7 +55,7 @@ public class CharacterBase : MonoBehaviour
     {
         Vector3 vector = new Vector3(z, 0, y);
         vector = vector.normalized;
-        _rb.AddForce(transform.forward * z, ForceMode.Impulse);
+        _rb.AddForce(transform.forward * z * Time.deltaTime, ForceMode.Impulse);
         _rb.angularVelocity = new Vector3(0 , y * _vehicleTurnSpeed, 0);
     }
 }
