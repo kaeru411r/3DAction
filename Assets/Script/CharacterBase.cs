@@ -17,6 +17,7 @@ public class CharacterBase : MonoBehaviour
     [SerializeField] float _speed;
     [Tooltip("車両の旋回速度")] 
     [SerializeField] float _vehicleTurnSpeed;
+    bool _isGround;
 
 
     public void Start()
@@ -53,9 +54,26 @@ public class CharacterBase : MonoBehaviour
     /// <param name="y"></param>
     public void Move(float z, float y)
     {
-        Vector3 vector = new Vector3(z, 0, y);
-        vector = vector.normalized;
-        _rb.AddForce(transform.forward * z * Time.deltaTime, ForceMode.Impulse);
-        _rb.angularVelocity = new Vector3(0 , y * _vehicleTurnSpeed, 0);
+        if (_isGround)
+        {
+            Vector2 vector = new Vector2(z, y);
+            vector = vector.normalized;
+            _rb.AddForce(transform.forward * vector.x * Time.deltaTime * _speed, ForceMode.Impulse);
+            var ro = new Vector3(_rb.angularVelocity.x, vector.y * _vehicleTurnSpeed * Time.deltaTime, _rb.angularVelocity.z);
+            _rb.angularVelocity = ro;
+            Debug.Log($"移動 前に{vector.x * _speed}, 右に{vector.y * _vehicleTurnSpeed}");
+        }
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if(collision.gameObject.tag == "Ground")
+        _isGround = true;
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.tag == "Ground")
+            _isGround = false;
     }
 }

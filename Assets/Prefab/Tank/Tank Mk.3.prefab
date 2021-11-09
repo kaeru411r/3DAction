@@ -629,7 +629,7 @@ MonoBehaviour:
   _muzzle: {fileID: 3545274256420969573}
   _sight: {fileID: 684033153592745065}
   _yawSpeed: 1
-  _pitchSpeed: 0.01
+  _pitchSpeed: 1
 --- !u!65 &8663998785929264512
 BoxCollider:
   m_ObjectHideFlags: 0

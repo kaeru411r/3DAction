@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Tester : CharacterBase
+public class Tester : MonoBehaviour
 {
-    private void Update()
+    private void FixedUpdate()
     {
-        Debug.Log(transform.localEulerAngles);
+        GetComponent<Rigidbody>().AddForce(-10, 0, 0,ForceMode.Impulse);
     }
 
 }
