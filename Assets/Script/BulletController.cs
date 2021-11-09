@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-
+/// <summary>
+/// 砲弾の発射以降の操作を行うコンポーネント
+/// </summary>
 [RequireComponent(typeof(Rigidbody))]
 public class BulletController : MonoBehaviour
 {
@@ -22,13 +24,16 @@ public class BulletController : MonoBehaviour
     RaycastHit _hit;
     [Tooltip("弾が消滅するまでの時間")]
     [SerializeField] float _destroyTime;
+    [Tooltip("リロードにかかる時間")]
+    [SerializeField] float _reloadTime;
+    /// <summary>リロードにかかる時間</summary>
+    public float ReloadTime { get { return _reloadTime; } }
+    Transform _root;
 
 
 
     private void Start()
     {
-        _lastPosition = transform.position;
-        //Fire(gameObject);
         Destroy(gameObject, _destroyTime);
     }
 
@@ -37,7 +42,7 @@ public class BulletController : MonoBehaviour
     {
         if (_isFired && HitCheck())   //ここにレイで着弾を観測する部分を書く
         {
-            Hit(_hit.collider.gameObject);
+            Hit(_hit.transform.root);
         }
         _lastPosition = transform.position;
     }
@@ -52,7 +57,7 @@ public class BulletController : MonoBehaviour
         rays = Physics.RaycastAll(_lastPosition, direction, distance);
         foreach(var r in rays)
         {
-            if (r.collider.gameObject != _go)
+            if (r.collider.transform.root != _root)
             {
                 _hit = r;
                 return true;
@@ -62,21 +67,24 @@ public class BulletController : MonoBehaviour
     }
 
     /// <summary>発砲時に呼ぶ</summary>
-    public void Fire(GameObject go)
+    public void Fire(Transform root)
     {
+        Debug.Log($"{root.name}が砲撃");
         _rb = GetComponent<Rigidbody>();
         _isFired = true;
         _rb.velocity = (_speed * transform.forward);
-        _go = go;
+        _root = root;
+        _lastPosition = transform.position;
     }
 
 
     /// <summary>着弾時に呼ぶ</summary>
     /// <param name="go"></param>
-    void Hit(GameObject go)
+    void Hit(Transform t)
     {
-        Debug.Log($"{go.name}に着弾");
-        go.GetComponent<CharacterBase>()?.Shot(_power);
+        Debug.Log($"{t.name}に着弾");
+        t.GetComponent<CharacterBase>()?.Shot(_power);
         Destroy(gameObject);
     }
+
 }

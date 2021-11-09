@@ -2,29 +2,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : CharacterBase
-{
-    /// <summary>プレイヤーのリジッドボディ</summary>
-    Rigidbody m_rb;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        m_rb = GetComponent<Rigidbody>();
-    }
+/// <summary>
+/// プレイヤー操作コンポーネント
+/// 車両の操作を行う
+/// </summary>
+public class PlayerController : MonoBehaviour
+{
+    [SerializeField] GunController _gunController;
+    [SerializeField] CharacterBase _characterBase;
+
 
     // Update is called once per frame
     void Update()
     {
-        Move();
+        float y = Input.GetAxisRaw("Horizontal");
+        float z = Input.GetAxisRaw("Vertical");
+        _characterBase.Move(z, y);
+        if (Input.GetButtonDown("Fire1"))
+        {
+            _gunController.Fire(transform.root);
+        }
+        float f = Input.GetAxisRaw("Mouse ScrollWheel");
+        if (f != 0)
+        {
+            _gunController.Choice(f);
+        }
     }
 
-    private void Move()
-    {
-        float x = Input.GetAxisRaw("Horizontal");
-        float z = Input.GetAxisRaw("Vertical");
-        Vector3 vector = new Vector3(x, 0, z);
-        vector = vector.normalized;
-        m_rb.AddForce(vector, ForceMode.Impulse);
-    }
+
 }

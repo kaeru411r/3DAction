@@ -5,9 +5,9 @@ using UnityEngine.Events;
 
 public class Tester : CharacterBase
 {
-    [SerializeField] UnityEvent unityEvent;
-    private void Start()
+    private void Update()
     {
-        unityEvent.Invoke();
+        Debug.Log(transform.localEulerAngles);
     }
+
 }
