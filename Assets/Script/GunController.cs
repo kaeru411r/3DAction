@@ -68,19 +68,17 @@ public class GunController : MonoBehaviour
         }
         if (dif <= _pitchSpeed && dif >= -_pitchSpeed)
         {
-            //_barrel.transform.rotation = Quaternion.Euler(x, y, 0);
-            _barrel.transform.localEulerAngles = new Vector3(x, y, 0);
+            _barrel.transform.localEulerAngles = new Vector3(x, 0, 0);
         }
         else if(dif > _pitchSpeed)
         {
-            var ro = new Vector3(_barrel.transform.localEulerAngles.x + _pitchSpeed, y, 0);
-            //_barrel.transform.rotation = Quaternion.Euler(ro);
+            var ro = new Vector3(_barrel.transform.localEulerAngles.x + _pitchSpeed, 0, 0);
             _barrel.transform.localEulerAngles = ro;
+            _barrel.GetComponent<Rigidbody>();
         }
         else
         {
-            var ro = new Vector3(_barrel.transform.localEulerAngles.x - _pitchSpeed, y, 0);
-            //_barrel.transform.rotation = Quaternion.Euler(ro);
+            var ro = new Vector3(_barrel.transform.localEulerAngles.x - _pitchSpeed, 0, 0);
             _barrel.transform.localEulerAngles = ro;
         }
     }
@@ -100,19 +98,16 @@ public class GunController : MonoBehaviour
         }
         if (dif <= _yawSpeed && dif >= -_yawSpeed)
         {
-            //transform.rotation = Quaternion.Euler(0, y, 0);
             transform.localEulerAngles = new Vector3(0, y, 0);
         }
         else if (dif > _yawSpeed)
         {
             var ro = new Vector3(0, transform.localEulerAngles.y + _yawSpeed, 0);
-            //transform.rotation = Quaternion.Euler(ro);
             transform.localEulerAngles = ro;
         }
         else
         {
             var ro = new Vector3(0, transform.localEulerAngles.y - _yawSpeed, 0);
-            //transform.rotation = Quaternion.Euler(ro);
             transform.localEulerAngles = ro;
         }
     }
