@@ -5,9 +5,10 @@ using UnityEngine.Events;
 
 public class Tester : MonoBehaviour
 {
-    private void FixedUpdate()
+    [SerializeField] int fps;
+    private void Update()
     {
-        GetComponent<Rigidbody>().AddForce(-10, 0, 0,ForceMode.Impulse);
+        Application.targetFrameRate = fps;
     }
 
 }

@@ -29,6 +29,7 @@ public class GunController : MonoBehaviour
     /// <summary>装填完了までの時間</summary>
     float _time;
 
+
     private void Start()
     {
         StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
@@ -38,7 +39,7 @@ public class GunController : MonoBehaviour
     private void FixedUpdate()
     {
         Yaw(_sight.localEulerAngles.y);
-        Pitch(_sight.localEulerAngles.x, transform.localEulerAngles.y);
+        Pitch(_sight.localEulerAngles.x);
     }
 
     /// <summary>砲弾の実体化から発射関数の呼び出しまでを行う</summary>
@@ -55,7 +56,7 @@ public class GunController : MonoBehaviour
 
     /// <summary>砲身の上下の動き</summary>
     /// <param name="x"></param>
-    void Pitch(float x, float y)
+    void Pitch(float x)
     {
         var dif = x - _barrel.transform.localEulerAngles.x;
         if (dif < -180)
@@ -69,17 +70,15 @@ public class GunController : MonoBehaviour
         if (dif <= _pitchSpeed && dif >= -_pitchSpeed)
         {
             _barrel.transform.localEulerAngles = new Vector3(x, 0, 0);
+            _barrel.transform.Rotate(Vector3.zero);
         }
         else if(dif > _pitchSpeed)
         {
-            var ro = new Vector3(_barrel.transform.localEulerAngles.x + _pitchSpeed, 0, 0);
-            _barrel.transform.localEulerAngles = ro;
-            _barrel.GetComponent<Rigidbody>();
+            _barrel.transform.Rotate(_pitchSpeed, 0, 0);
         }
         else
         {
-            var ro = new Vector3(_barrel.transform.localEulerAngles.x - _pitchSpeed, 0, 0);
-            _barrel.transform.localEulerAngles = ro;
+            _barrel.transform.Rotate(-_pitchSpeed, 0, 0);
         }
     }
 
@@ -99,16 +98,15 @@ public class GunController : MonoBehaviour
         if (dif <= _yawSpeed && dif >= -_yawSpeed)
         {
             transform.localEulerAngles = new Vector3(0, y, 0);
+            transform.Rotate(Vector3.zero);
         }
         else if (dif > _yawSpeed)
         {
-            var ro = new Vector3(0, transform.localEulerAngles.y + _yawSpeed, 0);
-            transform.localEulerAngles = ro;
+            transform.Rotate(0, _yawSpeed, 0);
         }
         else
         {
-            var ro = new Vector3(0, transform.localEulerAngles.y - _yawSpeed, 0);
-            transform.localEulerAngles = ro;
+            transform.Rotate(0, -_yawSpeed, 0);
         }
     }
 
@@ -121,12 +119,10 @@ public class GunController : MonoBehaviour
             _ammoNunber = _ammoNunber - 1;
             if (_ammoNunber < 0)
                 _ammoNunber = _ammos.Length - 1;
-            Debug.Log(_ammoNunber);
         }
         else
         {
             _ammoNunber = (_ammoNunber + 1) % _ammos.Length;
-            Debug.Log(_ammoNunber);
         }
         StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
     }
@@ -139,18 +135,15 @@ public class GunController : MonoBehaviour
         if (_isLoad)
         {
             _isLoad = false;
-            Debug.Log($"{transform.root.name} がリロード開始 {time}秒");
             for (_time = time; _time >= 0; _time -= Time.deltaTime)
             {
                 yield return null;
             }
-            Debug.Log($"{transform.root.name} がリロード完了");
             _isLoad = true;
         }
         else
         {
             _time = time;
-            Debug.Log($"リロード再始 {time}秒");
         }
     }
 }

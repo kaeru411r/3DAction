@@ -61,7 +61,6 @@ public class CharacterBase : MonoBehaviour
             _rb.AddForce(transform.forward * vector.x * Time.deltaTime * _speed, ForceMode.Impulse);
             var ro = new Vector3(_rb.angularVelocity.x, vector.y * _vehicleTurnSpeed * Time.deltaTime, _rb.angularVelocity.z);
             _rb.angularVelocity = ro;
-            Debug.Log($"移動 前に{vector.x * _speed}, 右に{vector.y * _vehicleTurnSpeed}");
         }
     }
 

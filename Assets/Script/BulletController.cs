@@ -29,6 +29,7 @@ public class BulletController : MonoBehaviour
     /// <summary>リロードにかかる時間</summary>
     public float ReloadTime { get { return _reloadTime; } }
     Transform _root;
+    Vector3 _firstPosition;
 
 
 
@@ -55,7 +56,7 @@ public class BulletController : MonoBehaviour
         var direction = vector / distance;
         RaycastHit[] rays;
         rays = Physics.RaycastAll(_lastPosition, direction, distance);
-        foreach(var r in rays)
+        foreach (var r in rays)
         {
             if (r.collider.transform.root != _root)
             {
@@ -69,12 +70,12 @@ public class BulletController : MonoBehaviour
     /// <summary>発砲時に呼ぶ</summary>
     public void Fire(Transform root)
     {
-        Debug.Log($"{root.name}が砲撃");
         _rb = GetComponent<Rigidbody>();
         _isFired = true;
         _rb.velocity = (_speed * transform.forward);
         _root = root;
         _lastPosition = transform.position;
+        _firstPosition = transform.position;
     }
 
 
@@ -82,7 +83,9 @@ public class BulletController : MonoBehaviour
     /// <param name="go"></param>
     void Hit(Transform t)
     {
-        Debug.Log($"{t.name}に着弾");
+        Debug.Log($"{t.name}に着弾　高低差{_hit.point.y - _firstPosition.y}" +
+            $"　水平距離{Vector2.Distance(new Vector2(_firstPosition.x, _firstPosition.y), new Vector2(_hit.point.x, _hit.point.z))}" +
+            $"　相対距離{Vector3.Distance(_firstPosition, _hit.point)}");
         t.GetComponent<CharacterBase>()?.Shot(_power);
         Destroy(gameObject);
     }
