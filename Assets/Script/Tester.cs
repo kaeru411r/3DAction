@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Tester : CharacterBase
+public class Tester : MonoBehaviour
 {
+    [SerializeField] int fps;
     private void Update()
     {
-        Debug.Log(transform.localEulerAngles);
+        Application.targetFrameRate = fps;
     }
 
 }

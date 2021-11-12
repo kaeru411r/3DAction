@@ -111,5 +111,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 100
   _power: 200
-  _destroyTime: 5
+  _destroyTime: 30
   _reloadTime: 0.5
