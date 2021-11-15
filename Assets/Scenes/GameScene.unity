@@ -320,6 +320,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8307861036935205298, guid: 676f03d27f62554488e052df6f4e8a23,
         type: 3}
+      propertyPath: _barrel
+      value: 
+      objectReference: {fileID: 151803176}
+    - target: {fileID: 8307861036935205298, guid: 676f03d27f62554488e052df6f4e8a23,
+        type: 3}
+      propertyPath: _muzzle
+      value: 
+      objectReference: {fileID: 151803175}
+    - target: {fileID: 8307861036935205298, guid: 676f03d27f62554488e052df6f4e8a23,
+        type: 3}
       propertyPath: _yawSpeed
       value: 1
       objectReference: {fileID: 0}
@@ -330,6 +340,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 676f03d27f62554488e052df6f4e8a23, type: 3}
+--- !u!4 &151803175 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1888516356169034387, guid: 676f03d27f62554488e052df6f4e8a23,
+    type: 3}
+  m_PrefabInstance: {fileID: 151803174}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &151803176 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 151755595371460944, guid: 676f03d27f62554488e052df6f4e8a23,
+    type: 3}
+  m_PrefabInstance: {fileID: 151803174}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &189298557
 GameObject:
   m_ObjectHideFlags: 3
