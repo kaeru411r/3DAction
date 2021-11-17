@@ -322,7 +322,6 @@ GameObject:
   - component: {fileID: 151755595019890829}
   - component: {fileID: 151755595019890828}
   - component: {fileID: 151755595019890831}
-  - component: {fileID: 8307861036935205298}
   - component: {fileID: 8663998785929264512}
   m_Layer: 0
   m_Name: Turret
@@ -609,27 +608,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 151755595019890824}
   m_Mesh: {fileID: 0}
---- !u!114 &8307861036935205298
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 151755595019890824}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2b0dc74b77513c44b9422778ceef9a3b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _ammos:
-  - {fileID: 3673785428059950365, guid: df8a59f13c5eea2439aa7af1d2d1cba5, type: 3}
-  - {fileID: 3673785428059950365, guid: 583d9683217979749a875af57b638262, type: 3}
-  - {fileID: 3673785428059950365, guid: bd34307adebcb4145b3b7936e234f2f2, type: 3}
-  _barrel: {fileID: 151755595371460944}
-  _muzzle: {fileID: 1888516356169034387}
-  _sight: {fileID: 684033153592745065}
-  _yawSpeed: 1
-  _pitchSpeed: 1
 --- !u!65 &8663998785929264512
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7536,6 +7514,7 @@ GameObject:
   - component: {fileID: 356457245135949055}
   - component: {fileID: 7627944943828151710}
   - component: {fileID: 2007389624222770007}
+  - component: {fileID: 5900374508571592935}
   m_Layer: 0
   m_Name: Tank Mk.3
   m_TagString: Untagged
@@ -7591,6 +7570,28 @@ MonoBehaviour:
   _hp: 1000
   _speed: 5
   _vehicleTurnSpeed: 5
+--- !u!114 &5900374508571592935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4883165105783779942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b0dc74b77513c44b9422778ceef9a3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _ammos:
+  - {fileID: 3673785428059950365, guid: df8a59f13c5eea2439aa7af1d2d1cba5, type: 3}
+  - {fileID: 3673785428059950365, guid: 583d9683217979749a875af57b638262, type: 3}
+  - {fileID: 3673785428059950365, guid: bd34307adebcb4145b3b7936e234f2f2, type: 3}
+  _turret: {fileID: 151755595019890825}
+  _barrel: {fileID: 151755595371460944}
+  _muzzle: {fileID: 1888516356169034387}
+  _sight: {fileID: 684033153592745065}
+  _yawSpeed: 1
+  _pitchSpeed: 1
 --- !u!1 &8318314638669147347
 GameObject:
   m_ObjectHideFlags: 0
