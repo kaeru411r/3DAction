@@ -5,10 +5,10 @@ using UnityEngine.Events;
 
 public class Tester : MonoBehaviour
 {
-    [SerializeField] int fps;
-    private void Update()
+    [SerializeField] GunController GunController;
+    private void Start()
     {
-        Application.targetFrameRate = fps;
+        GunController.Target = transform;
     }
 
 }

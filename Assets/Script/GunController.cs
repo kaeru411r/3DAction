@@ -22,6 +22,8 @@ public class GunController : MonoBehaviour
     [SerializeField] float _yawSpeed;
     [Tooltip("砲身の上下動作速度")]
     [SerializeField] float _pitchSpeed;
+    /// <summary>sightが狙う先</summary>
+    Transform _target;
     /// <summary>使う弾薬の種類</summary>
     int _ammoNunber;
     /// <summary>現在装填されてるか</summary>
@@ -29,10 +31,25 @@ public class GunController : MonoBehaviour
     /// <summary>装填完了までの時間</summary>
     float _time;
 
+    public Transform Target { get { return _target; } set { _target = value; } }
+
 
     private void Start()
     {
         StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
+    }
+
+    private void Update()
+    {
+        if (_target)
+        {
+            _sight.LookAt(_target.position);
+        }
+        else
+        {
+            _target = _sight;
+            Debug.LogWarning($"{name}はターゲットの指定なし");
+        }
     }
 
 
