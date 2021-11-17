@@ -48,7 +48,7 @@ public class GunController : MonoBehaviour
         else
         {
             _target = _sight;
-            Debug.LogWarning($"{name}はターゲットの指定なし");
+            Debug.LogWarning($"{transform.root.name}はターゲットの指定なし");
         }
     }
 
