@@ -13,15 +13,17 @@ public class GunController : MonoBehaviour
     [Tooltip("弾薬配列")]
     [SerializeField] BulletController[] _ammos;
     [Tooltip("砲身")]
-    [SerializeField] GameObject _barrel;
+    [SerializeField] Transform _barrel;
     [Tooltip("砲口")]
-    [SerializeField] GameObject _muzzle;
+    [SerializeField] Transform _muzzle;
     [Tooltip("直接照準を合わせる基準")]
     [SerializeField] Transform _sight;
     [Tooltip("砲塔の旋回速度")]
     [SerializeField] float _yawSpeed;
     [Tooltip("砲身の上下動作速度")]
     [SerializeField] float _pitchSpeed;
+    /// <summary>sightが狙う先</summary>
+    Transform _target;
     /// <summary>使う弾薬の種類</summary>
     int _ammoNunber;
     /// <summary>現在装填されてるか</summary>
@@ -29,10 +31,25 @@ public class GunController : MonoBehaviour
     /// <summary>装填完了までの時間</summary>
     float _time;
 
+    public Transform Target { get { return _target; } set { _target = value; } }
+
 
     private void Start()
     {
         StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
+    }
+
+    private void Update()
+    {
+        if (_target)
+        {
+            _sight.LookAt(_target.position);
+        }
+        else
+        {
+            _target = _sight;
+            Debug.LogWarning($"{name}はターゲットの指定なし");
+        }
     }
 
 
@@ -48,7 +65,7 @@ public class GunController : MonoBehaviour
     {
         if (_isLoad)
         {
-            var go = Instantiate(_ammos[_ammoNunber], _muzzle.transform.position, _muzzle.transform.rotation);
+            var go = Instantiate(_ammos[_ammoNunber], _muzzle.position, _muzzle.rotation);
             go.GetComponent<BulletController>()?.Fire(root);
             StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
         }
@@ -58,7 +75,7 @@ public class GunController : MonoBehaviour
     /// <param name="x"></param>
     void Pitch(float x)
     {
-        var dif = x - _barrel.transform.localEulerAngles.x;
+        var dif = x - _barrel.localEulerAngles.x;
         if (dif < -180)
         {
             dif = dif + 360;
@@ -69,16 +86,16 @@ public class GunController : MonoBehaviour
         }
         if (dif <= _pitchSpeed && dif >= -_pitchSpeed)
         {
-            _barrel.transform.localEulerAngles = new Vector3(x, 0, 0);
-            _barrel.transform.Rotate(Vector3.zero);
+            _barrel.localEulerAngles = new Vector3(x, 0, 0);
+            _barrel.Rotate(Vector3.zero);
         }
         else if(dif > _pitchSpeed)
         {
-            _barrel.transform.Rotate(_pitchSpeed, 0, 0);
+            _barrel.Rotate(_pitchSpeed, 0, 0);
         }
         else
         {
-            _barrel.transform.Rotate(-_pitchSpeed, 0, 0);
+            _barrel.Rotate(-_pitchSpeed, 0, 0);
         }
     }
 
