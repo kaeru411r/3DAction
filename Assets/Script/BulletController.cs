@@ -39,13 +39,14 @@ public class BulletController : MonoBehaviour
     }
 
 
-    private void FixedUpdate()
+    private void Update()
     {
         if (_isFired && HitCheck())   //ここにレイで着弾を観測する部分を書く
         {
             Hit(_hit.transform.root);
+            transform.forward = _rb.velocity;
+            _lastPosition = transform.position;
         }
-        _lastPosition = transform.position;
     }
 
     /// <summary>着弾の有無、及びその対象の確認</summary>
