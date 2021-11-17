@@ -12,6 +12,8 @@ public class GunController : MonoBehaviour
 
     [Tooltip("弾薬配列")]
     [SerializeField] BulletController[] _ammos;
+    [Tooltip("砲塔")]
+    [SerializeField] Transform _turret;
     [Tooltip("砲身")]
     [SerializeField] Transform _barrel;
     [Tooltip("砲口")]
@@ -48,7 +50,7 @@ public class GunController : MonoBehaviour
         else
         {
             _target = _sight;
-            Debug.LogWarning($"{transform.root.name}はターゲットの指定なし");
+            Debug.LogWarning($"{name}はターゲットの指定なし");
         }
     }
 
@@ -103,7 +105,7 @@ public class GunController : MonoBehaviour
     /// <param name="y"></param>
     void Yaw(float y)
     {
-        var dif = y - transform.localEulerAngles.y;
+        var dif = y - _turret.transform.localEulerAngles.y;
         if (dif < -180)
         {
             dif = dif + 360;
@@ -114,16 +116,16 @@ public class GunController : MonoBehaviour
         }
         if (dif <= _yawSpeed && dif >= -_yawSpeed)
         {
-            transform.localEulerAngles = new Vector3(0, y, 0);
-            transform.Rotate(Vector3.zero);
+            _turret.transform.localEulerAngles = new Vector3(0, y, 0);
+            _turret.transform.Rotate(Vector3.zero);
         }
         else if (dif > _yawSpeed)
         {
-            transform.Rotate(0, _yawSpeed, 0);
+            _turret.transform.Rotate(0, _yawSpeed, 0);
         }
         else
         {
-            transform.Rotate(0, -_yawSpeed, 0);
+            _turret.transform.Rotate(0, -_yawSpeed, 0);
         }
     }
 
