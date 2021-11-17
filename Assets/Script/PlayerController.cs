@@ -14,8 +14,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] CharacterBase _characterBase;
     /// <summary>照準先</summary>
     Transform _target;
+    /// <summary>サイトオブジェクトのトランスフォーム</summary>
+    Transform _sight;
     [Tooltip("レティクル")]
-    [SerializeField] Image _sight;
+    [SerializeField] Image _crosshair;
     [Tooltip("rayを飛ばす距離")]
     [SerializeField] float _distance;
     [Tooltip("照準するレイヤー")]
@@ -24,11 +26,12 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         _target = new GameObject().transform;
-        _gunController.Target = _target;
+        _sight = _gunController.Sight;
     }
     // Update is called once per frame
     void Update()
     {
+
         float y = Input.GetAxisRaw("Horizontal");
         float z = Input.GetAxisRaw("Vertical");
         _characterBase.Move(z, y);
@@ -42,6 +45,8 @@ public class PlayerController : MonoBehaviour
             _gunController.Choice(f);
         }
 
+        _sight.LookAt(_target.position);
+
         Aim();
     }
 
@@ -50,7 +55,7 @@ public class PlayerController : MonoBehaviour
         float centerX = Screen.width / 2;
         float centerY = Screen.height / 2;
         RaycastHit hit;
-        Ray ray = Camera.main.ScreenPointToRay(_sight.rectTransform.position);
+        Ray ray = Camera.main.ScreenPointToRay(_crosshair.rectTransform.position);
         if (Physics.Raycast(ray, out hit, _distance, _layerMask)){
             _target.position = hit.point;
         }

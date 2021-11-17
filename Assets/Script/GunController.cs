@@ -33,7 +33,7 @@ public class GunController : MonoBehaviour
     /// <summary>装填完了までの時間</summary>
     float _time;
 
-    public Transform Target { get { return _target; } set { _target = value; } }
+    public Transform Sight { get { return _sight; } set { _sight = value; } }
 
 
     private void Start()
@@ -43,15 +43,15 @@ public class GunController : MonoBehaviour
 
     private void Update()
     {
-        if (_target)
-        {
-            _sight.LookAt(_target.position);
-        }
-        else
-        {
-            _target = _sight;
-            Debug.LogWarning($"{name}はターゲットの指定なし");
-        }
+        //if (_target)
+        //{
+        //    _sight.LookAt(_target.position);
+        //}
+        //else
+        //{
+        //    _target = _sight;
+        //    Debug.LogWarning($"{name}はターゲットの指定なし");
+        //}
     }
 
 

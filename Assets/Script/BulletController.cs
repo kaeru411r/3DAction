@@ -28,7 +28,9 @@ public class BulletController : MonoBehaviour
     [SerializeField] float _reloadTime;
     /// <summary>リロードにかかる時間</summary>
     public float ReloadTime { get { return _reloadTime; } }
+    /// <summary>発射した戦車</summary>
     Transform _root;
+    /// <summary>発射された位置</summary>
     Vector3 _firstPosition;
 
 

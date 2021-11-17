@@ -17,6 +17,7 @@ public class CharacterBase : MonoBehaviour
     [SerializeField] float _speed;
     [Tooltip("車両の旋回速度")] 
     [SerializeField] float _vehicleTurnSpeed;
+    /// <summary>地面についているかどうか</summary>
     bool _isGround;
 
 
