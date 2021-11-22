@@ -131,8 +131,9 @@ public class GunController : MonoBehaviour
 
     /// <summary>砲弾の切り替えを行う</summary>
     /// <param name="f"></param>
-    public void Choice(float f)
+    public void Change(float f)
     {
+       
         if (f < 0)
         {
             _ammoNunber = _ammoNunber - 1;
@@ -146,6 +147,15 @@ public class GunController : MonoBehaviour
         StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
     }
 
+    public void Choice(int n)
+    {
+        if(n <= _ammos.Length && n - 1 != _ammoNunber)
+        {
+            _ammoNunber = n - 1;
+            StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
+        }
+    }
+
 
     /// <summary>砲弾の装填を行う
     /// 最後に呼び出されてからtime秒後に装填完了する</summary>
@@ -153,16 +163,19 @@ public class GunController : MonoBehaviour
     {
         if (_isLoad)
         {
+            Debug.Log($"{transform.root.name}が{_ammos[_ammoNunber].name}装填完了まで{time}");
             _isLoad = false;
             for (_time = time; _time >= 0; _time -= Time.deltaTime)
             {
                 yield return null;
             }
+            Debug.Log($"{transform.root.name}がリロード完了");
             _isLoad = true;
         }
         else
         {
             _time = time;
+            Debug.Log($"{transform.root.name}が{_ammos[_ammoNunber].name}装填完了まで{_time}");
         }
     }
 }

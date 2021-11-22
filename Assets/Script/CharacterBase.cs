@@ -53,14 +53,13 @@ public class CharacterBase : MonoBehaviour
     /// <summary>移動</summary>
     /// <param name="z"></param>
     /// <param name="y"></param>
-    public void Move(float z, float y)
+    public void Move(Vector2 vector)
     {
         if (_isGround)
         {
-            Vector2 vector = new Vector2(z, y);
             vector = vector.normalized;
-            _rb.AddForce(transform.forward * vector.x * Time.deltaTime * _speed, ForceMode.Impulse);
-            var ro = new Vector3(_rb.angularVelocity.x, vector.y * _vehicleTurnSpeed * Time.deltaTime, _rb.angularVelocity.z);
+            _rb.AddForce(transform.forward * vector.y * Time.deltaTime * _speed, ForceMode.Impulse);
+            var ro = new Vector3(_rb.angularVelocity.x, vector.x * _vehicleTurnSpeed * Time.deltaTime, _rb.angularVelocity.z);
             _rb.angularVelocity = ro;
         }
     }

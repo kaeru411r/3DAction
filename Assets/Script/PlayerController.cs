@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
+using System.Text.RegularExpressions;
 
 
 /// <summary>
@@ -22,35 +24,84 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float _distance;
     [Tooltip("照準するレイヤー")]
     [SerializeField] LayerMask _layerMask;
+    [Tooltip("FPS時の砲塔砲身の予約できる回転量の上限")]
+    [SerializeField] float _maxDeltaRotation;
+    ViewMode _viewMode = ViewMode.TPS;
+    Vector2 _move;
+    Vector2 _look;
 
     private void Start()
     {
         _target = new GameObject().transform;
         _sight = _gunController.Sight;
+        if(_maxDeltaRotation < 10)
+        {
+            _maxDeltaRotation = 10;
+        }
     }
-    // Update is called once per frame
-    void Update()
-    {
 
-        float y = Input.GetAxisRaw("Horizontal");
-        float z = Input.GetAxisRaw("Vertical");
-        _characterBase.Move(z, y);
-        if (Input.GetButtonDown("Fire1"))
+    public void OnMove(InputAction.CallbackContext context)
+    {
+        _move = context.ReadValue<Vector2>();
+    }
+
+    public void OnLook(InputAction.CallbackContext context)
+    {
+        //Debug.Log(context.ReadValue<Vector2>());
+        _look = context.ReadValue<Vector2>();
+    }
+
+    public void OnScroll(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            _gunController.Change(context.ReadValue<Vector2>().y);
+        }
+    }
+
+    public void OnChange(InputAction.CallbackContext context)
+    {
+        if(context.performed)
+        {
+            _gunController.Change(1f);
+        }
+    }
+
+    public void OnFire(InputAction.CallbackContext context)
+    {
+        if(context.performed)
         {
             _gunController.Fire(transform.root);
         }
-        float f = Input.GetAxisRaw("Mouse ScrollWheel");
-        if (f != 0)
-        {
-            _gunController.Choice(f);
-        }
-
-        _sight.LookAt(_target.position);
-
-        Aim();
     }
 
-    void Aim()
+    public void OnChoice(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            _gunController.Choice(int.Parse(Regex.Replace(context.control.ToString(), @"[^0-9]", "")));
+        }
+    }
+
+
+    // Update is called once per frame
+    void Update()
+    {
+        _characterBase.Move(_move);
+
+
+
+        if (_viewMode == ViewMode.TPS)
+        {
+            TPSAim();
+        }
+        else
+        {
+            FPSAim();
+        }
+    }
+
+    void TPSAim()
     {
         float centerX = Screen.width / 2;
         float centerY = Screen.height / 2;
@@ -65,6 +116,48 @@ public class PlayerController : MonoBehaviour
             Vector3 position = ray.origin;
             _target.position = direction * _distance + position;
         }
+        _sight.LookAt(_target.position);
+    }
+
+    void FPSAim()
+    {
+        _sight.Rotate(_look.y, _look.x, 0);
+        Debug.Log($"#1 {_sight.eulerAngles.y - _look.y} + {_look.y} = {_sight.eulerAngles.y}");
+        Vector3 sight = _sight.rotation.eulerAngles;
+        Vector3 camera = Camera.main.transform.rotation.eulerAngles;
+        Debug.Log($"#2 {sight.y} - {camera.y} = {sight.y - camera.y}");
+        if (sight.x - camera.x > _maxDeltaRotation)
+        {
+            _sight.eulerAngles = new Vector3(camera.x + _maxDeltaRotation, 0, 0);
+            Debug.Log(1);
+        }
+        else if (sight.x - camera.x < -_maxDeltaRotation)
+        {
+            _sight.eulerAngles = new Vector3(camera.x - _maxDeltaRotation, 0, 0);
+            Debug.Log(2);
+        }
+        if (sight.y - camera.y > _maxDeltaRotation)
+        {
+            //Debug.Log($"{sight.y - camera.y} {_maxDeltaRotation} 1");
+            _sight.eulerAngles = new Vector3(0, camera.y + _maxDeltaRotation, 0);
+            Debug.Log(3);
+        }
+        else if (sight.y - camera.y < -_maxDeltaRotation)
+        {
+            //Debug.Log($"{sight.y - camera.y} {_maxDeltaRotation} 2");
+            _sight.eulerAngles = new Vector3(0, camera.y - _maxDeltaRotation, 0);
+            Debug.Log(4);
+        }
+    }
+
+    /// <summary>
+    /// 視点モード
+    /// </summary>
+    enum ViewMode
+    {
+        FPS,
+        Zoom,
+        TPS,
     }
 
 }
