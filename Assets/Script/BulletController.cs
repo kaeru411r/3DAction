@@ -47,7 +47,6 @@ public class BulletController : MonoBehaviour
         {
             Hit(_hit.transform.root);
             transform.forward = _rb.velocity;
-            _lastPosition = transform.position;
         }
     }
 
@@ -59,6 +58,7 @@ public class BulletController : MonoBehaviour
         var direction = vector / distance;
         RaycastHit[] rays;
         rays = Physics.RaycastAll(_lastPosition, direction, distance);
+        _lastPosition = transform.position;
         foreach (var r in rays)
         {
             if (r.collider.transform.root != _root)

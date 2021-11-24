@@ -18,6 +18,8 @@ public class PlayerController : MonoBehaviour
     Transform _target;
     /// <summary>サイトオブジェクトのトランスフォーム</summary>
     Transform _sight;
+    /// <summary>バレルオブジェクトのトランスフォーム</summary>
+    Transform _barrel;
     [Tooltip("レティクル")]
     [SerializeField] Image _crosshair;
     [Tooltip("rayを飛ばす距離")]
@@ -25,18 +27,23 @@ public class PlayerController : MonoBehaviour
     [Tooltip("照準するレイヤー")]
     [SerializeField] LayerMask _layerMask;
     [Tooltip("FPS時の砲塔砲身の予約できる回転量の上限")]
-    [SerializeField] float _maxDeltaRotation;
-    ViewMode _viewMode = ViewMode.TPS;
+    [SerializeField] Vector2 _maxDeltaRotation;
+    /// <summary>現在の視点</summary>
+    [SerializeField] ViewMode _viewMode;
+    /// <summary>移動用ベクトル</summary>
     Vector2 _move;
+    /// <summary>視点操作用ベクトル</summary>
     Vector2 _look;
+    
 
     private void Start()
     {
         _target = new GameObject().transform;
         _sight = _gunController.Sight;
-        if(_maxDeltaRotation < 10)
+        _barrel = _gunController.Barrel;
+        if(_maxDeltaRotation == Vector2.zero)
         {
-            _maxDeltaRotation = 10;
+            Debug.LogError("_maxDeltaRotationを設定しろ");
         }
     }
 
@@ -94,6 +101,7 @@ public class PlayerController : MonoBehaviour
         if (_viewMode == ViewMode.TPS)
         {
             TPSAim();
+
         }
         else
         {
@@ -103,8 +111,6 @@ public class PlayerController : MonoBehaviour
 
     void TPSAim()
     {
-        float centerX = Screen.width / 2;
-        float centerY = Screen.height / 2;
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(_crosshair.rectTransform.position);
         if (Physics.Raycast(ray, out hit, _distance, _layerMask)){
@@ -121,33 +127,50 @@ public class PlayerController : MonoBehaviour
 
     void FPSAim()
     {
+        _look = new Vector2(0, 1);
+        _look = _look.normalized;
+        Vector3 dif = _sight.eulerAngles - Camera.main.transform.eulerAngles;
         _sight.Rotate(_look.y, _look.x, 0);
-        Debug.Log($"#1 {_sight.eulerAngles.y - _look.y} + {_look.y} = {_sight.eulerAngles.y}");
-        Vector3 sight = _sight.rotation.eulerAngles;
-        Vector3 camera = Camera.main.transform.rotation.eulerAngles;
-        Debug.Log($"#2 {sight.y} - {camera.y} = {sight.y - camera.y}");
-        if (sight.x - camera.x > _maxDeltaRotation)
-        {
-            _sight.eulerAngles = new Vector3(camera.x + _maxDeltaRotation, 0, 0);
-            Debug.Log(1);
-        }
-        else if (sight.x - camera.x < -_maxDeltaRotation)
-        {
-            _sight.eulerAngles = new Vector3(camera.x - _maxDeltaRotation, 0, 0);
-            Debug.Log(2);
-        }
-        if (sight.y - camera.y > _maxDeltaRotation)
-        {
-            //Debug.Log($"{sight.y - camera.y} {_maxDeltaRotation} 1");
-            _sight.eulerAngles = new Vector3(0, camera.y + _maxDeltaRotation, 0);
-            Debug.Log(3);
-        }
-        else if (sight.y - camera.y < -_maxDeltaRotation)
-        {
-            //Debug.Log($"{sight.y - camera.y} {_maxDeltaRotation} 2");
-            _sight.eulerAngles = new Vector3(0, camera.y - _maxDeltaRotation, 0);
-            Debug.Log(4);
-        }
+
+        ////  ヨー制御
+        //if (dif.y < -180)
+        //{
+        //    dif = new Vector3(dif.x, dif.y + 360, dif.z);
+        //}
+        //else if (dif.y > 180)
+        //{
+        //    dif = new Vector3(dif.x, dif.y - 360, dif.z);
+        //}
+        //if (dif.y > _maxDeltaRotation.x)
+        //{
+        //    _sight.Rotate(0, _maxDeltaRotation.x - dif.y, 0);
+        //}
+        //else if(dif.y < -_maxDeltaRotation.x)
+        //{
+        //    _sight.Rotate(0, -_maxDeltaRotation.x - dif.y, 0);
+        //}
+
+        //  ピッチ制御
+        //if (dif.x < -180)
+        //{
+        //    dif = new Vector3(dif.x + 360, dif.y, dif.z);
+        //    Debug.Log($"#1");
+        //}
+        //else if (dif.x > 180)
+        //{
+        //    dif = new Vector3(dif.x - 360, dif.y, dif.z);
+        //    Debug.Log($"#2");
+        ////}
+        //if (dif.x > _maxDeltaRotation.y)
+        //{
+        //    _sight.Rotate(_maxDeltaRotation.y - dif.x, 0, 0);
+        //    //Debug.Log($"+");
+        //}
+        //else if (dif.x < -_maxDeltaRotation.y)
+        //{
+        //    _sight.Rotate(-_maxDeltaRotation.y - dif.x, 0, 0);
+        //    //Debug.Log($"-");
+        //}
     }
 
     /// <summary>

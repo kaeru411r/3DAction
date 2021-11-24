@@ -35,6 +35,8 @@ public class GunController : MonoBehaviour
 
     public Transform Sight { get { return _sight; } set { _sight = value; } }
 
+    public Transform Barrel { get { return _barrel; } set { _barrel = value; } }
+
 
     private void Start()
     {
@@ -57,7 +59,7 @@ public class GunController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Yaw(_sight.localEulerAngles.y);
+        //Yaw(_sight.localEulerAngles.y);
         Pitch(_sight.localEulerAngles.x);
     }
 
@@ -89,7 +91,6 @@ public class GunController : MonoBehaviour
         if (dif <= _pitchSpeed && dif >= -_pitchSpeed)
         {
             _barrel.localEulerAngles = new Vector3(x, 0, 0);
-            _barrel.Rotate(Vector3.zero);
         }
         else if(dif > _pitchSpeed)
         {
@@ -117,7 +118,6 @@ public class GunController : MonoBehaviour
         if (dif <= _yawSpeed && dif >= -_yawSpeed)
         {
             _turret.transform.localEulerAngles = new Vector3(0, y, 0);
-            _turret.transform.Rotate(Vector3.zero);
         }
         else if (dif > _yawSpeed)
         {
