@@ -24,6 +24,10 @@ public class GunController : MonoBehaviour
     [SerializeField] float _yawSpeed;
     [Tooltip("砲身の上下動作速度")]
     [SerializeField] float _pitchSpeed;
+    [Tooltip("仰角")]
+    [SerializeField] float _elevationAngle;
+    [Tooltip("俯角")]
+    [SerializeField] float _depressionAngle;
     /// <summary>sightが狙う先</summary>
     Transform _target;
     /// <summary>使う弾薬の種類</summary>
@@ -33,7 +37,11 @@ public class GunController : MonoBehaviour
     /// <summary>装填完了までの時間</summary>
     float _time;
 
-    public Transform Target { get { return _target; } set { _target = value; } }
+    public Transform Sight { get { return _sight; } set { _sight = value; } }
+
+    public Vector3 Barrel { get { return _barrel.eulerAngles; } }
+
+    public Vector3 Turret { get { return _turret.eulerAngles; } }
 
 
     private void Start()
@@ -43,14 +51,20 @@ public class GunController : MonoBehaviour
 
     private void Update()
     {
-        if (_target)
+        float x = _sight.eulerAngles.x;
+        if (x > 180)
         {
-            _sight.LookAt(_target.position);
+            x -= 360;
         }
-        else
+        if(x < -_elevationAngle)
         {
-            _target = _sight;
-            Debug.LogWarning($"{name}はターゲットの指定なし");
+            //Debug.Log($"#1 {_sight.eulerAngles.x} {-_elevationAngle} {_sight.eulerAngles.x < -_elevationAngle}");
+            _sight.eulerAngles = new Vector3(-_elevationAngle, _sight.eulerAngles.y, _sight.eulerAngles.z);
+        }
+        else if (x > _depressionAngle)
+        {
+            //Debug.Log($"#2 {_sight.eulerAngles.x} {-_depressionAngle} {_sight.eulerAngles.x > _depressionAngle}");
+            _sight.eulerAngles = new Vector3(_depressionAngle, _sight.eulerAngles.y, _sight.eulerAngles.z);
         }
     }
 
@@ -89,7 +103,6 @@ public class GunController : MonoBehaviour
         if (dif <= _pitchSpeed && dif >= -_pitchSpeed)
         {
             _barrel.localEulerAngles = new Vector3(x, 0, 0);
-            _barrel.Rotate(Vector3.zero);
         }
         else if(dif > _pitchSpeed)
         {
@@ -117,7 +130,6 @@ public class GunController : MonoBehaviour
         if (dif <= _yawSpeed && dif >= -_yawSpeed)
         {
             _turret.transform.localEulerAngles = new Vector3(0, y, 0);
-            _turret.transform.Rotate(Vector3.zero);
         }
         else if (dif > _yawSpeed)
         {
@@ -131,8 +143,9 @@ public class GunController : MonoBehaviour
 
     /// <summary>砲弾の切り替えを行う</summary>
     /// <param name="f"></param>
-    public void Choice(float f)
+    public void Change(float f)
     {
+       
         if (f < 0)
         {
             _ammoNunber = _ammoNunber - 1;
@@ -146,6 +159,15 @@ public class GunController : MonoBehaviour
         StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
     }
 
+    public void Choice(int n)
+    {
+        if(n <= _ammos.Length && n - 1 != _ammoNunber)
+        {
+            _ammoNunber = n - 1;
+            StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
+        }
+    }
+
 
     /// <summary>砲弾の装填を行う
     /// 最後に呼び出されてからtime秒後に装填完了する</summary>
@@ -153,16 +175,19 @@ public class GunController : MonoBehaviour
     {
         if (_isLoad)
         {
+            Debug.Log($"{transform.root.name}が{_ammos[_ammoNunber].name}装填完了まで{time}");
             _isLoad = false;
             for (_time = time; _time >= 0; _time -= Time.deltaTime)
             {
                 yield return null;
             }
+            Debug.Log($"{transform.root.name}がリロード完了");
             _isLoad = true;
         }
         else
         {
             _time = time;
+            Debug.Log($"{transform.root.name}が{_ammos[_ammoNunber].name}装填完了まで{_time}");
         }
     }
 }

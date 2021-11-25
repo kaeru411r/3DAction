@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
 
 public class Tester : MonoBehaviour
 {
-    [SerializeField] GunController GunController;
-    private void Start()
+    void Update()
     {
-        GunController.Target = transform;
+        //Debug.Log(transform.eulerAngles);
+        transform.eulerAngles = new Vector3(transform.eulerAngles.x-15, transform.eulerAngles.y, transform.eulerAngles.z);
     }
 
 }

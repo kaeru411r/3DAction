@@ -28,7 +28,9 @@ public class BulletController : MonoBehaviour
     [SerializeField] float _reloadTime;
     /// <summary>リロードにかかる時間</summary>
     public float ReloadTime { get { return _reloadTime; } }
+    /// <summary>発射した戦車</summary>
     Transform _root;
+    /// <summary>発射された位置</summary>
     Vector3 _firstPosition;
 
 
@@ -39,13 +41,13 @@ public class BulletController : MonoBehaviour
     }
 
 
-    private void FixedUpdate()
+    private void Update()
     {
         if (_isFired && HitCheck())   //ここにレイで着弾を観測する部分を書く
         {
             Hit(_hit.transform.root);
+            transform.forward = _rb.velocity;
         }
-        _lastPosition = transform.position;
     }
 
     /// <summary>着弾の有無、及びその対象の確認</summary>
@@ -56,6 +58,7 @@ public class BulletController : MonoBehaviour
         var direction = vector / distance;
         RaycastHit[] rays;
         rays = Physics.RaycastAll(_lastPosition, direction, distance);
+        _lastPosition = transform.position;
         foreach (var r in rays)
         {
             if (r.collider.transform.root != _root)
