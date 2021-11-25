@@ -203,7 +203,7 @@
                     "id": "8c8e490b-c610-4785-884f-f04217b23ca4",
                     "path": "<Mouse>/delta",
                     "interactions": "",
-                    "processors": "ScaleVector2(x=0.1,y=0.1),InvertVector2(invertX=false),StickDeadzone(min=0.125,max=1)",
+                    "processors": "ScaleVector2(x=0.01,y=0.01),InvertVector2(invertX=false),StickDeadzone(max=1)",
                     "groups": ";Keyboard&Mouse;Touch",
                     "action": "Look",
                     "isComposite": false,

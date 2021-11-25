@@ -18,8 +18,6 @@ public class PlayerController : MonoBehaviour
     Transform _target;
     /// <summary>サイトオブジェクトのトランスフォーム</summary>
     Transform _sight;
-    /// <summary>バレルオブジェクトのトランスフォーム</summary>
-    Transform _barrel;
     [Tooltip("レティクル")]
     [SerializeField] Image _crosshair;
     [Tooltip("rayを飛ばす距離")]
@@ -28,20 +26,21 @@ public class PlayerController : MonoBehaviour
     [SerializeField] LayerMask _layerMask;
     [Tooltip("FPS時の砲塔砲身の予約できる回転量の上限")]
     [SerializeField] Vector2 _maxDeltaRotation;
+    [Tooltip("マウス感度")]
+    [SerializeField] Vector2 _mouseSensitivity;
     /// <summary>現在の視点</summary>
     [SerializeField] ViewMode _viewMode;
     /// <summary>移動用ベクトル</summary>
     Vector2 _move;
     /// <summary>視点操作用ベクトル</summary>
     Vector2 _look;
-    
+
 
     private void Start()
     {
         _target = new GameObject().transform;
         _sight = _gunController.Sight;
-        _barrel = _gunController.Barrel;
-        if(_maxDeltaRotation == Vector2.zero)
+        if (_maxDeltaRotation == Vector2.zero)
         {
             Debug.LogError("_maxDeltaRotationを設定しろ");
         }
@@ -54,7 +53,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnLook(InputAction.CallbackContext context)
     {
-        //Debug.Log(context.ReadValue<Vector2>());
+        Debug.Log(context.ReadValue<Vector2>());
         _look = context.ReadValue<Vector2>();
     }
 
@@ -68,7 +67,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnChange(InputAction.CallbackContext context)
     {
-        if(context.performed)
+        if (context.performed)
         {
             _gunController.Change(1f);
         }
@@ -76,7 +75,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnFire(InputAction.CallbackContext context)
     {
-        if(context.performed)
+        if (context.performed)
         {
             _gunController.Fire(transform.root);
         }
@@ -113,7 +112,8 @@ public class PlayerController : MonoBehaviour
     {
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(_crosshair.rectTransform.position);
-        if (Physics.Raycast(ray, out hit, _distance, _layerMask)){
+        if (Physics.Raycast(ray, out hit, _distance, _layerMask))
+        {
             _target.position = hit.point;
         }
         else
@@ -127,50 +127,46 @@ public class PlayerController : MonoBehaviour
 
     void FPSAim()
     {
-        _look = new Vector2(0, 1);
-        _look = _look.normalized;
-        Vector3 dif = _sight.eulerAngles - Camera.main.transform.eulerAngles;
-        _sight.Rotate(_look.y, _look.x, 0);
+        Vector3 barrel = _gunController.Barrel;
+        Vector3 turret = _gunController.Turret;
+        Vector2 dif = _sight.eulerAngles - new Vector3(barrel.x, turret.y);
+        _sight.Rotate(_look.y * _mouseSensitivity.y, _look.x * _mouseSensitivity.x, 0);
 
-        ////  ヨー制御
-        //if (dif.y < -180)
-        //{
-        //    dif = new Vector3(dif.x, dif.y + 360, dif.z);
-        //}
-        //else if (dif.y > 180)
-        //{
-        //    dif = new Vector3(dif.x, dif.y - 360, dif.z);
-        //}
-        //if (dif.y > _maxDeltaRotation.x)
-        //{
-        //    _sight.Rotate(0, _maxDeltaRotation.x - dif.y, 0);
-        //}
-        //else if(dif.y < -_maxDeltaRotation.x)
-        //{
-        //    _sight.Rotate(0, -_maxDeltaRotation.x - dif.y, 0);
-        //}
+        //  ヨー制御
+        if (dif.y < -180)
+        {
+            dif = new Vector3(dif.x, dif.y + 360);
+        }
+        else if (dif.y > 180)
+        {
+            dif = new Vector3(dif.x, dif.y - 360);
+        }
+        if (dif.y > _maxDeltaRotation.x)
+        {
+            _sight.Rotate(0, _maxDeltaRotation.x - dif.y, 0);
+        }
+        else if (dif.y < -_maxDeltaRotation.x)
+        {
+            _sight.Rotate(0, -_maxDeltaRotation.x - dif.y, 0);
+        }
 
         //  ピッチ制御
-        //if (dif.x < -180)
-        //{
-        //    dif = new Vector3(dif.x + 360, dif.y, dif.z);
-        //    Debug.Log($"#1");
-        //}
-        //else if (dif.x > 180)
-        //{
-        //    dif = new Vector3(dif.x - 360, dif.y, dif.z);
-        //    Debug.Log($"#2");
-        ////}
-        //if (dif.x > _maxDeltaRotation.y)
-        //{
-        //    _sight.Rotate(_maxDeltaRotation.y - dif.x, 0, 0);
-        //    //Debug.Log($"+");
-        //}
-        //else if (dif.x < -_maxDeltaRotation.y)
-        //{
-        //    _sight.Rotate(-_maxDeltaRotation.y - dif.x, 0, 0);
-        //    //Debug.Log($"-");
-        //}
+        if (dif.x < -180)
+        {
+            dif = new Vector3(dif.x + 360, dif.y);
+        }
+        else if (dif.x > 180)
+        {
+            dif = new Vector3(dif.x - 360, dif.y);
+        }
+        if (dif.x > _maxDeltaRotation.y)
+        {
+            _sight.Rotate(_maxDeltaRotation.y - dif.x, 0, 0);
+        }
+        else if (dif.x < -_maxDeltaRotation.y)
+        {
+            _sight.Rotate(-_maxDeltaRotation.y - dif.x, 0, 0);
+        }
     }
 
     /// <summary>

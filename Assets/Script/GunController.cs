@@ -24,6 +24,10 @@ public class GunController : MonoBehaviour
     [SerializeField] float _yawSpeed;
     [Tooltip("砲身の上下動作速度")]
     [SerializeField] float _pitchSpeed;
+    [Tooltip("仰角")]
+    [SerializeField] float _elevationAngle;
+    [Tooltip("俯角")]
+    [SerializeField] float _depressionAngle;
     /// <summary>sightが狙う先</summary>
     Transform _target;
     /// <summary>使う弾薬の種類</summary>
@@ -35,7 +39,9 @@ public class GunController : MonoBehaviour
 
     public Transform Sight { get { return _sight; } set { _sight = value; } }
 
-    public Transform Barrel { get { return _barrel; } set { _barrel = value; } }
+    public Vector3 Barrel { get { return _barrel.eulerAngles; } }
+
+    public Vector3 Turret { get { return _turret.eulerAngles; } }
 
 
     private void Start()
@@ -45,21 +51,27 @@ public class GunController : MonoBehaviour
 
     private void Update()
     {
-        //if (_target)
-        //{
-        //    _sight.LookAt(_target.position);
-        //}
-        //else
-        //{
-        //    _target = _sight;
-        //    Debug.LogWarning($"{name}はターゲットの指定なし");
-        //}
+        float x = _sight.eulerAngles.x;
+        if (x > 180)
+        {
+            x -= 360;
+        }
+        if(x < -_elevationAngle)
+        {
+            //Debug.Log($"#1 {_sight.eulerAngles.x} {-_elevationAngle} {_sight.eulerAngles.x < -_elevationAngle}");
+            _sight.eulerAngles = new Vector3(-_elevationAngle, _sight.eulerAngles.y, _sight.eulerAngles.z);
+        }
+        else if (x > _depressionAngle)
+        {
+            //Debug.Log($"#2 {_sight.eulerAngles.x} {-_depressionAngle} {_sight.eulerAngles.x > _depressionAngle}");
+            _sight.eulerAngles = new Vector3(_depressionAngle, _sight.eulerAngles.y, _sight.eulerAngles.z);
+        }
     }
 
 
     private void FixedUpdate()
     {
-        //Yaw(_sight.localEulerAngles.y);
+        Yaw(_sight.localEulerAngles.y);
         Pitch(_sight.localEulerAngles.x);
     }
 
