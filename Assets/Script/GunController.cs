@@ -68,6 +68,7 @@ public class GunController : MonoBehaviour
             if(_ammos.Count == 0)
             {
                 Debug.LogError($"{name}はAmmosが選択されていません");
+                _isLoad = false;
             }
             else
             {
