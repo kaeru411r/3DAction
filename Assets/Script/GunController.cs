@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using System.Linq;
 
 
 /// <summary>
@@ -11,7 +13,7 @@ public class GunController : MonoBehaviour
 {
 
     [Tooltip("弾薬配列")]
-    [SerializeField] BulletController[] _ammos;
+    [SerializeField] List<BulletController> _ammos;
     [Tooltip("砲塔")]
     [SerializeField] Transform _turret;
     [Tooltip("砲身")]
@@ -25,9 +27,9 @@ public class GunController : MonoBehaviour
     [Tooltip("砲身の上下動作速度")]
     [SerializeField] float _pitchSpeed;
     [Tooltip("仰角")]
-    [SerializeField] float _elevationAngle;
+    [SerializeField] float _elevationAngle = 90;
     [Tooltip("俯角")]
-    [SerializeField] float _depressionAngle;
+    [SerializeField] float _depressionAngle = 90;
     /// <summary>sightが狙う先</summary>
     Transform _target;
     /// <summary>使う弾薬の種類</summary>
@@ -36,6 +38,8 @@ public class GunController : MonoBehaviour
     bool _isLoad = true;
     /// <summary>装填完了までの時間</summary>
     float _time;
+    /// <summary>360度</summary>
+    const int AllAround = 360;
 
     public Transform Sight { get { return _sight; } set { _sight = value; } }
 
@@ -46,33 +50,79 @@ public class GunController : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
+        if (_ammos.Count == 0)
+        {
+            Debug.LogError($"{name}はAmmosが選択されていません");
+            _isLoad = false;
+        }
+        else if(_ammos.Contains(null))
+        {
+            for(int i = 0; i < _ammos.Count; i++)
+            {
+                if (!_ammos[i])
+                {
+                    _ammos.RemoveAt(i);
+                    i--;
+                }
+            }
+            if(_ammos.Count == 0)
+            {
+                Debug.LogError($"{name}はAmmosが選択されていません");
+            }
+            else
+            {
+                Debug.LogWarning($"{name}はAmmosに未選択があります");
+            }
+        }
+        if (!_turret)
+        {
+            Debug.LogError($"{name}はTurretが選択されていません");
+        }
+        if (!_barrel)
+        {
+            Debug.LogError($"{name}はBurrelが選択されていません");
+        }
+        if (!_muzzle)
+        {
+            Debug.LogError($"{name}はMuzzleが選択されていません");
+        }
+        if (!_sight)
+        {
+            Debug.LogError($"{name}はSightが選択されていません");
+        }
     }
 
     private void Update()
     {
-        float x = _sight.eulerAngles.x;
-        if (x > 180)
+        if (_sight)
         {
-            x -= 360;
-        }
-        if(x < -_elevationAngle)
-        {
-            //Debug.Log($"#1 {_sight.eulerAngles.x} {-_elevationAngle} {_sight.eulerAngles.x < -_elevationAngle}");
-            _sight.eulerAngles = new Vector3(-_elevationAngle, _sight.eulerAngles.y, _sight.eulerAngles.z);
-        }
-        else if (x > _depressionAngle)
-        {
-            //Debug.Log($"#2 {_sight.eulerAngles.x} {-_depressionAngle} {_sight.eulerAngles.x > _depressionAngle}");
-            _sight.eulerAngles = new Vector3(_depressionAngle, _sight.eulerAngles.y, _sight.eulerAngles.z);
+            float x = _sight.eulerAngles.x;
+            if (x > AllAround / 2)
+            {
+                x -= AllAround;
+            }
+            if (x < -_elevationAngle)
+            {
+                //Debug.Log($"#1 {_sight.eulerAngles.x} {-_elevationAngle} {_sight.eulerAngles.x < -_elevationAngle}");
+                _sight.eulerAngles = new Vector3(-_elevationAngle, _sight.eulerAngles.y, _sight.eulerAngles.z);
+            }
+            else if (x > _depressionAngle)
+            {
+                //Debug.Log($"#2 {_sight.eulerAngles.x} {-_depressionAngle} {_sight.eulerAngles.x > _depressionAngle}");
+                _sight.eulerAngles = new Vector3(_depressionAngle, _sight.eulerAngles.y, _sight.eulerAngles.z);
+            }
         }
     }
 
 
     private void FixedUpdate()
     {
-        Yaw(_sight.localEulerAngles.y);
-        Pitch(_sight.localEulerAngles.x);
+        if (_turret)
+        {
+            Yaw(_sight.localEulerAngles.y);
+            if(_barrel)
+            Pitch(_sight.localEulerAngles.x);
+        }
     }
 
     /// <summary>砲弾の実体化から発射関数の呼び出しまでを行う</summary>
@@ -92,19 +142,19 @@ public class GunController : MonoBehaviour
     void Pitch(float x)
     {
         var dif = x - _barrel.localEulerAngles.x;
-        if (dif < -180)
+        if (dif < -AllAround / 2)
         {
-            dif = dif + 360;
+            dif = dif + AllAround;
         }
-        else if (dif > 180)
+        else if (dif > AllAround / 2)
         {
-            dif = dif - 360;
+            dif = dif - AllAround;
         }
         if (dif <= _pitchSpeed && dif >= -_pitchSpeed)
         {
             _barrel.localEulerAngles = new Vector3(x, 0, 0);
         }
-        else if(dif > _pitchSpeed)
+        else if (dif > _pitchSpeed)
         {
             _barrel.Rotate(_pitchSpeed, 0, 0);
         }
@@ -119,13 +169,13 @@ public class GunController : MonoBehaviour
     void Yaw(float y)
     {
         var dif = y - _turret.transform.localEulerAngles.y;
-        if (dif < -180)
+        if (dif < -AllAround / 2)
         {
-            dif = dif + 360;
+            dif = dif + AllAround;
         }
-        else if (dif > 180)
+        else if (dif > AllAround / 2)
         {
-            dif = dif - 360;
+            dif = dif - AllAround;
         }
         if (dif <= _yawSpeed && dif >= -_yawSpeed)
         {
@@ -145,26 +195,31 @@ public class GunController : MonoBehaviour
     /// <param name="f"></param>
     public void Change(float f)
     {
-       
-        if (f < 0)
+        if (_ammos.Count != 0)
         {
-            _ammoNunber = _ammoNunber - 1;
-            if (_ammoNunber < 0)
-                _ammoNunber = _ammos.Length - 1;
+            if (f < 0)
+            {
+                _ammoNunber = _ammoNunber - 1;
+                if (_ammoNunber < 0)
+                    _ammoNunber = _ammos.Count - 1;
+            }
+            else
+            {
+                _ammoNunber = (_ammoNunber + 1) % _ammos.Count;
+            }
+            StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
         }
-        else
-        {
-            _ammoNunber = (_ammoNunber + 1) % _ammos.Length;
-        }
-        StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
     }
 
     public void Choice(int n)
     {
-        if(n <= _ammos.Length && n - 1 != _ammoNunber)
+        if (_ammos.Count != 0)
         {
-            _ammoNunber = n - 1;
-            StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
+            if (n <= _ammos.Count && n - 1 != _ammoNunber)
+            {
+                _ammoNunber = n - 1;
+                StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
+            }
         }
     }
 
