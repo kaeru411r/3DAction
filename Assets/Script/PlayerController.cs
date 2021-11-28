@@ -12,8 +12,8 @@ using System.Text.RegularExpressions;
 /// </summary>
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] GunController _gunController;
-    [SerializeField] CharacterBase _characterBase;
+    GunController _gunController;
+    CharacterBase _characterBase;
     /// <summary>照準先</summary>
     Transform _target;
     /// <summary>サイトオブジェクトのトランスフォーム</summary>
@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
     [Tooltip("照準するレイヤー")]
     [SerializeField] LayerMask _layerMask;
     [Tooltip("FPS時の砲塔砲身の予約できる回転量の上限")]
-    [SerializeField] Vector2 _maxDeltaRotation;
+    [SerializeField] Vector2 _maxDeltaRotation = new Vector2(10, 10);
     [Tooltip("マウス感度")]
     [SerializeField] Vector2 _mouseSensitivity;
     /// <summary>現在の視点</summary>
@@ -38,12 +38,21 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        _target = new GameObject().transform;
-        _sight = _gunController.Sight;
-        if (_maxDeltaRotation == Vector2.zero)
+        _gunController = GetComponent<GunController>();
+        if (!_gunController)
         {
-            Debug.LogError("_maxDeltaRotationを設定しろ");
+            Debug.LogError($"{name}にGunControllerコンポーネントが見つかりませんでした");
         }
+        else
+        {
+            _sight = _gunController.Sight;
+        }
+        _characterBase = GetComponent<CharacterBase>();
+        if (!_characterBase)
+        {
+            Debug.LogError($"{name}にCharacterBaseコンポーネントが見つかりませんでした");
+        }
+        _target = new GameObject().transform;
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -61,7 +70,7 @@ public class PlayerController : MonoBehaviour
     {
         if (context.performed)
         {
-            _gunController.Change(context.ReadValue<Vector2>().y);
+            _gunController?.Change(context.ReadValue<Vector2>().y);
         }
     }
 
@@ -69,7 +78,7 @@ public class PlayerController : MonoBehaviour
     {
         if (context.performed)
         {
-            _gunController.Change(1f);
+            _gunController?.Change(1f);
         }
     }
 
@@ -77,7 +86,7 @@ public class PlayerController : MonoBehaviour
     {
         if (context.performed)
         {
-            _gunController.Fire(transform.root);
+            _gunController?.Fire(transform.root);
         }
     }
 
@@ -85,7 +94,7 @@ public class PlayerController : MonoBehaviour
     {
         if (context.performed)
         {
-            _gunController.Choice(int.Parse(Regex.Replace(context.control.ToString(), @"[^0-9]", "")));
+            _gunController?.Choice(int.Parse(Regex.Replace(context.control.ToString(), @"[^0-9]", "")));
         }
     }
 
@@ -93,18 +102,20 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        _characterBase.Move(_move);
+        _characterBase?.Move(_move);
 
 
-
-        if (_viewMode == ViewMode.TPS)
+        if (_gunController)
         {
-            TPSAim();
+            if (_viewMode == ViewMode.TPS)
+            {
+                TPSAim();
 
-        }
-        else
-        {
-            FPSAim();
+            }
+            else
+            {
+                FPSAim();
+            }
         }
     }
 

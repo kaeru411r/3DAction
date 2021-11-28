@@ -40,6 +40,8 @@ public class GunController : MonoBehaviour
     float _time;
     /// <summary>360度</summary>
     const int AllAround = 360;
+    /// <summary>必要なTransformがアサインされてなかったときのダミー</summary>
+    Transform _dummy;
 
     public Transform Sight { get { return _sight; } set { _sight = value; } }
 
@@ -55,9 +57,9 @@ public class GunController : MonoBehaviour
             Debug.LogError($"{name}はAmmosが選択されていません");
             _isLoad = false;
         }
-        else if(_ammos.Contains(null))
+        else if (_ammos.Contains(null))
         {
-            for(int i = 0; i < _ammos.Count; i++)
+            for (int i = 0; i < _ammos.Count; i++)
             {
                 if (!_ammos[i])
                 {
@@ -65,7 +67,7 @@ public class GunController : MonoBehaviour
                     i--;
                 }
             }
-            if(_ammos.Count == 0)
+            if (_ammos.Count == 0)
             {
                 Debug.LogError($"{name}はAmmosが選択されていません");
                 _isLoad = false;
@@ -78,52 +80,49 @@ public class GunController : MonoBehaviour
         if (!_turret)
         {
             Debug.LogError($"{name}はTurretが選択されていません");
+            _turret = PreDummy();
         }
         if (!_barrel)
         {
             Debug.LogError($"{name}はBurrelが選択されていません");
+            _barrel = PreDummy();
         }
         if (!_muzzle)
         {
             Debug.LogError($"{name}はMuzzleが選択されていません");
+            _muzzle = PreDummy();
         }
         if (!_sight)
         {
             Debug.LogError($"{name}はSightが選択されていません");
+            _sight = PreDummy();
         }
     }
 
     private void Update()
     {
-        if (_sight)
+        float x = _sight.eulerAngles.x;
+        if (x > AllAround / 2)
         {
-            float x = _sight.eulerAngles.x;
-            if (x > AllAround / 2)
-            {
-                x -= AllAround;
-            }
-            if (x < -_elevationAngle)
-            {
-                //Debug.Log($"#1 {_sight.eulerAngles.x} {-_elevationAngle} {_sight.eulerAngles.x < -_elevationAngle}");
-                _sight.eulerAngles = new Vector3(-_elevationAngle, _sight.eulerAngles.y, _sight.eulerAngles.z);
-            }
-            else if (x > _depressionAngle)
-            {
-                //Debug.Log($"#2 {_sight.eulerAngles.x} {-_depressionAngle} {_sight.eulerAngles.x > _depressionAngle}");
-                _sight.eulerAngles = new Vector3(_depressionAngle, _sight.eulerAngles.y, _sight.eulerAngles.z);
-            }
+            x -= AllAround;
+        }
+        if (x < -_elevationAngle)
+        {
+            //Debug.Log($"#1 {_sight.eulerAngles.x} {-_elevationAngle} {_sight.eulerAngles.x < -_elevationAngle}");
+            _sight.eulerAngles = new Vector3(-_elevationAngle, _sight.eulerAngles.y, _sight.eulerAngles.z);
+        }
+        else if (x > _depressionAngle)
+        {
+            //Debug.Log($"#2 {_sight.eulerAngles.x} {-_depressionAngle} {_sight.eulerAngles.x > _depressionAngle}");
+            _sight.eulerAngles = new Vector3(_depressionAngle, _sight.eulerAngles.y, _sight.eulerAngles.z);
         }
     }
 
 
     private void FixedUpdate()
     {
-        if (_turret)
-        {
-            Yaw(_sight.localEulerAngles.y);
-            if(_barrel)
-            Pitch(_sight.localEulerAngles.x);
-        }
+        Yaw(_sight.localEulerAngles.y);
+        Pitch(_sight.localEulerAngles.x);
     }
 
     /// <summary>砲弾の実体化から発射関数の呼び出しまでを行う</summary>
@@ -244,6 +243,19 @@ public class GunController : MonoBehaviour
         {
             _time = time;
             Debug.Log($"{transform.root.name}が{_ammos[_ammoNunber].name}装填完了まで{_time}");
+        }
+    }
+
+    Transform PreDummy()
+    {
+        if (_dummy)
+        {
+            return _dummy;
+        }
+        else
+        {
+            _dummy = new GameObject().transform;
+            return _dummy;
         }
     }
 }
