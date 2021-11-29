@@ -7592,6 +7592,7 @@ MonoBehaviour:
   _sight: {fileID: 684033153592745065}
   _yawSpeed: 1
   _pitchSpeed: 1
+  _gunMoveSpeed: {x: 1, y: 1}
   _elevationAngle: 30
   _depressionAngle: 15
 --- !u!1 &8318314638669147347

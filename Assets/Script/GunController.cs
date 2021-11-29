@@ -22,10 +22,8 @@ public class GunController : MonoBehaviour
     [SerializeField] Transform _muzzle;
     [Tooltip("直接照準を合わせる基準")]
     [SerializeField] Transform _sight;
-    [Tooltip("砲塔の旋回速度")]
-    [SerializeField] float _yawSpeed;
-    [Tooltip("砲身の上下動作速度")]
-    [SerializeField] float _pitchSpeed;
+    [Tooltip("砲の動作スピード")]
+    [SerializeField] Vector2 _gunMoveSpeed;
     [Tooltip("仰角")]
     [SerializeField] float _elevationAngle = 90;
     [Tooltip("俯角")]
@@ -49,6 +47,8 @@ public class GunController : MonoBehaviour
 
     public Vector3 Turret { get { return _turret.eulerAngles; } }
 
+    public Vector2 GunMoveSpeed { get { return _gunMoveSpeed; } }
+    int a = 0;
 
     private void Start()
     {
@@ -101,6 +101,8 @@ public class GunController : MonoBehaviour
 
     private void Update()
     {
+        Debug.Log($"gun{a}");
+        a++;
         float x = _sight.eulerAngles.x;
         if (x > AllAround / 2)
         {
@@ -150,17 +152,17 @@ public class GunController : MonoBehaviour
         {
             dif = dif - AllAround;
         }
-        if (dif <= _pitchSpeed && dif >= -_pitchSpeed)
+        if (dif <= _gunMoveSpeed.y && dif >= -_gunMoveSpeed.y)
         {
             _barrel.localEulerAngles = new Vector3(x, 0, 0);
         }
-        else if (dif > _pitchSpeed)
+        else if (dif > _gunMoveSpeed.y)
         {
-            _barrel.Rotate(_pitchSpeed, 0, 0);
+            _barrel.Rotate(_gunMoveSpeed.y, 0, 0);
         }
         else
         {
-            _barrel.Rotate(-_pitchSpeed, 0, 0);
+            _barrel.Rotate(-_gunMoveSpeed.y, 0, 0);
         }
     }
 
@@ -177,17 +179,17 @@ public class GunController : MonoBehaviour
         {
             dif = dif - AllAround;
         }
-        if (dif <= _yawSpeed && dif >= -_yawSpeed)
+        if (dif <= _gunMoveSpeed.x && dif >= -_gunMoveSpeed.x)
         {
             _turret.transform.localEulerAngles = new Vector3(0, y, 0);
         }
-        else if (dif > _yawSpeed)
+        else if (dif > _gunMoveSpeed.x)
         {
-            _turret.transform.Rotate(0, _yawSpeed, 0);
+            _turret.transform.Rotate(0, _gunMoveSpeed.x, 0);
         }
         else
         {
-            _turret.transform.Rotate(0, -_yawSpeed, 0);
+            _turret.transform.Rotate(0, -_gunMoveSpeed.x, 0);
         }
     }
 
