@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using System.Linq;
 
 
 /// <summary>
@@ -11,7 +13,7 @@ public class GunController : MonoBehaviour
 {
 
     [Tooltip("弾薬配列")]
-    [SerializeField] BulletController[] _ammos;
+    [SerializeField] List<BulletController> _ammos;
     [Tooltip("砲塔")]
     [SerializeField] Transform _turret;
     [Tooltip("砲身")]
@@ -20,14 +22,12 @@ public class GunController : MonoBehaviour
     [SerializeField] Transform _muzzle;
     [Tooltip("直接照準を合わせる基準")]
     [SerializeField] Transform _sight;
-    [Tooltip("砲塔の旋回速度")]
-    [SerializeField] float _yawSpeed;
-    [Tooltip("砲身の上下動作速度")]
-    [SerializeField] float _pitchSpeed;
+    [Tooltip("砲の動作スピード")]
+    [SerializeField] Vector2 _gunMoveSpeed;
     [Tooltip("仰角")]
-    [SerializeField] float _elevationAngle;
+    [SerializeField] float _elevationAngle = 90;
     [Tooltip("俯角")]
-    [SerializeField] float _depressionAngle;
+    [SerializeField] float _depressionAngle = 90;
     /// <summary>sightが狙う先</summary>
     Transform _target;
     /// <summary>使う弾薬の種類</summary>
@@ -36,6 +36,10 @@ public class GunController : MonoBehaviour
     bool _isLoad = true;
     /// <summary>装填完了までの時間</summary>
     float _time;
+    /// <summary>360度</summary>
+    const int AllAround = 360;
+    /// <summary>必要なTransformがアサインされてなかったときのダミー</summary>
+    Transform _dummy;
 
     public Transform Sight { get { return _sight; } set { _sight = value; } }
 
@@ -43,20 +47,68 @@ public class GunController : MonoBehaviour
 
     public Vector3 Turret { get { return _turret.eulerAngles; } }
 
+    public Vector2 GunMoveSpeed { get { return _gunMoveSpeed; } }
+    int a = 0;
 
     private void Start()
     {
-        StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
+        if (_ammos.Count == 0)
+        {
+            Debug.LogError($"{name}はAmmosが選択されていません");
+            _isLoad = false;
+        }
+        else if (_ammos.Contains(null))
+        {
+            for (int i = 0; i < _ammos.Count; i++)
+            {
+                if (!_ammos[i])
+                {
+                    _ammos.RemoveAt(i);
+                    i--;
+                }
+            }
+            if (_ammos.Count == 0)
+            {
+                Debug.LogError($"{name}はAmmosが選択されていません");
+                _isLoad = false;
+            }
+            else
+            {
+                Debug.LogWarning($"{name}はAmmosに未選択があります");
+            }
+        }
+        if (!_turret)
+        {
+            Debug.LogError($"{name}はTurretが選択されていません");
+            _turret = PreDummy();
+        }
+        if (!_barrel)
+        {
+            Debug.LogError($"{name}はBurrelが選択されていません");
+            _barrel = PreDummy();
+        }
+        if (!_muzzle)
+        {
+            Debug.LogError($"{name}はMuzzleが選択されていません");
+            _muzzle = PreDummy();
+        }
+        if (!_sight)
+        {
+            Debug.LogError($"{name}はSightが選択されていません");
+            _sight = PreDummy();
+        }
     }
 
     private void Update()
     {
+        Debug.Log($"gun{a}");
+        a++;
         float x = _sight.eulerAngles.x;
-        if (x > 180)
+        if (x > AllAround / 2)
         {
-            x -= 360;
+            x -= AllAround;
         }
-        if(x < -_elevationAngle)
+        if (x < -_elevationAngle)
         {
             //Debug.Log($"#1 {_sight.eulerAngles.x} {-_elevationAngle} {_sight.eulerAngles.x < -_elevationAngle}");
             _sight.eulerAngles = new Vector3(-_elevationAngle, _sight.eulerAngles.y, _sight.eulerAngles.z);
@@ -92,25 +144,25 @@ public class GunController : MonoBehaviour
     void Pitch(float x)
     {
         var dif = x - _barrel.localEulerAngles.x;
-        if (dif < -180)
+        if (dif < -AllAround / 2)
         {
-            dif = dif + 360;
+            dif = dif + AllAround;
         }
-        else if (dif > 180)
+        else if (dif > AllAround / 2)
         {
-            dif = dif - 360;
+            dif = dif - AllAround;
         }
-        if (dif <= _pitchSpeed && dif >= -_pitchSpeed)
+        if (dif <= _gunMoveSpeed.y && dif >= -_gunMoveSpeed.y)
         {
             _barrel.localEulerAngles = new Vector3(x, 0, 0);
         }
-        else if(dif > _pitchSpeed)
+        else if (dif > _gunMoveSpeed.y)
         {
-            _barrel.Rotate(_pitchSpeed, 0, 0);
+            _barrel.Rotate(_gunMoveSpeed.y, 0, 0);
         }
         else
         {
-            _barrel.Rotate(-_pitchSpeed, 0, 0);
+            _barrel.Rotate(-_gunMoveSpeed.y, 0, 0);
         }
     }
 
@@ -119,25 +171,25 @@ public class GunController : MonoBehaviour
     void Yaw(float y)
     {
         var dif = y - _turret.transform.localEulerAngles.y;
-        if (dif < -180)
+        if (dif < -AllAround / 2)
         {
-            dif = dif + 360;
+            dif = dif + AllAround;
         }
-        else if (dif > 180)
+        else if (dif > AllAround / 2)
         {
-            dif = dif - 360;
+            dif = dif - AllAround;
         }
-        if (dif <= _yawSpeed && dif >= -_yawSpeed)
+        if (dif <= _gunMoveSpeed.x && dif >= -_gunMoveSpeed.x)
         {
             _turret.transform.localEulerAngles = new Vector3(0, y, 0);
         }
-        else if (dif > _yawSpeed)
+        else if (dif > _gunMoveSpeed.x)
         {
-            _turret.transform.Rotate(0, _yawSpeed, 0);
+            _turret.transform.Rotate(0, _gunMoveSpeed.x, 0);
         }
         else
         {
-            _turret.transform.Rotate(0, -_yawSpeed, 0);
+            _turret.transform.Rotate(0, -_gunMoveSpeed.x, 0);
         }
     }
 
@@ -145,26 +197,31 @@ public class GunController : MonoBehaviour
     /// <param name="f"></param>
     public void Change(float f)
     {
-       
-        if (f < 0)
+        if (_ammos.Count != 0)
         {
-            _ammoNunber = _ammoNunber - 1;
-            if (_ammoNunber < 0)
-                _ammoNunber = _ammos.Length - 1;
+            if (f < 0)
+            {
+                _ammoNunber = _ammoNunber - 1;
+                if (_ammoNunber < 0)
+                    _ammoNunber = _ammos.Count - 1;
+            }
+            else
+            {
+                _ammoNunber = (_ammoNunber + 1) % _ammos.Count;
+            }
+            StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
         }
-        else
-        {
-            _ammoNunber = (_ammoNunber + 1) % _ammos.Length;
-        }
-        StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
     }
 
     public void Choice(int n)
     {
-        if(n <= _ammos.Length && n - 1 != _ammoNunber)
+        if (_ammos.Count != 0)
         {
-            _ammoNunber = n - 1;
-            StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
+            if (n <= _ammos.Count && n - 1 != _ammoNunber)
+            {
+                _ammoNunber = n - 1;
+                StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
+            }
         }
     }
 
@@ -188,6 +245,19 @@ public class GunController : MonoBehaviour
         {
             _time = time;
             Debug.Log($"{transform.root.name}が{_ammos[_ammoNunber].name}装填完了まで{_time}");
+        }
+    }
+
+    Transform PreDummy()
+    {
+        if (_dummy)
+        {
+            return _dummy;
+        }
+        else
+        {
+            _dummy = new GameObject().transform;
+            return _dummy;
         }
     }
 }
