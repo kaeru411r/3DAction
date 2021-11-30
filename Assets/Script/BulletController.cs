@@ -16,16 +16,18 @@ public class BulletController : MonoBehaviour
     [SerializeField] float _speed;
     [Tooltip("威力")]
     [SerializeField] float _power;
+    [Tooltip("弾が消滅するまでの時間")]
+    [SerializeField] float _destroyTime;
+    [Tooltip("リロードにかかる時間")]
+    [SerializeField] float _reloadTime;
+    [Tooltip("弾にかかる重力")]
+    [SerializeField] float _gravity;
     /// <summary>発砲したオブジェクト</summary>
     GameObject _go;
     /// <summary>前物理フレームでの座標</summary>
     Vector3 _lastPosition;
     /// <summary>着弾した相手</summary>
     RaycastHit _hit;
-    [Tooltip("弾が消滅するまでの時間")]
-    [SerializeField] float _destroyTime;
-    [Tooltip("リロードにかかる時間")]
-    [SerializeField] float _reloadTime;
     /// <summary>リロードにかかる時間</summary>
     public float ReloadTime { get { return _reloadTime; } }
     /// <summary>発射した戦車</summary>

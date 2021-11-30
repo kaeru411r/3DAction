@@ -29,8 +29,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Vector2 _maxDeltaRotation = new Vector2(10, 10);
     [Tooltip("マウス感度")]
     [SerializeField] Vector2 _mouseSensitivity;
-    [Tooltip("フリールックカメラ")]
-    [SerializeField] CinemachineFreeLook _freeLook;
+    [Tooltip("TPSカメラ")]
+    [SerializeField] CinemachineFreeLook _TPSCamara;
+    [Tooltip("FPSカメラ")]
+    [SerializeField] CinemachineVirtualCamera _FPSCamera;
     /// <summary>現在の視点</summary>
     [SerializeField] ViewMode _viewMode;
     /// <summary>移動用ベクトル</summary>
@@ -39,7 +41,6 @@ public class PlayerController : MonoBehaviour
     Vector2 _look;
     /// <summary>現在入力しているデバイス</summary>
     InputDevice _inputDevice;
-    int a = 0;
 
 
     private void Start()
@@ -115,8 +116,8 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         _characterBase?.Move(_move);
-        _freeLook.m_XAxis.m_MaxSpeed = _mouseSensitivity.x * 20;
-        _freeLook.m_YAxis.m_MaxSpeed = _mouseSensitivity.y / 2;
+        _TPSCamara.m_XAxis.m_MaxSpeed = _mouseSensitivity.x * 20;
+        _TPSCamara.m_YAxis.m_MaxSpeed = _mouseSensitivity.y / 2;
 
         if (_gunController)
         {
@@ -139,6 +140,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>TPS時の視点操作</summary>
     void TPSAim()
     {
         RaycastHit hit;
@@ -156,10 +158,9 @@ public class PlayerController : MonoBehaviour
         _sight.LookAt(_target.position);
     }
 
+    /// <summary>マウスでのFPS操作</summary>
     void MouseFPSAim()
     {
-        Debug.Log($"pl{a}");
-        a++;
         Vector3 barrel = _gunController.Barrel;
         Vector3 turret = _gunController.Turret;
         Vector2 dif = _sight.eulerAngles - new Vector3(barrel.x, turret.y);
@@ -202,10 +203,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
+    /// <summary>ゲームパッドでのFPS操作</summary>
     void PadTPSAim()
     {
-        Debug.Log($"pl{a}");
-        a++;
         Vector2 gunSpeed = _gunController.GunMoveSpeed;
         Vector3 barrel = _gunController.Barrel;
         Vector3 turret = _gunController.Turret;
