@@ -422,7 +422,7 @@
                     "id": "eb671431-43e3-42e1-a299-87c799d6d7e7",
                     "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "AxisDeadzone",
                     "groups": "Gamepad",
                     "action": "Aim",
                     "isComposite": false,

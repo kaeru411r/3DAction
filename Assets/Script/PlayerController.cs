@@ -180,7 +180,7 @@ public class PlayerController : MonoBehaviour
             if (_viewMode == ViewMode.TPS)
             {
                 TPSAim();
-
+                Camera.main.cullingMask = _defaltLayerMask;
             }
             else
             {
