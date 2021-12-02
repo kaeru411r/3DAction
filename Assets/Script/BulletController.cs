@@ -95,4 +95,9 @@ public class BulletController : MonoBehaviour
         Destroy(gameObject);
     }
 
+    public override string ToString()
+    {
+        return $"name :{name}, position :{transform.position}";
+    }
+
 }

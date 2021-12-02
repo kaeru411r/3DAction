@@ -58,3 +58,5 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+Assets/Main Camera Blends.asset.meta
+Assets/TestCameraChange.cs.meta

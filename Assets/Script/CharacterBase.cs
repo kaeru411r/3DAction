@@ -11,14 +11,14 @@ public class CharacterBase : MonoBehaviour
 {
     [Tooltip("HP")]
     [SerializeField] float _hp;
-    /// <summary>キャラクターのリジッドボディ</summary>
-    Rigidbody _rb;
     [Tooltip("移動速度")]
     [SerializeField] float _speed;
     [Tooltip("車両の旋回速度")] 
     [SerializeField] float _vehicleTurnSpeed;
     /// <summary>地面についているかどうか</summary>
     bool _isGround;
+    /// <summary>キャラクターのリジッドボディ</summary>
+    Rigidbody _rb;
 
 
     public void Start()
