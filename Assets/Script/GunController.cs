@@ -48,7 +48,6 @@ public class GunController : MonoBehaviour
     public Vector3 Turret { get { return _turret.eulerAngles; } }
 
     public Vector2 GunMoveSpeed { get { return _gunMoveSpeed; } }
-    int a = 0;
 
     private void Start()
     {
@@ -101,8 +100,6 @@ public class GunController : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log($"gun{a}");
-        a++;
         float x = _sight.eulerAngles.x;
         if (x > AllAround / 2)
         {
