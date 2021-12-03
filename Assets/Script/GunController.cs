@@ -43,9 +43,9 @@ public class GunController : MonoBehaviour
 
     public Transform Sight { get { return _sight; } set { _sight = value; } }
 
-    public Vector3 Barrel { get { return _barrel.eulerAngles; } }
+    public Vector3 Barrel { get { return _barrel.localEulerAngles; } }
 
-    public Vector3 Turret { get { return _turret.eulerAngles; } }
+    public Vector3 Turret { get { return _turret.localEulerAngles; } }
 
     public Vector2 GunMoveSpeed { get { return _gunMoveSpeed; } }
 
@@ -100,7 +100,7 @@ public class GunController : MonoBehaviour
 
     private void Update()
     {
-        float x = _sight.eulerAngles.x;
+        float x = _sight.localEulerAngles.x;
         if (x > AllAround / 2)
         {
             x -= AllAround;
@@ -108,12 +108,12 @@ public class GunController : MonoBehaviour
         if (x < -_elevationAngle)
         {
             //Debug.Log($"#1 {_sight.eulerAngles.x} {-_elevationAngle} {_sight.eulerAngles.x < -_elevationAngle}");
-            _sight.eulerAngles = new Vector3(-_elevationAngle, _sight.eulerAngles.y, _sight.eulerAngles.z);
+            _sight.localEulerAngles = new Vector3(-_elevationAngle, _sight.localEulerAngles.y, _sight.localEulerAngles.z);
         }
         else if (x > _depressionAngle)
         {
             //Debug.Log($"#2 {_sight.eulerAngles.x} {-_depressionAngle} {_sight.eulerAngles.x > _depressionAngle}");
-            _sight.eulerAngles = new Vector3(_depressionAngle, _sight.eulerAngles.y, _sight.eulerAngles.z);
+            _sight.localEulerAngles = new Vector3(_depressionAngle, _sight.localEulerAngles.y, _sight.localEulerAngles.z);
         }
     }
 

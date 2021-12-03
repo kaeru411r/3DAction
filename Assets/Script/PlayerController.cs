@@ -96,7 +96,6 @@ public class PlayerController : MonoBehaviour
         yield return null;
         _tpsVCam.MoveToTopOfPrioritySubqueue();
     }
-
     /// <summary>WASD及び左スティック</summary>
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -157,6 +156,7 @@ public class PlayerController : MonoBehaviour
     /// <summary>右クリック及び左トリガー</summary>
     public void OnAim(InputAction.CallbackContext context)
     {
+        
         if (context.ReadValue<float>() != 0)
         {
             _isZoom = true;
@@ -191,7 +191,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else if (_inputDevice == InputDevice.GamaPad)
                 {
-                    PadTPSAim();
+                    PadFPSAim();
                 }
             }
         }
@@ -235,7 +235,7 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 barrel = _gunController.Barrel;
         Vector3 turret = _gunController.Turret;
-        Vector2 dif = _sight.eulerAngles - new Vector3(barrel.x, turret.y);
+        Vector2 dif = _sight.localEulerAngles - new Vector3(barrel.x, turret.y);
         _sight.Rotate(_look.y * _mouseSensitivity.y, _look.x * _mouseSensitivity.x, 0);
 
         //  ヨー制御
@@ -275,6 +275,15 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>ゲームパッドでのFPS操作</summary>
+    void PadFPSAim()
+    {
+        Vector2 gunSpeed = _gunController.GunMoveSpeed;
+        Vector3 barrel = _gunController.Barrel;
+        Vector3 turret = _gunController.Turret;
+        _sight.localEulerAngles = new Vector3(barrel.x + gunSpeed.y * _look.y, turret.y + gunSpeed.x * _look.x);
+    }
+
     /// <summary>カメラの切り替えを行う</summary>
     void CameraChange()
     {
@@ -301,14 +310,6 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    /// <summary>ゲームパッドでのFPS操作</summary>
-    void PadTPSAim()
-    {
-        Vector2 gunSpeed = _gunController.GunMoveSpeed;
-        Vector3 barrel = _gunController.Barrel;
-        Vector3 turret = _gunController.Turret;
-        _sight.eulerAngles = new Vector3(barrel.x + gunSpeed.y * _look.y, turret.y + gunSpeed.x * _look.x);
-    }
 
     /// <summary>
     /// 視点モード
