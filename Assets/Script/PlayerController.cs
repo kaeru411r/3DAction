@@ -56,6 +56,15 @@ public class PlayerController : MonoBehaviour
     /// <summary>FPSのデフォルトの視野角</summary>
     float _fpsFov;
 
+    //private void OnEnable()
+    //{
+    //    Cursor.visible = false;
+    //}
+
+    //private void OnDisable()
+    //{
+    //    Cursor.visible = true;
+    //}
 
     private void Start()
     {

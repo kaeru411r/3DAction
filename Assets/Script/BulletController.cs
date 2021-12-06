@@ -35,6 +35,8 @@ public class BulletController : MonoBehaviour
     /// <summary>発射された位置</summary>
     Vector3 _firstPosition;
 
+    Collision _co;
+
 
 
     private void Start()
@@ -45,11 +47,16 @@ public class BulletController : MonoBehaviour
 
     private void Update()
     {
-        if (_isFired && HitCheck())   //ここにレイで着弾を観測する部分を書く
+        if (_isFired)
         {
-            Hit(_hit.transform.root);
+            _rb.velocity = new Vector3(_rb.velocity.x, _rb.velocity.y - _gravity * Time.deltaTime, _rb.velocity.z);
             transform.forward = _rb.velocity;
+            if (HitCheck())   //ここにレイで着弾を観測する部分を書く
+            {
+                Hit(_hit.transform.root);
+            }
         }
+
     }
 
     /// <summary>着弾の有無、及びその対象の確認</summary>
@@ -72,6 +79,7 @@ public class BulletController : MonoBehaviour
         return false;
     }
 
+
     /// <summary>発砲時に呼ぶ</summary>
     public void Fire(Transform root)
     {
@@ -81,6 +89,7 @@ public class BulletController : MonoBehaviour
         _root = root;
         _lastPosition = transform.position;
         _firstPosition = transform.position;
+        _rb.useGravity = false;
     }
 
 

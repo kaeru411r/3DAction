@@ -113,3 +113,4 @@ MonoBehaviour:
   _power: 200
   _destroyTime: 30
   _reloadTime: 0.5
+  _gravity: 9.8
