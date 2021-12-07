@@ -143,7 +143,7 @@ public class PlayerController : MonoBehaviour
     {
         if (context.performed)
         {
-            _gunController?.Fire(transform.root);
+            _gunController?.Fire();
         }
     }
     /// <summary>数字キー</summary>

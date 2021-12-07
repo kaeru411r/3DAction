@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 3673785428059950367}
   - component: {fileID: 3673785428059950364}
   - component: {fileID: 3673785428059950365}
-  - component: {fileID: 8862376707192105005}
   m_Layer: 0
   m_Name: TestBullet 1
   m_TagString: Bullet
@@ -115,16 +114,3 @@ MonoBehaviour:
   _destroyTime: 5
   _reloadTime: 1
   _gravity: 9.8
---- !u!135 &8862376707192105005
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3673785428059950362}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}

@@ -22,8 +22,6 @@ public class BulletController : MonoBehaviour
     [SerializeField] float _reloadTime;
     [Tooltip("弾にかかる重力")]
     [SerializeField] float _gravity;
-    [Tooltip("弾丸の角速度")]
-    [SerializeField] float _angularVelocity;
     /// <summary>発砲したオブジェクト</summary>
     GameObject _go;
     /// <summary>前物理フレームでの座標</summary>
@@ -92,7 +90,6 @@ public class BulletController : MonoBehaviour
         _lastPosition = transform.position;
         _firstPosition = transform.position;
         _rb.useGravity = false;
-        _rb.angularVelocity = new Vector3(0, _angularVelocity, 0);
     }
 
 

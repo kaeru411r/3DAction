@@ -7593,6 +7593,7 @@ MonoBehaviour:
   _gunMoveSpeed: {x: 1, y: 1}
   _elevationAngle: 30
   _depressionAngle: 15
+  _riflingPitch: 100
 --- !u!1 &8318314638669147347
 GameObject:
   m_ObjectHideFlags: 0
