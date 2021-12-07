@@ -130,6 +130,7 @@ public class GunController : MonoBehaviour
     {
         if (_isLoad)
         {
+            Vector3 dir = new Vector3(_muzzle.eulerAngles.x + 90, _muzzle.eulerAngles.y, _muzzle.eulerAngles.z);
             var go = Instantiate(_ammos[_ammoNunber], _muzzle.position, _muzzle.rotation);
             go.GetComponent<BulletController>()?.Fire(root);
             StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
