@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
+﻿using UnityEngine;
 
 /// <summary>
 /// 砲弾の発射以降の操作を行うコンポーネント
@@ -41,6 +38,7 @@ public class BulletController : MonoBehaviour
 
     private void Start()
     {
+        _rb = GetComponent<Rigidbody>();
         Destroy(gameObject, _destroyTime);
     }
 
@@ -58,7 +56,6 @@ public class BulletController : MonoBehaviour
         }
 
     }
-
     /// <summary>着弾の有無、及びその対象の確認</summary>
     private bool HitCheck()
     {
@@ -83,7 +80,10 @@ public class BulletController : MonoBehaviour
     /// <summary>発砲時に呼ぶ</summary>
     public void Fire(Transform root)
     {
-        _rb = GetComponent<Rigidbody>();
+        if (!_rb)
+        {
+            _rb = GetComponent<Rigidbody>();
+        }
         _isFired = true;
         _rb.velocity = (_speed * transform.forward);
         _root = root;

@@ -1,8 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-using System.Linq;
 
 
 /// <summary>
@@ -40,6 +38,9 @@ public class GunController : MonoBehaviour
     const int AllAround = 360;
     /// <summary>必要なTransformがアサインされてなかったときのダミー</summary>
     Transform _dummy;
+    /// <summary>リロードコルーチン</summary>
+    Coroutine _ReLoad;
+
 
     public Transform Sight { get { return _sight; } set { _sight = value; } }
 

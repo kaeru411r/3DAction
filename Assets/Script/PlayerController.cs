@@ -1,18 +1,17 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using System.Text.RegularExpressions;
 using Cinemachine;
 using System;
-using System.Linq;
 
 
 /// <summary>
 /// プレイヤー操作コンポーネント
-/// 車両の操作を行う
+/// プレイヤーによる車両の操作を行う
 /// </summary>
+[RequireComponent(typeof(GunController), typeof(CharacterBase))]
 public class PlayerController : MonoBehaviour
 {
     GunController _gunController;
@@ -55,6 +54,8 @@ public class PlayerController : MonoBehaviour
     bool _isZoom = false;
     /// <summary>FPSのデフォルトの視野角</summary>
     float _fpsFov;
+    /// <summary>_target用オブジェクトの名前</summary>
+    string _targetName = "TPSTarget";
 
     //private void OnEnable()
     //{
@@ -85,7 +86,7 @@ public class PlayerController : MonoBehaviour
         {
             Debug.LogError($"{name}にCharacterBaseコンポーネントが見つかりませんでした");
         }
-        _target = new GameObject().transform;
+        SetTarget();
         if (_viewMode == ViewMode.FPS)
         {
             _fpsVCam.MoveToTopOfPrioritySubqueue();
@@ -94,6 +95,14 @@ public class PlayerController : MonoBehaviour
         {
             StartCoroutine(TPSSetUp());
         }
+    }
+
+    /// <summary>_targetの用意</summary>
+    void SetTarget()
+    {
+        var go = new GameObject();
+        go.name = _targetName;
+        _target = go.transform;
     }
 
     /// <summary>TPSからスタートする際、変な方向を向いているTPSカメラの向きを正す</summary>
@@ -105,6 +114,7 @@ public class PlayerController : MonoBehaviour
         yield return null;
         _tpsVCam.MoveToTopOfPrioritySubqueue();
     }
+
     /// <summary>WASD及び左スティック</summary>
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -206,21 +216,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void FPSZoom()
-    {
-        if (_isZoom)
-        {
-            float fovrad = (float)(2 * Math.Atan((1 / _scopeMagnification) * Math.Tan(_fpsFov * Math.PI / 360)));
-            _fpsVCam.m_Lens.FieldOfView = (float)(fovrad * 180 / Math.PI);
-            Camera.main.cullingMask = _layerMask;
-        }
-        else
-        {
-            _fpsVCam.m_Lens.FieldOfView = _fpsFov;
-            Camera.main.cullingMask = _defaltLayerMask;
-        }
-    }
-
     /// <summary>TPS時の視点操作</summary>
     void TPSAim()
     {
@@ -291,6 +286,22 @@ public class PlayerController : MonoBehaviour
         Vector3 barrel = _gunController.Barrel;
         Vector3 turret = _gunController.Turret;
         _sight.localEulerAngles = new Vector3(barrel.x + gunSpeed.y * _look.y, turret.y + gunSpeed.x * _look.x);
+    }
+
+    /// <summary>FPS時のズーム切り替え</summary>
+    void FPSZoom()
+    {
+        if (_isZoom)
+        {
+            float fovrad = (float)(2 * Math.Atan((1 / _scopeMagnification) * Math.Tan(_fpsFov * Math.PI / 360)));
+            _fpsVCam.m_Lens.FieldOfView = (float)(fovrad * 180 / Math.PI);
+            Camera.main.cullingMask = _layerMask;
+        }
+        else
+        {
+            _fpsVCam.m_Lens.FieldOfView = _fpsFov;
+            Camera.main.cullingMask = _defaltLayerMask;
+        }
     }
 
     /// <summary>カメラの切り替えを行う</summary>

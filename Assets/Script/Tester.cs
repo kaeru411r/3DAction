@@ -1,36 +1,41 @@
-﻿using System.Collections;
+﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.InputSystem;
 
 public class Tester : MonoBehaviour
 {
-    bool a;
-    float b;
-    int c = 0;
-    float time;
-    private void Start()
-    {
-        GetComponent<Rigidbody>().angularVelocity = new Vector3(2 * Mathf.PI, 0, 0);
-        time = Time.time;
+    public List<AxleInfo> axleInfos; // 個々の車軸の情報
+    public float maxMotorTorque; //ホイールに適用可能な最大トルク
+    public float maxSteeringAngle; // 適用可能な最大ハンドル角度
+    [SerializeField] float MotorTorque;
+    [SerializeField] float steeringAngle;
 
-    }
-
-    private void Update()
+    public void FixedUpdate()
     {
-        if(!a && b - transform.eulerAngles.x > 180)
+        float motor = maxMotorTorque * MotorTorque;
+        float steering = maxSteeringAngle * steeringAngle;
+
+        foreach (AxleInfo axleInfo in axleInfos)
         {
-            a = true;
+            if (axleInfo.steering)
+            {
+                axleInfo.leftWheel.steerAngle = steering;
+                axleInfo.rightWheel.steerAngle = steering;
+            }
+            if (axleInfo.motor)
+            {
+                axleInfo.leftWheel.motorTorque = motor;
+                axleInfo.rightWheel.motorTorque = motor;
+            }
         }
-        if (a)
-        {
-            a = false;
-            c++;
-            Debug.Log(Time.time - time);
-            time = Time.time;
-        }
-        b = transform.eulerAngles.x;
     }
 }
 
+[System.Serializable]
+public class AxleInfo
+{
+    public WheelCollider leftWheel;
+    public WheelCollider rightWheel;
+    public bool motor; //このホイールがエンジンにアタッチされているかどうか
+    public bool steering; // このホイールがハンドルの角度を反映しているかどうか
+}

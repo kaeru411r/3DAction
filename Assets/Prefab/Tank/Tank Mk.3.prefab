@@ -7515,6 +7515,7 @@ GameObject:
   - component: {fileID: 7627944943828151710}
   - component: {fileID: 2007389624222770007}
   - component: {fileID: 5900374508571592935}
+  - component: {fileID: -2416034790005775932}
   m_Layer: 0
   m_Name: Tank Mk.3
   m_TagString: Untagged
@@ -7547,7 +7548,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4883165105783779942}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 60000
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
@@ -7593,7 +7594,31 @@ MonoBehaviour:
   _gunMoveSpeed: {x: 1, y: 1}
   _elevationAngle: 30
   _depressionAngle: 15
-  _riflingPitch: 100
+--- !u!114 &-2416034790005775932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4883165105783779942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa1e08f9bf135ea469ac053dbb33feda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _wheels:
+  - _rightWheel: {fileID: 0}
+    _leftWheel: {fileID: 0}
+  - _rightWheel: {fileID: 0}
+    _leftWheel: {fileID: 0}
+  - _rightWheel: {fileID: 0}
+    _leftWheel: {fileID: 0}
+  - _rightWheel: {fileID: 0}
+    _leftWheel: {fileID: 0}
+  - _rightWheel: {fileID: 0}
+    _leftWheel: {fileID: 0}
+  - _rightWheel: {fileID: 0}
+    _leftWheel: {fileID: 0}
 --- !u!1 &8318314638669147347
 GameObject:
   m_ObjectHideFlags: 0
