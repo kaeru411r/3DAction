@@ -7607,18 +7607,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _wheels:
-  - _rightWheel: {fileID: 0}
-    _leftWheel: {fileID: 0}
-  - _rightWheel: {fileID: 0}
-    _leftWheel: {fileID: 0}
-  - _rightWheel: {fileID: 0}
-    _leftWheel: {fileID: 0}
-  - _rightWheel: {fileID: 0}
-    _leftWheel: {fileID: 0}
-  - _rightWheel: {fileID: 0}
-    _leftWheel: {fileID: 0}
-  - _rightWheel: {fileID: 0}
-    _leftWheel: {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  _forwardTorque: 0
+  _backTorque: 0
+  _brakeTorque: 0
+  _wheelDanpingRate: 0
 --- !u!1 &8318314638669147347
 GameObject:
   m_ObjectHideFlags: 0
