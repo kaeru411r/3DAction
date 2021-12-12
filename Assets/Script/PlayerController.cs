@@ -11,11 +11,12 @@ using System;
 /// プレイヤー操作コンポーネント
 /// プレイヤーによる車両の操作を行う
 /// </summary>
-[RequireComponent(typeof(GunController), typeof(CharacterBase))]
+[RequireComponent(typeof(GunController), typeof(CharacterBase), typeof(CaterpillarController))]
 public class PlayerController : MonoBehaviour
 {
     GunController _gunController;
     CharacterBase _characterBase;
+    CaterpillarController _caterpillarController;
     /// <summary>照準先</summary>
     Transform _target;
     /// <summary>サイトオブジェクトのトランスフォーム</summary>
@@ -69,23 +70,13 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        _gunController = GetComponent<GunController>();
+        _characterBase = GetComponent<CharacterBase>();
+        _caterpillarController = GetComponent<CaterpillarController>();
         _fpsFov = _fpsVCam.m_Lens.FieldOfView;
         _tpsVCam.m_Lens.FieldOfView = _tpsFov;
         _defaltLayerMask = Camera.main.cullingMask;
-        _gunController = GetComponent<GunController>();
-        if (!_gunController)
-        {
-            Debug.LogError($"{name}にGunControllerコンポーネントが見つかりませんでした");
-        }
-        else
-        {
-            _sight = _gunController.Sight;
-        }
-        _characterBase = GetComponent<CharacterBase>();
-        if (!_characterBase)
-        {
-            Debug.LogError($"{name}にCharacterBaseコンポーネントが見つかりませんでした");
-        }
+        _sight = _gunController.Sight;
         SetTarget();
         if (_viewMode == ViewMode.FPS)
         {
@@ -175,7 +166,7 @@ public class PlayerController : MonoBehaviour
     /// <summary>右クリック及び左トリガー</summary>
     public void OnAim(InputAction.CallbackContext context)
     {
-        
+
         if (context.ReadValue<float>() != 0)
         {
             _isZoom = true;
@@ -190,7 +181,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        _characterBase?.Move(_move);
+        _caterpillarController?.Move(_move);
         _tpsVCam.m_XAxis.m_MaxSpeed = _mouseSensitivity.x * 20;
         _tpsVCam.m_YAxis.m_MaxSpeed = _mouseSensitivity.y / 2;
 
