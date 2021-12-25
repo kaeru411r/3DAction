@@ -58,15 +58,15 @@ public class PlayerController : MonoBehaviour
     /// <summary>_target用オブジェクトの名前</summary>
     string _targetName = "TPSTarget";
 
-    //private void OnEnable()
-    //{
-    //    Cursor.visible = false;
-    //}
+    private void OnEnable()
+    {
+        Cursor.visible = false;
+    }
 
-    //private void OnDisable()
-    //{
-    //    Cursor.visible = true;
-    //}
+    private void OnDisable()
+    {
+        Cursor.visible = true;
+    }
 
     private void Start()
     {

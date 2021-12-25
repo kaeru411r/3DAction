@@ -18,12 +18,6 @@ public class CaterpillarController : MonoBehaviour
     [SerializeField] float _brakeTorque;
     [Tooltip("ホイールの減衰値")]
     [SerializeField] float _wheelDanpingRate;
-    [Tooltip("スプリングの柔らかさ")]
-    [SerializeField] float _spring;
-    [Tooltip("ショックアブソーバーの強さ")]
-    [SerializeField] float _damper;
-    [Tooltip("サスペンションの初期位置")]
-    [SerializeField] float _targetPosition;
     [Tooltip("ホイールの重量")]
     [SerializeField] float _mass;
     [Tooltip("ホイールの半径")]
@@ -38,22 +32,23 @@ public class CaterpillarController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        NullCheck();
+        ColliderNullCheck();
+        MeshCheck();
         SetUp();
+        Move(Vector3.zero);
     }
 
     /// <summary>_wheelsの各要素に必要なものがそろっているか</summary>
-    void NullCheck()
+    void ColliderNullCheck()
     {
         StringBuilder sb = new StringBuilder();
         bool b0 = false;
-        int l = 0;
         for (int i = 0; i < _wheelColliders.Count; i++)
         {
             bool b1 = false;
             if (_wheelColliders[i].RightWheel == null)
             {
-                sb.Append($"\nElement{l}");
+                sb.Append($"\nElement{i}");
                 sb.Append($"\n  {nameof(WheelColliders.RightWheel)}");
                 b1 = true;
             }
@@ -61,27 +56,9 @@ public class CaterpillarController : MonoBehaviour
             {
                 if (!b1)
                 {
-                    sb.Append($"\nElement{l}");
+                    sb.Append($"\nElement{i}");
                 }
                 sb.Append($"\n  {nameof(WheelColliders.LeftWheel)}");
-                b1 = true;
-            }
-            if (_wheelMeshs[i].RightWheelMesh == null)
-            {
-                if (!b1)
-                {
-                    sb.Append($"\nElement{l}");
-                }
-                sb.Append($"\n  {nameof(WheelMeshs.RightWheelMesh)}");
-                b1 = true;
-            }
-            if (_wheelMeshs[i].LeftWheelMesh == null)
-            {
-                if (!b1)
-                {
-                    sb.Append($"\nElement{l}");
-                }
-                sb.Append($"\n  {nameof(WheelMeshs.LeftWheelMesh)}");
                 b1 = true;
             }
             if (b1)
@@ -90,7 +67,6 @@ public class CaterpillarController : MonoBehaviour
                 i--;
                 b0 = true;
             }
-            l++;
         }
         if (b0)
         {
@@ -99,10 +75,60 @@ public class CaterpillarController : MonoBehaviour
         }
     }
 
+    /// <summary>ホイールのMeshの配列に異常がないかチェック</summary>
+    void MeshCheck()
+    {
+        StringBuilder sb = new StringBuilder();
+        bool b0 = false;
+        for (int i = 0; i < _wheelMeshs.Count; i++)
+        {
+            bool b1 = false;
+            if (_wheelMeshs[i].RightWheelMesh == null)
+            {
+                sb.Append($"\nElement{i}");
+                sb.Append($"\n  {nameof(WheelMeshs.RightWheelMesh)}");
+                b1 = true;
+            }
+            if (_wheelMeshs[i].LeftWheelMesh == null)
+            {
+                if (!b1)
+                {
+                    sb.Append($"\nElement{i}");
+                }
+                sb.Append($"\n  {nameof(WheelMeshs.LeftWheelMesh)}");
+                b1 = true;
+            }
+            if (b1)
+            {
+                _wheelMeshs.RemoveAt(i);
+                i--;
+                b0 = true;
+            }
+        }
+        if (b0)
+        {
+            sb.Insert(0, $"{transform.root.name}の{nameof(_wheelColliders)}の以下の項目にアサインがされていません");
+            Debug.LogWarning(sb);
+        }
+        for (int i = 0; i < _wheelMeshs.Count; i++)
+        {
+
+            WheelMeshs w = _wheelMeshs[i];
+            if (_wheelColliders.Count <= w.Index)
+            {
+                Debug.LogError($"{transform.root.name}の{nameof(_wheelColliders)}には{w.Index}は無いため、" +
+                    $"{nameof(_wheelMeshs)}[{i}]は" +
+                    $"{nameof(_wheelColliders)}[{_wheelColliders.Count - 1}]と同期されます");
+                w.Index = _wheelColliders.Count - 1;
+                _wheelMeshs[i] = w;
+            }
+        }
+
+    }
+
     /// <summary>各ホイールのパラメータの設定</summary>
     void SetUp()
     {
-        JointSpring j = new JointSpring();
         WheelFrictionCurve f = new WheelFrictionCurve();
         foreach (var w in _wheelColliders)
         {
@@ -110,11 +136,6 @@ public class CaterpillarController : MonoBehaviour
             var l = w.LeftWheel;
             r.wheelDampingRate = _wheelDanpingRate;
             l.wheelDampingRate = _wheelDanpingRate;
-            j.spring = _spring;
-            j.damper = _damper;
-            j.targetPosition = _targetPosition;
-            r.suspensionSpring = j;
-            l.suspensionSpring = j;
             r.mass = _mass;
             l.mass = _mass;
             r.radius = _radius;
@@ -141,22 +162,19 @@ public class CaterpillarController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        MeshUpdate();
+    }
+
+    /// <summary>ホイールの外観の更新</summary>
+    private void MeshUpdate()
+    {
         Vector3 rp;
         Vector3 lp;
         Quaternion rr;
         Quaternion lr;
-        WheelMeshs w;
-        for(int i = 0; i < _wheelMeshs.Count; i++)
+        JointSpring j = new JointSpring();
+        foreach (var w in _wheelMeshs)
         {
-            w = _wheelMeshs[i];
-            if (_wheelColliders.Count <= w.Index)
-            {
-                Debug.LogError($"{transform.root.name}の{nameof(_wheelColliders)}には{w.Index}は無いため、" +
-                    $"{nameof(_wheelMeshs)}[{i}]は" +
-                    $"{nameof(_wheelColliders)}[{_wheelColliders.Count - 1}]と同期されます");
-                w.Index = _wheelColliders.Count - 1;
-                _wheelMeshs[i] = w;
-            }
             _wheelColliders[w.Index].RightWheel.GetWorldPose(out rp, out rr);
             _wheelColliders[w.Index].LeftWheel.GetWorldPose(out lp, out lr);
             w.RightWheelMesh.transform.position = rp;
@@ -164,39 +182,78 @@ public class CaterpillarController : MonoBehaviour
             w.LeftWheelMesh.transform.position = lp;
             w.LeftWheelMesh.transform.rotation = lr;
         }
+        foreach (var w in _wheelColliders)
+        {
+            j.spring = w.Spring;
+            j.damper = w.Damper; ;
+            j.targetPosition = w.TargetPosition;
+            w.RightWheel.suspensionSpring = j;
+            w.LeftWheel.suspensionSpring = j;
+        }
     }
 
     /// <summary>移動関数</summary>
     /// <param name="dir"></param>
     public void Move(Vector2 dir)
     {
-        dir = dir.normalized;
-
-        foreach (var w in _wheelColliders)
+        //Debug.Log(dir);
+        float magnitude = dir.magnitude;
+        if (magnitude > 1)
         {
-            if (dir.y == 0)
-            {
-                w.RightWheel.brakeTorque = _brakeTorque;
-                w.LeftWheel.brakeTorque = _brakeTorque;
-                w.RightWheel.motorTorque = 0;
-                w.LeftWheel.motorTorque = 0;
-            }
-            else if (dir.y > 0)
-            {
-                w.RightWheel.brakeTorque = 0;
-                w.LeftWheel.brakeTorque = 0;
-                w.RightWheel.motorTorque = dir.y * _forwardTorque;
-                w.LeftWheel.motorTorque = dir.y * _forwardTorque;
-            }
-            else if (dir.y < 0)
-            {
-                w.RightWheel.motorTorque = dir.y * _backTorque;
-                w.LeftWheel.motorTorque = dir.y * _backTorque;
-                w.RightWheel.brakeTorque = 0;
-                w.LeftWheel.brakeTorque = 0;
-            }
+            dir = dir.normalized;
+            magnitude = 1;
+        }
+        float theta = Mathf.Abs(Vector2.SignedAngle(new Vector2(0, 1), dir));
+
+        float rPower = 0;
+        float lPower = 0;
+        int frontOrBack = 1;
+        const float qAround = 90;
+
+        if(dir.y < 0)
+        {
+            frontOrBack = -1;
         }
 
+        if (dir.x > 0)      //右旋回
+        {
+            lPower = magnitude * frontOrBack;
+            rPower = (Mathf.Abs(theta - qAround) - qAround / 2) / (qAround / 2) * magnitude * frontOrBack;
+        }
+        else if (dir.x < 0) //左旋回
+        {
+            rPower = magnitude * frontOrBack;
+            lPower = (Mathf.Abs(theta - qAround) - qAround / 2) / (qAround / 2) * magnitude * frontOrBack;
+        }
+        else
+        {
+            rPower = magnitude * frontOrBack;
+            lPower = magnitude * frontOrBack;
+        }
+        //Debug.Log($"{rPower} {lPower} {magnitude} { dir}");
+
+        StringBuilder sb = new StringBuilder();
+        foreach (var w in _wheelColliders)
+        {
+            if (rPower > 0)
+            {
+                w.RightWheel.motorTorque = _forwardTorque * rPower;
+            }
+            else
+            {
+                w.RightWheel.motorTorque = _backTorque * rPower;
+            }
+            if (lPower > 0)
+            {
+                w.LeftWheel.motorTorque = _forwardTorque * lPower;
+            }
+            else
+            {
+                w.LeftWheel.motorTorque = _backTorque * lPower;
+            }
+            sb.AppendLine($"{w.RightWheel.rpm} {w.LeftWheel.rpm}");
+        }
+        //Debug.Log(sb);
     }
 }
 
@@ -210,6 +267,12 @@ public struct WheelColliders
     public WheelCollider LeftWheel;
     [Tooltip("オブジェクトのローカル座標系でのホイールの中心位置")]
     public Vector3 Center;
+    [Tooltip("スプリングの柔らかさ")]
+    public float Spring;
+    [Tooltip("ショックアブソーバーの強さ")]
+    public float Damper;
+    [Tooltip("サスペンションの初期位置")]
+    public float TargetPosition;
 }
 
 /// <summary>左右一式のホイールの見た目</summary>
