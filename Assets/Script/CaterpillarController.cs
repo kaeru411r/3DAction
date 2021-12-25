@@ -163,6 +163,7 @@ public class CaterpillarController : MonoBehaviour
     void Update()
     {
         MeshUpdate();
+        SuspensionUpdate();
     }
 
     /// <summary>ホイールの外観の更新</summary>
@@ -172,7 +173,6 @@ public class CaterpillarController : MonoBehaviour
         Vector3 lp;
         Quaternion rr;
         Quaternion lr;
-        JointSpring j = new JointSpring();
         foreach (var w in _wheelMeshs)
         {
             _wheelColliders[w.Index].RightWheel.GetWorldPose(out rp, out rr);
@@ -182,6 +182,11 @@ public class CaterpillarController : MonoBehaviour
             w.LeftWheelMesh.transform.position = lp;
             w.LeftWheelMesh.transform.rotation = lr;
         }
+    }
+
+    void SuspensionUpdate()
+    {
+        JointSpring j = new JointSpring();
         foreach (var w in _wheelColliders)
         {
             j.spring = w.Spring;

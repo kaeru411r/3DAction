@@ -8673,17 +8673,17 @@ MonoBehaviour:
   _radius: 0.3
   _suspensionDistance: 0.2
   _forwardWheelFriction:
-    ExtremumSlip: 1
-    ExtremumValue: 1.4
-    AsymptoteSlip: 1.2
-    AsymptoteValue: 0.9
-    Stiffness: 1
+    ExtremumSlip: 1.5
+    ExtremumValue: 1.9
+    AsymptoteSlip: 1.7
+    AsymptoteValue: 1.4
+    Stiffness: 1.5
   _sideWheelFriction:
-    ExtremumSlip: 0.4
-    ExtremumValue: 1
-    AsymptoteSlip: 0.8
-    AsymptoteValue: 0.5
-    Stiffness: 1
+    ExtremumSlip: 1.5
+    ExtremumValue: 1.9
+    AsymptoteSlip: 1.7
+    AsymptoteValue: 1.4
+    Stiffness: 1.5
 --- !u!1 &5069155851893509777
 GameObject:
   m_ObjectHideFlags: 0
