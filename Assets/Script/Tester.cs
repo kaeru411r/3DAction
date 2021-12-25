@@ -1,42 +1,41 @@
-﻿using System.Collections;
+﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.InputSystem;
 
 public class Tester : MonoBehaviour
 {
+    public List<AxleInfo> axleInfos; // 個々の車軸の情報
+    public float maxMotorTorque; //ホイールに適用可能な最大トルク
+    public float maxSteeringAngle; // 適用可能な最大ハンドル角度
+    [SerializeField] float MotorTorque;
+    [SerializeField] float steeringAngle;
 
-
-
-    void Update()
+    public void FixedUpdate()
     {
-        // ゲームパッドが接続されていないとnullになる。
-        if (Gamepad.current == null) return;
+        float motor = maxMotorTorque * MotorTorque;
+        float steering = maxSteeringAngle * steeringAngle;
 
-        if (Gamepad.current.buttonNorth.wasPressedThisFrame)
+        foreach (AxleInfo axleInfo in axleInfos)
         {
-            Debug.Log("Button Northが押された！");
+            if (axleInfo.steering)
+            {
+                axleInfo.leftWheel.steerAngle = steering;
+                axleInfo.rightWheel.steerAngle = steering;
+            }
+            if (axleInfo.motor)
+            {
+                axleInfo.leftWheel.motorTorque = motor;
+                axleInfo.rightWheel.motorTorque = motor;
+            }
         }
-        if (Gamepad.current.buttonSouth.wasReleasedThisFrame)
-        {
-            Debug.Log("Button Southが離された！");
-        }
-    }
-
-    void OnGUI()
-    {
-        if (Gamepad.current == null) return;
-
-        GUILayout.Label($"leftStick: {Gamepad.current.leftStick.ReadValue()}");
-        GUILayout.Label($"buttonNorth: {Gamepad.current.buttonNorth.isPressed}");
-        GUILayout.Label($"buttonSouth: {Gamepad.current.buttonSouth.isPressed}");
-        GUILayout.Label($"buttonEast: {Gamepad.current.buttonEast.isPressed}");
-        GUILayout.Label($"buttonWest: {Gamepad.current.buttonWest.isPressed}");
-        GUILayout.Label($"leftShoulder: {Gamepad.current.leftShoulder.ReadValue()}");
-        GUILayout.Label($"leftTrigger: {Gamepad.current.leftTrigger.ReadValue()}");
-        GUILayout.Label($"rightShoulder: {Gamepad.current.rightShoulder.ReadValue()}");
-        GUILayout.Label($"rightTrigger: {Gamepad.current.rightTrigger.ReadValue()}");
     }
 }
 
+[System.Serializable]
+public class AxleInfo
+{
+    public WheelCollider leftWheel;
+    public WheelCollider rightWheel;
+    public bool motor; //このホイールがエンジンにアタッチされているかどうか
+    public bool steering; // このホイールがハンドルの角度を反映しているかどうか
+}

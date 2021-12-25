@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 
 /// <summary>
@@ -21,9 +19,15 @@ public class CharacterBase : MonoBehaviour
     Rigidbody _rb;
 
 
-    public void Start()
+    void Start()
     {
         _rb = GetComponent<Rigidbody>();
+        _rb.centerOfMass = Vector3.zero;
+    }
+
+    private void Update()
+    {
+        //_rb.centerOfMass = Vector3.zero;
     }
 
     /// <summary>被弾時の処理</summary>
@@ -55,6 +59,7 @@ public class CharacterBase : MonoBehaviour
     /// <param name="y"></param>
     public void Move(Vector2 vector)
     {
+        Debug.LogError(vector);
         if (_isGround)
         {
             vector = vector.normalized;

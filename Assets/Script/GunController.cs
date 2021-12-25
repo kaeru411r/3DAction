@@ -1,8 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-using System.Linq;
 
 
 /// <summary>
@@ -40,6 +38,9 @@ public class GunController : MonoBehaviour
     const int AllAround = 360;
     /// <summary>必要なTransformがアサインされてなかったときのダミー</summary>
     Transform _dummy;
+    /// <summary>リロードコルーチン</summary>
+    Coroutine _ReLoad;
+
 
     public Transform Sight { get { return _sight; } set { _sight = value; } }
 
@@ -126,12 +127,13 @@ public class GunController : MonoBehaviour
 
     /// <summary>砲弾の実体化から発射関数の呼び出しまでを行う</summary>
     /// <param name="root"></param>
-    public void Fire(Transform root)
+    public void Fire()
     {
         if (_isLoad)
         {
+            Vector3 dir = new Vector3(_muzzle.eulerAngles.x + 90, _muzzle.eulerAngles.y, _muzzle.eulerAngles.z);
             var go = Instantiate(_ammos[_ammoNunber], _muzzle.position, _muzzle.rotation);
-            go.GetComponent<BulletController>()?.Fire(root);
+            go.GetComponent<BulletController>()?.Fire(transform.root);
             StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
         }
     }

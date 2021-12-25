@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
+﻿using UnityEngine;
 
 /// <summary>
 /// 砲弾の発射以降の操作を行うコンポーネント
@@ -35,23 +32,30 @@ public class BulletController : MonoBehaviour
     /// <summary>発射された位置</summary>
     Vector3 _firstPosition;
 
+    Collision _co;
+
 
 
     private void Start()
     {
+        _rb = GetComponent<Rigidbody>();
         Destroy(gameObject, _destroyTime);
     }
 
 
     private void Update()
     {
-        if (_isFired && HitCheck())   //ここにレイで着弾を観測する部分を書く
+        if (_isFired)
         {
-            Hit(_hit.transform.root);
+            _rb.velocity = new Vector3(_rb.velocity.x, _rb.velocity.y - _gravity * Time.deltaTime, _rb.velocity.z);
             transform.forward = _rb.velocity;
+            if (HitCheck())   //ここにレイで着弾を観測する部分を書く
+            {
+                Hit(_hit.transform.root);
+            }
         }
-    }
 
+    }
     /// <summary>着弾の有無、及びその対象の確認</summary>
     private bool HitCheck()
     {
@@ -72,15 +76,20 @@ public class BulletController : MonoBehaviour
         return false;
     }
 
+
     /// <summary>発砲時に呼ぶ</summary>
     public void Fire(Transform root)
     {
-        _rb = GetComponent<Rigidbody>();
+        if (!_rb)
+        {
+            _rb = GetComponent<Rigidbody>();
+        }
         _isFired = true;
         _rb.velocity = (_speed * transform.forward);
         _root = root;
         _lastPosition = transform.position;
         _firstPosition = transform.position;
+        _rb.useGravity = false;
     }
 
 
