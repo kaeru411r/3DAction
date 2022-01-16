@@ -8671,7 +8671,8 @@ MonoBehaviour:
   _wheelDanpingRate: 100
   _mass: 50
   _radius: 0.3
-  _suspensionDistance: 0.2
+  _suspensionDistance: 0.3
+  targetPositionBalance: 0
   _forwardWheelFriction:
     ExtremumSlip: 1.5
     ExtremumValue: 1.9

@@ -26,8 +26,6 @@ public class GunController : MonoBehaviour
     [SerializeField] float _elevationAngle = 90;
     [Tooltip("俯角")]
     [SerializeField] float _depressionAngle = 90;
-    /// <summary>sightが狙う先</summary>
-    Transform _target;
     /// <summary>使う弾薬の種類</summary>
     int _ammoNunber;
     /// <summary>現在装填されてるか</summary>
@@ -38,8 +36,6 @@ public class GunController : MonoBehaviour
     const int AllAround = 360;
     /// <summary>必要なTransformがアサインされてなかったときのダミー</summary>
     Transform _dummy;
-    /// <summary>リロードコルーチン</summary>
-    Coroutine _ReLoad;
 
 
     public Transform Sight { get { return _sight; } set { _sight = value; } }

@@ -22,7 +22,7 @@ public class CharacterBase : MonoBehaviour
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
-        _rb.centerOfMass = Vector3.zero;
+        _rb.centerOfMass = new Vector3(0, -1, 0);
     }
 
     private void Update()

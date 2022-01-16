@@ -11,11 +11,10 @@ using System;
 /// プレイヤー操作コンポーネント
 /// プレイヤーによる車両の操作を行う
 /// </summary>
-[RequireComponent(typeof(GunController), typeof(CharacterBase), typeof(CaterpillarController))]
+[RequireComponent(typeof(GunController), typeof(CaterpillarController))]
 public class PlayerController : MonoBehaviour
 {
     GunController _gunController;
-    CharacterBase _characterBase;
     CaterpillarController _caterpillarController;
     /// <summary>照準先</summary>
     Transform _target;
@@ -71,7 +70,6 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         _gunController = GetComponent<GunController>();
-        _characterBase = GetComponent<CharacterBase>();
         _caterpillarController = GetComponent<CaterpillarController>();
         _fpsFov = _fpsVCam.m_Lens.FieldOfView;
         _tpsVCam.m_Lens.FieldOfView = _tpsFov;
@@ -110,6 +108,8 @@ public class PlayerController : MonoBehaviour
     public void OnMove(InputAction.CallbackContext context)
     {
         _move = context.ReadValue<Vector2>();
+        _caterpillarController?.Move(_move);
+        //Debug.LogError(_move);
     }
     /// <summary>マウス移動</summary>
     public void OnMouseLook(InputAction.CallbackContext context)
@@ -181,7 +181,6 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        _caterpillarController?.Move(_move);
         _tpsVCam.m_XAxis.m_MaxSpeed = _mouseSensitivity.x * 20;
         _tpsVCam.m_YAxis.m_MaxSpeed = _mouseSensitivity.y / 2;
 

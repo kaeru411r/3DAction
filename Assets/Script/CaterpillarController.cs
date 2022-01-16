@@ -24,6 +24,8 @@ public class CaterpillarController : MonoBehaviour
     [SerializeField] float _radius;
     [Tooltip("サスペンションの最大延長距離")]
     [SerializeField] float _suspensionDistance;
+    [Tooltip("サスペンションの初期位置のバランス")]
+    [SerializeField,Range(-1,1)] float targetPositionBalance;
     [Tooltip("ホイールの前後方向の摩擦特性")]
     [SerializeField] Friction _forwardWheelFriction;
     [Tooltip("ホイールの左右方向の摩擦特性")]
@@ -35,7 +37,7 @@ public class CaterpillarController : MonoBehaviour
         ColliderNullCheck();
         MeshCheck();
         SetUp();
-        Move(Vector3.zero);
+        //Move(Vector3.zero);
     }
 
     /// <summary>_wheelsの各要素に必要なものがそろっているか</summary>
@@ -201,7 +203,7 @@ public class CaterpillarController : MonoBehaviour
     /// <param name="dir"></param>
     public void Move(Vector2 dir)
     {
-        //Debug.Log(dir);
+        Debug.Log(dir);
         float magnitude = dir.magnitude;
         if (magnitude > 1)
         {
@@ -256,6 +258,8 @@ public class CaterpillarController : MonoBehaviour
             {
                 w.LeftWheel.motorTorque = _backTorque * lPower;
             }
+            w.RightWheel.brakeTorque = _brakeTorque * (1 - magnitude);
+            w.LeftWheel.brakeTorque = _brakeTorque * (1 - magnitude);
             sb.AppendLine($"{w.RightWheel.rpm} {w.LeftWheel.rpm}");
         }
         //Debug.Log(sb);
