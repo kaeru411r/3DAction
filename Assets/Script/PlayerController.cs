@@ -40,6 +40,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float _tpsFov;
     [Tooltip("望遠鏡の倍率")]
     [SerializeField] float _scopeMagnification;
+    [Tooltip("TPSカメラの参照トランスフォーム")]
+    [SerializeField] Transform _tpsCamBass;
     /// <summary>現在の視点</summary>
     [SerializeField] ViewMode _viewMode;
     /// <summary>移動用ベクトル</summary>
