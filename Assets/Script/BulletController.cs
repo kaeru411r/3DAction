@@ -19,8 +19,6 @@ public class BulletController : MonoBehaviour
     [SerializeField] float _reloadTime;
     [Tooltip("弾にかかる重力")]
     [SerializeField] float _gravity;
-    /// <summary>発砲したオブジェクト</summary>
-    GameObject _go;
     /// <summary>前物理フレームでの座標</summary>
     Vector3 _lastPosition;
     /// <summary>着弾した相手</summary>
@@ -31,8 +29,6 @@ public class BulletController : MonoBehaviour
     Transform _root;
     /// <summary>発射された位置</summary>
     Vector3 _firstPosition;
-
-    Collision _co;
 
 
 
