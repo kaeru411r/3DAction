@@ -23,6 +23,9 @@ public class TPSCamaraController : MonoBehaviour
     Vector3 _lastEulerAngles;
     /// <summary>マウスの入力値</summary>
     Vector2 _look;
+    /// <summary>最後のhit</summary>
+    RaycastHit _hit;
+    [SerializeField] Transform GameObject;
 
 
     private void Start()
@@ -53,20 +56,24 @@ public class TPSCamaraController : MonoBehaviour
 
     private void Update()
     {
-        //transform.Rotate(new Vector3(_look.y, _look.x) * new Vector2(_speed.x, _speed.y));
-        //transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
-
-        RaycastHit hit;
-
-        if (Physics.Raycast(_lookTr.position, (transform.forward * -1).normalized, out hit, _maxRadius, _layerMask))
+        transform.root.position = _lookTr.position;
+        transform.root.rotation = _lookTr.rotation;
+        transform.Rotate(new Vector3(_look.y, _look.x) * new Vector2(_speed.x, _speed.y));
+        transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
+        GameObject.eulerAngles = transform.eulerAngles;
+        GameObject.position = _lookTr.position;
+        Physics.queriesHitBackfaces = true;
+        Debug.DrawRay(_lookTr.position, transform.forward * -1 * _maxRadius, Color.red);
+        if (Physics.Raycast(_lookTr.position, transform.forward * -1, out _hit, _maxRadius, _layerMask))
         {
-            transform.position = hit.point;
+            transform.position = _hit.point;
             Debug.Log(1);
         }
         else
         {
 
         }
+        Physics.queriesHitBackfaces = false;
         _lastEulerAngles = transform.eulerAngles;
     }
 

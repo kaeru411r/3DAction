@@ -106,6 +106,8 @@ public class PlayerController : MonoBehaviour
         _tpsVCam.MoveToTopOfPrioritySubqueue();
     }
 
+    #region 入力受付部
+
     /// <summary>WASD及び左スティック</summary>
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -178,6 +180,8 @@ public class PlayerController : MonoBehaviour
             _isZoom = false;
         }
     }
+
+    #endregion
 
 
     // Update is called once per frame
