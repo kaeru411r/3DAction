@@ -13,10 +13,14 @@ public class TPSCamaraController : MonoBehaviour
     CinemachineVirtualCameraBase _vCam;
     [Tooltip("リグの最長半径")]
     [SerializeField] float _maxRadius;
-    [Tooltip("リグのレイヤーマスク")]
-    [SerializeField] LayerMask _layerMask;
     [Tooltip("カメラ速度")]
     [SerializeField] Vector2 _speed;
+    [Tooltip("上部リグの半径と高さ")]
+    [SerializeField] Vector2 _topRig;
+    [Tooltip("中部リグの半径と高さ")]
+    [SerializeField] Vector2 _middleRig;
+    [Tooltip("下部リグの半径と高さ")]
+    [SerializeField] Vector2 _bottomRig;
     /// <summary>LookAt対象</summary>
     Transform _lookTr;
     /// <summary>前フレームでのカメラの向き</summary>
@@ -56,24 +60,20 @@ public class TPSCamaraController : MonoBehaviour
 
     private void Update()
     {
+        _topRig = _topRig.normalized;
+        _middleRig = _middleRig.normalized;
+        _bottomRig = _bottomRig.normalized;
         transform.root.position = _lookTr.position;
         transform.root.rotation = _lookTr.rotation;
-        transform.Rotate(new Vector3(_look.y, _look.x) * new Vector2(_speed.x, _speed.y));
+        transform.Rotate(new Vector2(_look.y, _look.x) * new Vector2(_speed.x, _speed.y));
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
         GameObject.eulerAngles = transform.eulerAngles;
         GameObject.position = _lookTr.position;
-        Physics.queriesHitBackfaces = true;
-        Debug.DrawRay(_lookTr.position, transform.forward * -1 * _maxRadius, Color.red);
-        if (Physics.Raycast(_lookTr.position, transform.forward * -1, out _hit, _maxRadius, _layerMask))
-        {
-            transform.position = _hit.point;
-            Debug.Log(1);
-        }
-        else
-        {
+        Vector3 direction = transform.localPosition.normalized;
+        Debug.Log($"{direction.x}, {Mathf.Atan2(_topRig.x, _topRig.y)}");
+        if (direction.x > Mathf.Atan2(_topRig.y, _topRig.x)){
 
         }
-        Physics.queriesHitBackfaces = false;
         _lastEulerAngles = transform.eulerAngles;
     }
 
@@ -81,19 +81,4 @@ public class TPSCamaraController : MonoBehaviour
     {
         _lastEulerAngles = transform.position - _lookTr.position;
     }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = new Color(1f, 0, 0, 1f);
-        if (!_vCam)
-        {
-            _vCam = GetComponent<CinemachineVirtualCameraBase>();
-        }
-
-        if (_vCam.LookAt)
-        {
-            Gizmos.DrawWireSphere(_vCam.LookAt.position, _maxRadius);
-        }
-    }
-
 }
