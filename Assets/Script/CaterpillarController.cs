@@ -24,6 +24,12 @@ public class CaterpillarController : MonoBehaviour
     [SerializeField] float _radius;
     [Tooltip("サスペンションの最大延長距離")]
     [SerializeField] float _suspensionDistance;
+    [Tooltip("スプリングの柔らかさ")]
+    [SerializeField] float _spring;
+    [Tooltip("ショックアブソーバーの強さ")]
+    [SerializeField] float _damper;
+    [Tooltip("サスペンションの初期位置")]
+    [SerializeField] float _targetPosition;
     [Tooltip("サスペンションの初期位置のバランス")]
     [SerializeField,Range(-1,1)] float targetPositionBalance;
     [Tooltip("ホイールの前後方向の摩擦特性")]
@@ -45,12 +51,12 @@ public class CaterpillarController : MonoBehaviour
     {
         StringBuilder sb = new StringBuilder();
         bool b0 = false;
-        for (int i = 0; i < _wheelColliders.Count; i++)
+        for (int i = 0, n = 0 ; i < _wheelColliders.Count; i++, n++)
         {
             bool b1 = false;
             if (_wheelColliders[i].RightWheel == null)
             {
-                sb.Append($"\nElement{i}");
+                sb.Append($"\nElement{n}");
                 sb.Append($"\n  {nameof(WheelColliders.RightWheel)}");
                 b1 = true;
             }
@@ -58,7 +64,7 @@ public class CaterpillarController : MonoBehaviour
             {
                 if (!b1)
                 {
-                    sb.Append($"\nElement{i}");
+                    sb.Append($"\nElement{n}");
                 }
                 sb.Append($"\n  {nameof(WheelColliders.LeftWheel)}");
                 b1 = true;
@@ -191,9 +197,9 @@ public class CaterpillarController : MonoBehaviour
         JointSpring j = new JointSpring();
         foreach (var w in _wheelColliders)
         {
-            j.spring = w.Spring;
-            j.damper = w.Damper; ;
-            j.targetPosition = w.TargetPosition;
+            j.spring = _spring;
+            j.damper = _damper;
+            j.targetPosition = _targetPosition;
             w.RightWheel.suspensionSpring = j;
             w.LeftWheel.suspensionSpring = j;
         }

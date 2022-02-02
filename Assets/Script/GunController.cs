@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Text;
 
 
 /// <summary>
 /// 砲動作コンポーネント
 /// 砲塔以下の操作を行う
 /// </summary>
+[RequireComponent(typeof(Rigidbody))]
 public class GunController : MonoBehaviour
 {
 
@@ -36,6 +38,10 @@ public class GunController : MonoBehaviour
     const int AllAround = 360;
     /// <summary>必要なTransformがアサインされてなかったときのダミー</summary>
     Transform _dummy;
+    /// <summary>戦車のリジッドボディ</summary>
+    Rigidbody _rb;
+
+
 
 
     public Transform Sight { get { return _sight; } set { _sight = value; } }
@@ -55,10 +61,12 @@ public class GunController : MonoBehaviour
         }
         else if (_ammos.Contains(null))
         {
-            for (int i = 0; i < _ammos.Count; i++)
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0, n = 0 ; i < _ammos.Count; i++, n++)
             {
                 if (!_ammos[i])
                 {
+                    sb.Append($"\nElement{n}");
                     _ammos.RemoveAt(i);
                     i--;
                 }
@@ -70,29 +78,31 @@ public class GunController : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning($"{name}はAmmosに未選択があります");
+                sb.Insert(0, $"{name}の{this}は{nameof(_ammos)}の以下の項目にアサインがされていません");
+                Debug.LogWarning(sb);
             }
         }
         if (!_turret)
         {
-            Debug.LogError($"{name}はTurretが選択されていません");
+            Debug.LogError($"{name}は{nameof(_turret)}がアサインされていません");
             _turret = PreDummy();
         }
         if (!_barrel)
         {
-            Debug.LogError($"{name}はBurrelが選択されていません");
+            Debug.LogError($"{name}は{nameof(_barrel)}がアサインされていません");
             _barrel = PreDummy();
         }
         if (!_muzzle)
         {
-            Debug.LogError($"{name}はMuzzleが選択されていません");
+            Debug.LogError($"{name}は{nameof(_muzzle)}がアサインされていません");
             _muzzle = PreDummy();
         }
         if (!_sight)
         {
-            Debug.LogError($"{name}はSightが選択されていません");
+            Debug.LogError($"{name}は{nameof(_sight)}がアサインされていません");
             _sight = PreDummy();
         }
+        _rb = GetComponent<Rigidbody>();
     }
 
     private void Update()
@@ -130,6 +140,10 @@ public class GunController : MonoBehaviour
             Vector3 dir = new Vector3(_muzzle.eulerAngles.x + 90, _muzzle.eulerAngles.y, _muzzle.eulerAngles.z);
             var go = Instantiate(_ammos[_ammoNunber], _muzzle.position, _muzzle.rotation);
             go.GetComponent<BulletController>()?.Fire(transform.root);
+
+            float mass = go.GetComponent<Rigidbody>().mass;
+            _rb.AddForceAtPosition(-_muzzle.forward * mass * _ammos[_ammoNunber].Speed, _muzzle.position, ForceMode.Impulse);
+
             StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
         }
     }

@@ -29,6 +29,8 @@ public class BulletController : MonoBehaviour
     Transform _root;
     /// <summary>発射された位置</summary>
     Vector3 _firstPosition;
+    /// <summary>砲口初速</summary>
+    public float Speed { get { return _speed; } }
 
 
 
