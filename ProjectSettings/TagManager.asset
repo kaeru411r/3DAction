@@ -17,8 +17,8 @@ TagManager:
   - 
   - 
   - Player
-  - TpsVCamRig
-  - 
+  - TpsVCamLimit
+  - Camera
   - 
   - 
   - 

@@ -58,12 +58,15 @@ public class TPSCamaraController : MonoBehaviour
 
     private void Update()
     {
-        transform.root.position = _lookTr.position;
-        transform.root.rotation = _lookTr.rotation;
+        //transform.root.position = _lookTr.position;
+        //transform.root.rotation = _lookTr.rotation;
         transform.Rotate(new Vector3(_look.y, _look.x) * _speed);
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
-        GameObject.eulerAngles = transform.eulerAngles;
-        GameObject.position = _lookTr.position;
+        if (GameObject)
+        {
+            GameObject.eulerAngles = transform.eulerAngles;
+            GameObject.position = _lookTr.position;
+        }
         float radius = 5;
 
 
