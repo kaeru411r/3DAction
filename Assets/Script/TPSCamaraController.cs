@@ -70,9 +70,16 @@ public class TPSCamaraController : MonoBehaviour
         float radius = 5;
 
 
-        Vector3 direction = transform.eulerAngles.normalized;
+        Vector3 direction = Quaternion.Euler(transform.eulerAngles) * Vector3.forward * -1;
         Vector3 position = _lookTr.position;
-        transform.position = direction * radius + position;
+        //transform.position = direction * radius + position;
+        Debug.DrawRay(position, direction * radius, Color.red);
+
+        var t = _vCam.GetCinemachineComponent<CinemachineTransposer>();
+        if (t)
+        {
+            t.m_FollowOffset = direction * radius;
+        }
 
         //Physics.queriesHitBackfaces = true;
         //Debug.DrawRay(_lookTr.position, transform.forward * -1 * _maxRadius, Color.red);
