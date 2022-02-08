@@ -61,16 +61,16 @@ public class TPSCamaraController : MonoBehaviour
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
 
         var angle = transform.localEulerAngles.x;
-        //if (angle < _elevationLimit)
-        //{
-        //    Debug.Log($"1 {angle} {_elevationLimit}");
-        //}
-        //else if (angle > _depressionLimit)
-        //{
-        //    Debug.Log($"2 {angle} {_depressionLimit}");
-        //}
-        //else
-        //{
+        if (angle < _elevationLimit)
+        {
+            Debug.Log($"1 {angle} {_elevationLimit}");
+        }
+        else if (angle > _depressionLimit)
+        {
+            Debug.Log($"2 {angle} {_depressionLimit}");
+        }
+        else
+        {
             Debug.Log($"3 {angle} {_elevationLimit} {_depressionLimit}");
             Vector3 direction = transform.rotation * Vector3.forward * -1;
             Vector3 position = _lookTr.position;
@@ -82,7 +82,7 @@ public class TPSCamaraController : MonoBehaviour
             {
                 t.m_FollowOffset = direction * _radius;
             }
-        //}
+        }
     }
 
     public void SetPosition(Vector3 dir)
