@@ -8,26 +8,23 @@ using UnityEngine.InputSystem;
 /// TPSカメラの操作をするクラス
 /// </summary>
 
-[RequireComponent (typeof(CinemachineVirtualCamera))]
+[RequireComponent(typeof(CinemachineVirtualCamera), typeof(PlayerInput))]
 public class TPSCamaraController : MonoBehaviour
 {
     /// <summary>このスクリプトで操作をするVcam</summary>
     CinemachineVirtualCamera _vCam;
     [Tooltip("リグの最長半径")]
-    [SerializeField] float _maxRadius;
-    [Tooltip("リグのレイヤーマスク")]
-    [SerializeField] LayerMask _layerMask;
+    [SerializeField] float _radius;
     [Tooltip("カメラ速度")]
     [SerializeField] Vector2 _speed;
+    [Tooltip("仰角限界")]
+    [SerializeField] float _elevationLimit;
+    [Tooltip("俯角限界")]
+    [SerializeField] float _depressionLimit;
     /// <summary>LookAt対象</summary>
     Transform _lookTr;
-    /// <summary>前フレームでのカメラの向き</summary>
-    Vector3 _lastEulerAngles;
     /// <summary>マウスの入力値</summary>
     Vector2 _look;
-    /// <summary>最後のhit</summary>
-    RaycastHit _hit;
-    [SerializeField] Transform GameObject;
 
 
     private void Start()
@@ -62,44 +59,39 @@ public class TPSCamaraController : MonoBehaviour
         //transform.root.rotation = _lookTr.rotation;
         transform.Rotate(new Vector3(_look.y, _look.x) * _speed);
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
-        if (GameObject)
-        {
-            GameObject.eulerAngles = transform.eulerAngles;
-            GameObject.position = _lookTr.position;
-        }
-        float radius = 5;
 
-
-        Vector3 direction = Quaternion.Euler(transform.eulerAngles) * Vector3.forward * -1;
-        Vector3 position = _lookTr.position;
-        //transform.position = direction * radius + position;
-        Debug.DrawRay(position, direction * radius, Color.red);
-
-        var t = _vCam.GetCinemachineComponent<CinemachineTransposer>();
-        if (t)
-        {
-            t.m_FollowOffset = direction * radius;
-        }
-
-        //Physics.queriesHitBackfaces = true;
-        //Debug.DrawRay(_lookTr.position, transform.forward * -1 * _maxRadius, Color.red);
-        //if (Physics.Raycast(_lookTr.position, transform.forward * -1, out _hit, _maxRadius, _layerMask))
+        var angle = transform.localEulerAngles.x;
+        //if (angle < _elevationLimit)
         //{
-        //    transform.position = _hit.point;
-        //    Debug.Log(1);
+        //    Debug.Log($"1 {angle} {_elevationLimit}");
+        //}
+        //else if (angle > _depressionLimit)
+        //{
+        //    Debug.Log($"2 {angle} {_depressionLimit}");
         //}
         //else
         //{
+            Debug.Log($"3 {angle} {_elevationLimit} {_depressionLimit}");
+            Vector3 direction = transform.rotation * Vector3.forward * -1;
+            Vector3 position = _lookTr.position;
+            //transform.position = direction * radius + position;
+            Debug.DrawRay(position, direction * _radius, Color.red);
 
+            var t = _vCam.GetCinemachineComponent<CinemachineTransposer>();
+            if (t)
+            {
+                t.m_FollowOffset = direction * _radius;
+            }
         //}
-        //Physics.queriesHitBackfaces = false;
-        _lastEulerAngles = transform.eulerAngles;
     }
 
-    private void LateUpdate()
+    public void SetPosition(Vector3 dir)
     {
-        _lastEulerAngles = transform.position - _lookTr.position;
+
     }
+
+
+
 
     private void OnDrawGizmosSelected()
     {
@@ -110,8 +102,9 @@ public class TPSCamaraController : MonoBehaviour
         }
         else if (_vCam.LookAt)
         {
-            Gizmos.DrawWireSphere(_vCam.LookAt.position, _maxRadius);
+            Gizmos.DrawWireSphere(_vCam.LookAt.position, _radius);
         }
     }
+
 
 }

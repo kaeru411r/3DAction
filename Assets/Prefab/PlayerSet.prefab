@@ -80,11 +80,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cdabeda3de397f419f3d08ff2258ca6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxRadius: 0
-  _layerMask:
-    serializedVersion: 2
-    m_Bits: 0
-  _speed: {x: 0, y: 0}
+  _radius: 10
+  _speed: {x: 1, y: 1}
+  _elevationLimit: 0
+  _depressionLimit: 0
   GameObject: {fileID: 0}
 --- !u!1 &3650465378263074116
 GameObject:
