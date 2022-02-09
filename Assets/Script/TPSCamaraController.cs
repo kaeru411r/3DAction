@@ -104,9 +104,21 @@ public class TPSCamaraController : MonoBehaviour
         if(_transposer.m_FollowOffset.y > _radius * _upperLimit)
         {
             var fO = _transposer.m_FollowOffset;
-            _transposer.m_FollowOffset = new Vector3(fO.x, _radius * _upperLimit, fO.z);
+            float r = Mathf.Sqrt(_radius * _radius - (_radius * _upperLimit) * (_radius * _upperLimit));
+            Vector2 xz = new Vector2(fO.x, fO.z);
+            xz = xz.normalized * r;
+            _transposer.m_FollowOffset = new Vector3(xz.x, _radius * _upperLimit, xz.y);
+            transform.LookAt(_lookTr);
         }
-        //transform.LookAt(_lookTr);
+        if (_transposer.m_FollowOffset.y < _radius * _bottomLimit)
+        {
+            var fO = _transposer.m_FollowOffset;
+            float r = Mathf.Sqrt(_radius * _radius - (_radius * _bottomLimit) * (_radius * _bottomLimit));
+            Vector2 xz = new Vector2(fO.x, fO.z);
+            xz = xz.normalized * r;
+            _transposer.m_FollowOffset = new Vector3(xz.x, _radius * _bottomLimit, xz.y);
+            transform.LookAt(_lookTr);
+        }
     }
 
     public void SetPosition(Vector3 dir)
