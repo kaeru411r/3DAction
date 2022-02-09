@@ -15,16 +15,24 @@ public class TPSCamaraController : MonoBehaviour
     CinemachineVirtualCamera _vCam;
     [Tooltip("リグの最長半径")]
     [SerializeField] float _radius;
-    [Tooltip("カメラ速度")]
-    [SerializeField] Vector2 _speed;
-    [Tooltip("仰角限界")]
-    [SerializeField] float _elevationLimit;
-    [Tooltip("俯角限界")]
-    [SerializeField] float _depressionLimit;
+    [Tooltip("マウスのカメラ速度")]
+    [SerializeField] Vector2 _mouseSpeed;
+    [Tooltip("パッドのカメラ速度")]
+    [SerializeField] Vector2 _padSpeed;
+    [Tooltip("上の限界点"), Range(-1, 1)]
+    [SerializeField] float _upperLimit;
+    [Tooltip("下の限界点"), Range(-1, 1)]
+    [SerializeField] float _bottomLimit;
     /// <summary>LookAt対象</summary>
     Transform _lookTr;
+    /// <summary>Follow対象</summary>
+    Transform _followTr;
     /// <summary>マウスの入力値</summary>
     Vector2 _look;
+    /// <summary>tureでマウス</summary>
+    bool _isMouseorPad;
+    /// <summary>vcamのtransposer</summary>
+    CinemachineTransposer _transposer;
 
 
     private void Start()
@@ -39,6 +47,20 @@ public class TPSCamaraController : MonoBehaviour
             _lookTr = transform;
             Debug.LogWarning($"{name}の{nameof(_vCam.LookAt)}がアサインされていません");
         }
+        if (_vCam.Follow)
+        {
+            _lookTr = _vCam.Follow;
+        }
+        else
+        {
+            _lookTr = transform;
+            Debug.LogWarning($"{name}の{nameof(_vCam.Follow)}がアサインされていません");
+        }
+        _transposer = _vCam.GetCinemachineComponent<CinemachineTransposer>();
+        if (!_transposer)
+        {
+            Debug.LogWarning($"{name}のBodyがTransposerに設定されていません");
+        }
     }
 
 
@@ -46,43 +68,45 @@ public class TPSCamaraController : MonoBehaviour
     public void OnMouseLook(InputAction.CallbackContext context)
     {
         _look = context.ReadValue<Vector2>();
+        _isMouseorPad = true;
     }
 
-    private void OnEnable()
+    /// <summary>Pad移動</summary>
+    public void OnPadLook(InputAction.CallbackContext context)
     {
-
+        _look = context.ReadValue<Vector2>();
+        _isMouseorPad = false;
     }
 
     private void Update()
     {
-        //transform.root.position = _lookTr.position;
-        //transform.root.rotation = _lookTr.rotation;
-        transform.Rotate(new Vector3(_look.y, _look.x) * _speed);
-        transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
-
-        var angle = transform.localEulerAngles.x;
-        if (angle < _elevationLimit)
+        if (_isMouseorPad)
         {
-            Debug.Log($"1 {angle} {_elevationLimit}");
-        }
-        else if (angle > _depressionLimit)
-        {
-            Debug.Log($"2 {angle} {_depressionLimit}");
+            transform.Rotate(new Vector3(_look.y, _look.x) * _mouseSpeed);
         }
         else
         {
-            Debug.Log($"3 {angle} {_elevationLimit} {_depressionLimit}");
-            Vector3 direction = transform.rotation * Vector3.forward * -1;
-            Vector3 position = _lookTr.position;
-            //transform.position = direction * radius + position;
-            Debug.DrawRay(position, direction * _radius, Color.red);
-
-            var t = _vCam.GetCinemachineComponent<CinemachineTransposer>();
-            if (t)
-            {
-                t.m_FollowOffset = direction * _radius;
-            }
+            transform.Rotate(new Vector3(_look.y, _look.x) * _padSpeed * Time.deltaTime);
         }
+
+        transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
+
+        float angle = transform.localEulerAngles.x;
+        Vector3 direction = transform.rotation * Vector3.forward * -1;
+        Vector3 position = _lookTr.position;
+        Debug.DrawRay(position, direction * _radius, Color.red);
+
+        if (_transposer)
+        {
+            _transposer.m_FollowOffset = direction * _radius;
+        }
+
+        if(_transposer.m_FollowOffset.y > _radius * _upperLimit)
+        {
+            var fO = _transposer.m_FollowOffset;
+            _transposer.m_FollowOffset = new Vector3(fO.x, _radius * _upperLimit, fO.z);
+        }
+        //transform.LookAt(_lookTr);
     }
 
     public void SetPosition(Vector3 dir)

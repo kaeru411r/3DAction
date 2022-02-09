@@ -278,7 +278,7 @@ public class PlayerController : MonoBehaviour
     /// <summary>ゲームパッドでのFPS操作</summary>
     void PadFPSAim()
     {
-        Vector2 gunSpeed = _gunController.GunMoveSpeed;
+        Vector2 gunSpeed = _gunController.GunMoveSpeed * Time.deltaTime;
         Vector3 barrel = _gunController.Barrel;
         Vector3 turret = _gunController.Turret;
         _sight.localEulerAngles = new Vector3(barrel.x + gunSpeed.y * _look.y, turret.y + gunSpeed.x * _look.x);

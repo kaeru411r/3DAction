@@ -322,17 +322,17 @@ Camera:
   m_GateFitMode: 2
   m_FOVAxisMode: 0
   m_SensorSize: {x: 36, y: 24}
-  m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 32.96973
+  m_LensShift: {x: -0, y: 0}
+  m_FocalLength: 33.97
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.1
-  far clip plane: 5000
-  field of view: 40
+  near clip plane: 0.001
+  far clip plane: 5000.02
+  field of view: 38.911827
   orthographic: 0
   orthographic size: 10
   m_Depth: -1
@@ -521,10 +521,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cdabeda3de397f419f3d08ff2258ca6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _radius: 0
-  _speed: {x: 0, y: 0}
-  _elevationLimit: 0
-  _depressionLimit: 0
+  _radius: 10
+  _mouseSpeed: {x: 1, y: 1}
+  _padSpeed: {x: 1, y: 1}
+  _upperLimit: 0
+  _bottomLimit: 0
 --- !u!114 &1935083889
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -546,12 +547,12 @@ MonoBehaviour:
   m_LookAt: {fileID: 565008252}
   m_Follow: {fileID: 565008252}
   m_Lens:
-    FieldOfView: 40
+    FieldOfView: 38.911827
     OrthographicSize: 10
-    NearClipPlane: 0.1
-    FarClipPlane: 5000
+    NearClipPlane: 0.001
+    FarClipPlane: 5000.02
     Dutch: 0
-    LensShift: {x: 0, y: 0}
+    LensShift: {x: -0, y: 0}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -692,6 +693,21 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: fd303d88-94c2-43d2-ae0a-227d7c802958
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1935083888}
+        m_MethodName: OnPadLook
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 88c1b3de-79c4-451c-bcaa-b9ad1ff5a98e
+    m_ActionName: Player/Look(TPS GamePad)
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
