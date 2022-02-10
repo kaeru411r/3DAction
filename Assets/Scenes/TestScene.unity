@@ -524,8 +524,8 @@ MonoBehaviour:
   _radius: 10
   _mouseSpeed: {x: 1, y: 1}
   _padSpeed: {x: 1, y: 1}
-  _upperLimit: 0
-  _bottomLimit: 0
+  _upperLimit: 0.45
+  _bottomLimit: -0.61
 --- !u!114 &1935083889
 MonoBehaviour:
   m_ObjectHideFlags: 0

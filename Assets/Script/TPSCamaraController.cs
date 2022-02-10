@@ -91,7 +91,7 @@ public class TPSCamaraController : MonoBehaviour
 
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
 
-        float angle = transform.localEulerAngles.x;
+        float angle = transform.eulerAngles.x;
         Vector3 direction = transform.rotation * Vector3.forward * -1;
         Vector3 position = _lookTr.position;
         Debug.DrawRay(position, direction * _radius, Color.red);
