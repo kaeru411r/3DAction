@@ -65,18 +65,18 @@ public class TPSCamaraController : MonoBehaviour
 
 
     /// <summary>マウス移動</summary>
-    public void OnMouseLook(InputAction.CallbackContext context)
-    {
-        _look = context.ReadValue<Vector2>();
-        _isMouseorPad = true;
-    }
+    //public void OnMouseLook(InputAction.CallbackContext context)
+    //{
+    //    _look = context.ReadValue<Vector2>();
+    //    _isMouseorPad = true;
+    //}
 
-    /// <summary>Pad移動</summary>
-    public void OnPadLook(InputAction.CallbackContext context)
-    {
-        _look = context.ReadValue<Vector2>();
-        _isMouseorPad = false;
-    }
+    ///// <summary>Pad移動</summary>
+    //public void OnPadLook(InputAction.CallbackContext context)
+    //{
+    //    _look = context.ReadValue<Vector2>();
+    //    _isMouseorPad = false;
+    //}
 
     private void Update()
     {
@@ -93,16 +93,19 @@ public class TPSCamaraController : MonoBehaviour
 
         float angle = transform.eulerAngles.x;
         Vector3 direction = transform.rotation * Vector3.forward * -1;
-        Vector3 position = _lookTr.position;
-        Debug.DrawRay(position, direction * _radius, Color.red);
+        {
+            Vector3 position = _lookTr.position;
+            Debug.DrawRay(position, direction * _radius, Color.red);
+        }
 
         if (_transposer)
         {
             _transposer.m_FollowOffset = direction * _radius;
         }
-
-        if(_transposer.m_FollowOffset.y > _radius * _upperLimit)
+        //float thetaU = 
+        if (_transposer.m_FollowOffset.y > _radius * _upperLimit)
         {
+            _look = new Vector2(_look.x, 0);
             var fO = _transposer.m_FollowOffset;
             float r = Mathf.Sqrt(_radius * _radius - (_radius * _upperLimit) * (_radius * _upperLimit));
             Vector2 xz = new Vector2(fO.x, fO.z);
