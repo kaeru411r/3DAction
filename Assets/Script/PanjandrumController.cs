@@ -16,12 +16,9 @@ public class PanjandrumController : MonoBehaviour
     [SerializeField] float _blastRadius;
     [Tooltip("ロケットのTransform")]
     [SerializeField] Transform[] _rockets;
-    [Tooltip("右ホイールのFixedJoint")]
-    [SerializeField] FixedJoint _rightWheelJoint;
-    [Tooltip("右ホイールのFixedJoint")]
-    [SerializeField] FixedJoint _leftWheelJoint;
 
     Rigidbody _rb;
+    bool _isFired;
 
 
 
@@ -34,9 +31,22 @@ public class PanjandrumController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        for(int i = 0; i < _rockets.Length; i++)
+        if (_isFired)
         {
-            _rb.AddForceAtPosition(Vector3.forward * _rocketPower, _rockets[i].position);
+            for (int i = 0; i < _rockets.Length; i++)
+            {
+                _rb.AddForceAtPosition(_rockets[i].forward * -1 * _rocketPower, _rockets[i].position);
+            }
         }
+    }
+
+    public void Fire()
+    {
+        _isFired = true;
+    }
+
+    public void Blast()
+    {
+        _rb.AddExplosionForce(_blastPower, transform.position, _blastRadius);
     }
 }
