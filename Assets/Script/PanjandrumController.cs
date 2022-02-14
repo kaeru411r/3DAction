@@ -16,7 +16,9 @@ public class PanjandrumController : MonoBehaviour
     [SerializeField] float _blastRadius;
     [Tooltip("ロケットのTransform")]
     [SerializeField] Transform[] _rockets;
-
+    [Tooltip("爆発までの時間")]
+    [SerializeField] float _time;
+     
     Rigidbody _rb;
     bool _isFired;
 
@@ -26,6 +28,7 @@ public class PanjandrumController : MonoBehaviour
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
+        StartCoroutine(Timer(_time));
     }
 
     private void OnEnable()
@@ -61,12 +64,13 @@ public class PanjandrumController : MonoBehaviour
 
     public void Blast()
     {
-
         ExplosionManager.Instance.Explosion(_blastPower, transform.position, _blastRadius, _damage);
+        Destroy(gameObject);
     }
 
-    private void OnCollisionEnter(Collision collision)
+    IEnumerator Timer(float time)
     {
+        yield return new WaitForSeconds(time);
         Blast();
     }
 }
