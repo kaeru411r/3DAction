@@ -12,7 +12,7 @@ using System;
 /// プレイヤーによる車両の操作を行う
 /// </summary>
 [RequireComponent(typeof(GunController), typeof(CaterpillarController))]
-public class PlayerController : MonoBehaviour
+public class PlayerController : SingletonMonoBehaviour<PlayerController>
 {
     GunController _gunController;
     CaterpillarController _caterpillarController;
@@ -20,26 +20,27 @@ public class PlayerController : MonoBehaviour
     Transform _target;
     /// <summary>サイトオブジェクトのトランスフォーム</summary>
     Transform _sight;
+    [SerializeField] float a;
     [Tooltip("レティクル")]
     [SerializeField] Image _crosshair;
     [Tooltip("rayを飛ばす距離")]
-    [SerializeField] float _distance;
+    [SerializeField] float _distance = 100;
     [Tooltip("フィールド上で見える自分以外のレイヤー")]
     [SerializeField] LayerMask _layerMask;
     [Tooltip("FPS時の砲塔砲身の予約できる回転量の上限")]
     [SerializeField] Vector2 _maxDeltaRotation = new Vector2(10, 10);
     [Tooltip("マウス感度")]
-    [SerializeField] Vector2 _mouseSensitivity;
+    [SerializeField] Vector2 _mouseSensitivity = Vector2.one * 10;
     [Tooltip("TPSカメラ")]
-    [SerializeField] CinemachineFreeLook _tpsVCam;
+    [SerializeField] CinemachineVirtualCamera _tpsVCam;
     [Tooltip("TPSカメラに近い位置に設置した中間VCam")]
     [SerializeField] CinemachineVirtualCameraBase _intermediateVCam;
     [Tooltip("FPSカメラ")]
     [SerializeField] CinemachineVirtualCamera _fpsVCam;
     [Tooltip("TPSのデフォルトの視野角")]
-    [SerializeField] float _tpsFov;
+    [SerializeField] float _tpsFov = 70;
     [Tooltip("望遠鏡の倍率")]
-    [SerializeField] float _scopeMagnification;
+    [SerializeField] float _scopeMagnification = 2;
     [Tooltip("TPSカメラの参照トランスフォーム")]
     [SerializeField] Transform _tpsCamBass;
     /// <summary>現在の視点</summary>
@@ -59,6 +60,7 @@ public class PlayerController : MonoBehaviour
     /// <summary>_target用オブジェクトの名前</summary>
     string _targetName = "TPSTarget";
 
+
     private void OnEnable()
     {
         Cursor.visible = false;
@@ -67,6 +69,11 @@ public class PlayerController : MonoBehaviour
     private void OnDisable()
     {
         Cursor.visible = true;
+    }
+
+    private void OnDestroy()
+    {
+        Destroy(transform.root.gameObject);
     }
 
     private void Start()
@@ -84,7 +91,8 @@ public class PlayerController : MonoBehaviour
         }
         if (_viewMode == ViewMode.TPS)
         {
-            StartCoroutine(TPSSetUp());
+            //StartCoroutine(TPSSetUp());
+            _tpsVCam.MoveToTopOfPrioritySubqueue();
         }
     }
 
@@ -187,8 +195,6 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        _tpsVCam.m_XAxis.m_MaxSpeed = _mouseSensitivity.x * 20;
-        _tpsVCam.m_YAxis.m_MaxSpeed = _mouseSensitivity.y / 2;
 
         if (_gunController)
         {

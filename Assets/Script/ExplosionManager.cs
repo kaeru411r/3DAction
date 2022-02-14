@@ -49,6 +49,14 @@ public class ExplosionManager : SingletonMonoBehaviour<ExplosionManager>
         }
     }
 
+    /// <summary>
+    /// リストにある全ての対象に爆発の影響を与える
+    /// </summary>
+    /// <param name="explosionForce"></param>
+    /// <param name="explosionPosition"></param>
+    /// <param name="explosionRadius"></param>
+    /// <param name="explosionDamage"></param>
+    /// <returns></returns>
     public float Explosion(float explosionForce, Vector3 explosionPosition, float explosionRadius, float explosionDamage)
     {
         float damage = 0;

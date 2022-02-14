@@ -423,6 +423,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: fd303d88-94c2-43d2-ae0a-227d7c802958
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 88c1b3de-79c4-451c-bcaa-b9ad1ff5a98e
+    m_ActionName: Player/Look(TPS GamePad)
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
