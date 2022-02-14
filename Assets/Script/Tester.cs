@@ -2,13 +2,21 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[RequireComponent(typeof(Rigidbody))]
 public class Tester : MonoBehaviour
 {
-    [SerializeField] float p;
-    [SerializeField] Rigidbody r;
-    private void Start()
+     Rigidbody r;
+
+    private void OnEnable()
     {
-        GetComponent<Rigidbody>().velocity = Vector3.forward * p;
-        r.AddForce(Vector3.forward * p * r.mass, ForceMode.Impulse);
+        if (!r)
+        {
+            r = GetComponent<Rigidbody>();
+        }
+        ExplosionManager.Instance.Add(r);
+    }
+    private void OnDisable()
+    {
+        ExplosionManager.Instance.Remove(r);
     }
 }

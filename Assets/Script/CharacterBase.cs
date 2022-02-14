@@ -11,7 +11,7 @@ public class CharacterBase : MonoBehaviour
     [SerializeField] float _hp;
     [Tooltip("移動速度")]
     [SerializeField] float _speed;
-    [Tooltip("車両の旋回速度")] 
+    [Tooltip("車両の旋回速度")]
     [SerializeField] float _vehicleTurnSpeed;
     /// <summary>地面についているかどうか</summary>
     bool _isGround;
@@ -23,6 +23,20 @@ public class CharacterBase : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody>();
         _rb.centerOfMass = new Vector3(0, -1, 0);
+    }
+
+    private void OnEnable()
+    {
+        if (!_rb)
+        {
+            _rb = GetComponent<Rigidbody>();
+        }
+        ExplosionManager.Instance.Add(_rb);
+    }
+
+    private void OnDisable()
+    {
+        ExplosionManager.Instance.Remove(_rb);
     }
 
     private void Update()
@@ -71,8 +85,8 @@ public class CharacterBase : MonoBehaviour
 
     private void OnCollisionStay(Collision collision)
     {
-        if(collision.gameObject.tag == "Ground")
-        _isGround = true;
+        if (collision.gameObject.tag == "Ground")
+            _isGround = true;
     }
 
     private void OnCollisionExit(Collision collision)

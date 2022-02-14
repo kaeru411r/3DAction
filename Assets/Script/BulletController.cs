@@ -12,7 +12,11 @@ public class BulletController : MonoBehaviour
     [Tooltip("初速")]
     [SerializeField] float _speed;
     [Tooltip("威力")]
-    [SerializeField] float _power;
+    [SerializeField] float damage;
+    [Tooltip("爆発のダメージ")]
+    [SerializeField] float _explosionDamage;
+    [Tooltip("爆発の半径")]
+    [SerializeField] float _explosionRasius;
     [Tooltip("弾が消滅するまでの時間")]
     [SerializeField] float _destroyTime;
     [Tooltip("リロードにかかる時間")]
@@ -98,7 +102,8 @@ public class BulletController : MonoBehaviour
         Debug.Log($"{t.name}に着弾　高低差{_hit.point.y - _firstPosition.y}" +
             $"　水平距離{Vector2.Distance(new Vector2(_firstPosition.x, _firstPosition.y), new Vector2(_hit.point.x, _hit.point.z))}" +
             $"　相対距離{Vector3.Distance(_firstPosition, _hit.point)}");
-        t.GetComponent<CharacterBase>()?.Shot(_power);
+        t.GetComponent<CharacterBase>()?.Shot(damage);
+        ExplosionManager.Instance.Explosion(0, _hit.point, _explosionRasius, _explosionDamage);
         Destroy(gameObject);
     }
 

@@ -28,6 +28,20 @@ public class PanjandrumController : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
     }
 
+    private void OnEnable()
+    {
+        if (!_rb)
+        {
+            _rb = GetComponent<Rigidbody>();
+        }
+        ExplosionManager.Instance.Add(_rb);
+    }
+
+    private void OnDisable()
+    {
+        ExplosionManager.Instance.Remove(_rb);
+    }
+
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -47,6 +61,12 @@ public class PanjandrumController : MonoBehaviour
 
     public void Blast()
     {
-        _rb.AddExplosionForce(_blastPower, transform.position, _blastRadius);
+
+        ExplosionManager.Instance.Explosion(_blastPower, transform.position, _blastRadius, _damage);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Blast();
     }
 }
