@@ -21,6 +21,10 @@ public class CharacterBase : MonoBehaviour
     bool _isSleeping = false;
 
 
+    /// <summary>このインスタンスが有効か否か</summary>
+    public bool IsSleeping { get { return _isSleeping; } }
+
+
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
@@ -52,6 +56,7 @@ public class CharacterBase : MonoBehaviour
     /// <param name="damage"></param>
     public void Shot(float damage)
     {
+        if(!_isSleeping)
         Damage(damage);
     }
 
