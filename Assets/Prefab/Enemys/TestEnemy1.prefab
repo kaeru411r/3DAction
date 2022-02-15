@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _accuracy: 10
+  _allowanceTime: 0.1
 --- !u!1001 &6495448761230017841
 PrefabInstance:
   m_ObjectHideFlags: 0

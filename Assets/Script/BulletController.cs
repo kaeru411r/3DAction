@@ -33,9 +33,12 @@ public class BulletController : MonoBehaviour
     Transform _root;
     /// <summary>発射された位置</summary>
     Vector3 _firstPosition;
+    /// <summary>発射された時間</summary>
+    float _firstTime;
+
     /// <summary>砲口初速</summary>
     public float Speed { get { return _speed; } }
-
+    /// <summary>重力加速度</summary>
     public float Gravity { get { return _gravity; } }
 
 
@@ -94,6 +97,7 @@ public class BulletController : MonoBehaviour
         _lastPosition = transform.position;
         _firstPosition = transform.position;
         _rb.useGravity = false;
+        _firstTime = Time.time;
     }
 
 
@@ -103,7 +107,8 @@ public class BulletController : MonoBehaviour
     {
         Debug.Log($"{t.name}に着弾　高低差{_hit.point.y - _firstPosition.y}" +
             $"　水平距離{Vector2.Distance(new Vector2(_firstPosition.x, _firstPosition.y), new Vector2(_hit.point.x, _hit.point.z))}" +
-            $"　相対距離{Vector3.Distance(_firstPosition, _hit.point)}");
+            $"　相対距離{Vector3.Distance(_firstPosition, _hit.point)} " +
+            $"  飛翔時間{Time.time - _firstTime}");
         t.GetComponent<CharacterBase>()?.Shot(_damage);
         ExplosionManager.Instance.Explosion(0, _hit.point, _explosionRasius, _explosionDamage);
         Destroy(gameObject);

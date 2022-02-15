@@ -8707,8 +8707,8 @@ MonoBehaviour:
   - Index: 9
     RightWheelMesh: {fileID: 523254146515366877}
     LeftWheelMesh: {fileID: 7335677000346344981}
-  _forwardTorque: 5000
-  _backTorque: 5000
+  _forwardTorque: 50000
+  _backTorque: 50000
   _brakeTorque: 2000
   _wheelDanpingRate: 100
   _mass: 50
