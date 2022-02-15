@@ -8,7 +8,6 @@ using System.Text;
 /// 砲動作コンポーネント
 /// 砲塔以下の操作を行う
 /// </summary>
-[RequireComponent(typeof(Rigidbody))]
 public class GunController : MonoBehaviour
 {
 
@@ -139,10 +138,13 @@ public class GunController : MonoBehaviour
         {
             Vector3 dir = new Vector3(_muzzle.eulerAngles.x + 90, _muzzle.eulerAngles.y, _muzzle.eulerAngles.z);
             var go = Instantiate(_ammos[_ammoNunber], _muzzle.position, _muzzle.rotation);
-            go.GetComponent<BulletController>()?.Fire(transform.root);
+            go.GetComponent<BulletController>()?.Fire(transform);
 
-            float mass = go.GetComponent<Rigidbody>().mass;
-            _rb.AddForceAtPosition(-_muzzle.forward * mass * _ammos[_ammoNunber].Speed, _muzzle.position, ForceMode.Impulse);
+            if (_rb)
+            {
+                float mass = go.GetComponent<Rigidbody>().mass;
+                _rb.AddForceAtPosition(-_muzzle.forward * mass * _ammos[_ammoNunber].Speed, _muzzle.position, ForceMode.Impulse);
+            }
 
             StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
         }

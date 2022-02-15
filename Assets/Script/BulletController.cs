@@ -53,7 +53,7 @@ public class BulletController : MonoBehaviour
             transform.forward = _rb.velocity;
             if (HitCheck())   //ここにレイで着弾を観測する部分を書く
             {
-                Hit(_hit.transform.root);
+                Hit(_hit.transform);
             }
         }
 
