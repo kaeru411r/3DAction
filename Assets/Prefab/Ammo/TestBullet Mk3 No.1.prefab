@@ -3469,7 +3469,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 100
-  _power: 200
+  damage: 100
+  _explosionDamage: 50
+  _explosionRasius: 3
   _destroyTime: 30
   _reloadTime: 0.5
   _gravity: 9.8

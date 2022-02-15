@@ -17,6 +17,8 @@ public class CharacterBase : MonoBehaviour
     bool _isGround;
     /// <summary>キャラクターのリジッドボディ</summary>
     Rigidbody _rb;
+    /// <summary>このインスタンスが有効か否か</summary>
+    bool _isSleeping = false;
 
 
     void Start()
@@ -27,11 +29,18 @@ public class CharacterBase : MonoBehaviour
 
     private void OnEnable()
     {
+        _isSleeping = false;
         if (!_rb)
         {
             _rb = GetComponent<Rigidbody>();
         }
         ExplosionManager.Instance.Add(this);
+        ExplosionManager.Instance.Add(_rb);
+    }
+
+    private void OnDisable()
+    {
+        _isSleeping = true;
     }
 
     private void Update()
