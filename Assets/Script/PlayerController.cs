@@ -11,36 +11,38 @@ using System;
 /// プレイヤー操作コンポーネント
 /// プレイヤーによる車両の操作を行う
 /// </summary>
-[RequireComponent(typeof(GunController), typeof(CharacterBase), typeof(CaterpillarController))]
-public class PlayerController : MonoBehaviour
+[RequireComponent(typeof(GunController), typeof(CaterpillarController))]
+public class PlayerController : SingletonMonoBehaviour<PlayerController>
 {
     GunController _gunController;
-    CharacterBase _characterBase;
     CaterpillarController _caterpillarController;
     /// <summary>照準先</summary>
     Transform _target;
     /// <summary>サイトオブジェクトのトランスフォーム</summary>
     Transform _sight;
+    [SerializeField] float a;
     [Tooltip("レティクル")]
     [SerializeField] Image _crosshair;
     [Tooltip("rayを飛ばす距離")]
-    [SerializeField] float _distance;
+    [SerializeField] float _distance = 100;
     [Tooltip("フィールド上で見える自分以外のレイヤー")]
     [SerializeField] LayerMask _layerMask;
     [Tooltip("FPS時の砲塔砲身の予約できる回転量の上限")]
     [SerializeField] Vector2 _maxDeltaRotation = new Vector2(10, 10);
     [Tooltip("マウス感度")]
-    [SerializeField] Vector2 _mouseSensitivity;
+    [SerializeField] Vector2 _mouseSensitivity = Vector2.one * 10;
     [Tooltip("TPSカメラ")]
-    [SerializeField] CinemachineFreeLook _tpsVCam;
+    [SerializeField] CinemachineVirtualCamera _tpsVCam;
     [Tooltip("TPSカメラに近い位置に設置した中間VCam")]
     [SerializeField] CinemachineVirtualCameraBase _intermediateVCam;
     [Tooltip("FPSカメラ")]
     [SerializeField] CinemachineVirtualCamera _fpsVCam;
     [Tooltip("TPSのデフォルトの視野角")]
-    [SerializeField] float _tpsFov;
+    [SerializeField] float _tpsFov = 70;
     [Tooltip("望遠鏡の倍率")]
-    [SerializeField] float _scopeMagnification;
+    [SerializeField] float _scopeMagnification = 2;
+    [Tooltip("TPSカメラの参照トランスフォーム")]
+    [SerializeField] Transform _tpsCamBass;
     /// <summary>現在の視点</summary>
     [SerializeField] ViewMode _viewMode;
     /// <summary>移動用ベクトル</summary>
@@ -58,6 +60,7 @@ public class PlayerController : MonoBehaviour
     /// <summary>_target用オブジェクトの名前</summary>
     string _targetName = "TPSTarget";
 
+
     private void OnEnable()
     {
         Cursor.visible = false;
@@ -68,10 +71,14 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = true;
     }
 
+    private void OnDestroy()
+    {
+        Destroy(transform.root.gameObject);
+    }
+
     private void Start()
     {
         _gunController = GetComponent<GunController>();
-        _characterBase = GetComponent<CharacterBase>();
         _caterpillarController = GetComponent<CaterpillarController>();
         _fpsFov = _fpsVCam.m_Lens.FieldOfView;
         _tpsVCam.m_Lens.FieldOfView = _tpsFov;
@@ -84,7 +91,8 @@ public class PlayerController : MonoBehaviour
         }
         if (_viewMode == ViewMode.TPS)
         {
-            StartCoroutine(TPSSetUp());
+            //StartCoroutine(TPSSetUp());
+            _tpsVCam.MoveToTopOfPrioritySubqueue();
         }
     }
 
@@ -106,10 +114,14 @@ public class PlayerController : MonoBehaviour
         _tpsVCam.MoveToTopOfPrioritySubqueue();
     }
 
+    #region 入力受付部
+
     /// <summary>WASD及び左スティック</summary>
     public void OnMove(InputAction.CallbackContext context)
     {
         _move = context.ReadValue<Vector2>();
+        _caterpillarController?.Move(_move);
+        //Debug.LogError(_move);
     }
     /// <summary>マウス移動</summary>
     public void OnMouseLook(InputAction.CallbackContext context)
@@ -160,7 +172,7 @@ public class PlayerController : MonoBehaviour
     {
         if (context.performed)
         {
-            CameraChange();
+            //CameraChange();
         }
     }
     /// <summary>右クリック及び左トリガー</summary>
@@ -177,13 +189,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    #endregion
+
 
     // Update is called once per frame
     void Update()
     {
-        _caterpillarController?.Move(_move);
-        _tpsVCam.m_XAxis.m_MaxSpeed = _mouseSensitivity.x * 20;
-        _tpsVCam.m_YAxis.m_MaxSpeed = _mouseSensitivity.y / 2;
 
         if (_gunController)
         {
@@ -228,8 +239,8 @@ public class PlayerController : MonoBehaviour
     /// <summary>マウスでのFPS操作</summary>
     void MouseFPSAim()
     {
-        Vector3 barrel = _gunController.Barrel;
-        Vector3 turret = _gunController.Turret;
+        Vector3 barrel = _gunController.Barrel.localEulerAngles;
+        Vector3 turret = _gunController.Turret.localEulerAngles;
         Vector2 dif = _sight.localEulerAngles - new Vector3(barrel.x, turret.y);
         _sight.Rotate(_look.y * _mouseSensitivity.y, _look.x * _mouseSensitivity.x, 0);
 
@@ -273,9 +284,9 @@ public class PlayerController : MonoBehaviour
     /// <summary>ゲームパッドでのFPS操作</summary>
     void PadFPSAim()
     {
-        Vector2 gunSpeed = _gunController.GunMoveSpeed;
-        Vector3 barrel = _gunController.Barrel;
-        Vector3 turret = _gunController.Turret;
+        Vector2 gunSpeed = _gunController.GunMoveSpeed * Time.deltaTime;
+        Vector3 barrel = _gunController.Barrel.localEulerAngles;
+        Vector3 turret = _gunController.Turret.localEulerAngles;
         _sight.localEulerAngles = new Vector3(barrel.x + gunSpeed.y * _look.y, turret.y + gunSpeed.x * _look.x);
     }
 

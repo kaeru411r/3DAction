@@ -11,18 +11,40 @@ public class CharacterBase : MonoBehaviour
     [SerializeField] float _hp;
     [Tooltip("移動速度")]
     [SerializeField] float _speed;
-    [Tooltip("車両の旋回速度")] 
+    [Tooltip("車両の旋回速度")]
     [SerializeField] float _vehicleTurnSpeed;
     /// <summary>地面についているかどうか</summary>
     bool _isGround;
     /// <summary>キャラクターのリジッドボディ</summary>
     Rigidbody _rb;
+    /// <summary>このインスタンスが有効か否か</summary>
+    bool _isSleeping = false;
+
+
+    /// <summary>このインスタンスが有効か否か</summary>
+    public bool IsSleeping { get { return _isSleeping; } }
 
 
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
-        _rb.centerOfMass = Vector3.zero;
+        _rb.centerOfMass = new Vector3(0, -1, 0);
+    }
+
+    private void OnEnable()
+    {
+        _isSleeping = false;
+        if (!_rb)
+        {
+            _rb = GetComponent<Rigidbody>();
+        }
+        ExplosionManager.Instance.Add(this);
+        ExplosionManager.Instance.Add(_rb);
+    }
+
+    private void OnDisable()
+    {
+        _isSleeping = true;
     }
 
     private void Update()
@@ -34,6 +56,7 @@ public class CharacterBase : MonoBehaviour
     /// <param name="damage"></param>
     public void Shot(float damage)
     {
+        if(!_isSleeping)
         Damage(damage);
     }
 
@@ -71,8 +94,8 @@ public class CharacterBase : MonoBehaviour
 
     private void OnCollisionStay(Collision collision)
     {
-        if(collision.gameObject.tag == "Ground")
-        _isGround = true;
+        if (collision.gameObject.tag == "Ground")
+            _isGround = true;
     }
 
     private void OnCollisionExit(Collision collision)

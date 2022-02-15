@@ -14,6 +14,14 @@
                     "interactions": ""
                 },
                 {
+                    "name": "Fire",
+                    "type": "Button",
+                    "id": "74505fea-e86e-4785-94a2-d933534dd32f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
                     "name": "Look(FPS Mouse)",
                     "type": "Value",
                     "id": "af13a63f-62f9-4c4f-8da6-eb6010d321ec",
@@ -22,10 +30,26 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Fire",
-                    "type": "Button",
-                    "id": "74505fea-e86e-4785-94a2-d933534dd32f",
-                    "expectedControlType": "Button",
+                    "name": "Look(FPS GamePad)",
+                    "type": "Value",
+                    "id": "686a98b2-a1b8-4495-9036-b497846ac175",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Look(TPS Mouse)",
+                    "type": "Value",
+                    "id": "9da6d732-4cac-4b86-a056-46b1a0190ccd",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Look(TPS GamePad)",
+                    "type": "Value",
+                    "id": "88c1b3de-79c4-451c-bcaa-b9ad1ff5a98e",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": ""
                 },
@@ -50,22 +74,6 @@
                     "type": "Button",
                     "id": "adf9fcad-c44b-4df3-b9f1-5d2afa39e40c",
                     "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Look(TPS)",
-                    "type": "Value",
-                    "id": "9da6d732-4cac-4b86-a056-46b1a0190ccd",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Look(FPS GamePad)",
-                    "type": "Value",
-                    "id": "686a98b2-a1b8-4495-9036-b497846ac175",
-                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": ""
                 },
@@ -221,17 +229,6 @@
                 },
                 {
                     "name": "",
-                    "id": "8c8e490b-c610-4785-884f-f04217b23ca4",
-                    "path": "<Mouse>/delta",
-                    "interactions": "",
-                    "processors": "ScaleVector2,InvertVector2(invertX=false)",
-                    "groups": ";Keyboard&Mouse;Touch",
-                    "action": "Look(FPS Mouse)",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "143bb1cd-cc10-4eca-a2f0-a3664166fe91",
                     "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
@@ -353,39 +350,6 @@
                 },
                 {
                     "name": "",
-                    "id": "aba9dfe4-47ed-4afc-aa24-f51b5fc86b43",
-                    "path": "<Pointer>/delta",
-                    "interactions": "",
-                    "processors": "InvertVector2(invertX=false),ScaleVector2(x=0.1,y=0.1)",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Look(TPS)",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "6e56165a-a306-42b6-a7c1-57f5deca3eba",
-                    "path": "<Gamepad>/rightStick",
-                    "interactions": "",
-                    "processors": "InvertVector2(invertX=false),ScaleVector2",
-                    "groups": "Gamepad",
-                    "action": "Look(TPS)",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "0cae9cbd-9d73-412d-a4f9-b9fab849e5c8",
-                    "path": "<Gamepad>/rightStick",
-                    "interactions": "",
-                    "processors": "InvertVector2(invertX=false)",
-                    "groups": "Gamepad",
-                    "action": "Look(FPS GamePad)",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "94050eab-05dd-4630-b523-1b2fe879fc44",
                     "path": "<Keyboard>/c",
                     "interactions": "",
@@ -425,6 +389,50 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "Aim",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8c8e490b-c610-4785-884f-f04217b23ca4",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "ScaleVector2,InvertVector2(invertX=false)",
+                    "groups": ";Keyboard&Mouse;Touch",
+                    "action": "Look(FPS Mouse)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0cae9cbd-9d73-412d-a4f9-b9fab849e5c8",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "InvertVector2(invertX=false)",
+                    "groups": "Gamepad",
+                    "action": "Look(FPS GamePad)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "aba9dfe4-47ed-4afc-aa24-f51b5fc86b43",
+                    "path": "<Pointer>/delta",
+                    "interactions": "",
+                    "processors": "InvertVector2(invertX=false),ScaleVector2(x=0.1,y=0.1)",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Look(TPS Mouse)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6e56165a-a306-42b6-a7c1-57f5deca3eba",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "InvertVector2(invertX=false),ScaleVector2",
+                    "groups": "Gamepad",
+                    "action": "Look(TPS GamePad)",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

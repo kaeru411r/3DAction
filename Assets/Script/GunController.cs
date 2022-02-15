@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Text;
 
 
 /// <summary>
@@ -26,8 +27,6 @@ public class GunController : MonoBehaviour
     [SerializeField] float _elevationAngle = 90;
     [Tooltip("俯角")]
     [SerializeField] float _depressionAngle = 90;
-    /// <summary>sightが狙う先</summary>
-    Transform _target;
     /// <summary>使う弾薬の種類</summary>
     int _ammoNunber;
     /// <summary>現在装填されてるか</summary>
@@ -38,17 +37,35 @@ public class GunController : MonoBehaviour
     const int AllAround = 360;
     /// <summary>必要なTransformがアサインされてなかったときのダミー</summary>
     Transform _dummy;
-    /// <summary>リロードコルーチン</summary>
-    Coroutine _ReLoad;
+    /// <summary>戦車のリジッドボディ</summary>
+    Rigidbody _rb;
 
 
-    public Transform Sight { get { return _sight; } set { _sight = value; } }
 
-    public Vector3 Barrel { get { return _barrel.localEulerAngles; } }
 
-    public Vector3 Turret { get { return _turret.localEulerAngles; } }
+    public Transform Sight { get { return _sight; } }
+
+    public Transform Barrel { get { return _barrel; } }
+
+    public Transform Turret { get { return _turret; } }
 
     public Vector2 GunMoveSpeed { get { return _gunMoveSpeed; } }
+
+    public BulletController Bullet
+    {
+        get
+        {
+            if (_ammos[_ammoNunber] != null)
+            {
+                return _ammos[_ammoNunber];
+            }
+            else
+            {
+                Debug.LogError($"{name}の{nameof(_ammos)}には{_ammoNunber}はありません");
+                return null;
+            }
+        }
+    }
 
     private void Start()
     {
@@ -59,10 +76,12 @@ public class GunController : MonoBehaviour
         }
         else if (_ammos.Contains(null))
         {
-            for (int i = 0; i < _ammos.Count; i++)
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0, n = 0; i < _ammos.Count; i++, n++)
             {
                 if (!_ammos[i])
                 {
+                    sb.Append($"\nElement{n}");
                     _ammos.RemoveAt(i);
                     i--;
                 }
@@ -74,29 +93,31 @@ public class GunController : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning($"{name}はAmmosに未選択があります");
+                sb.Insert(0, $"{name}の{this}は{nameof(_ammos)}の以下の項目にアサインがされていません");
+                Debug.LogWarning(sb);
             }
         }
         if (!_turret)
         {
-            Debug.LogError($"{name}はTurretが選択されていません");
+            Debug.LogError($"{name}は{nameof(_turret)}がアサインされていません");
             _turret = PreDummy();
         }
         if (!_barrel)
         {
-            Debug.LogError($"{name}はBurrelが選択されていません");
+            Debug.LogError($"{name}は{nameof(_barrel)}がアサインされていません");
             _barrel = PreDummy();
         }
         if (!_muzzle)
         {
-            Debug.LogError($"{name}はMuzzleが選択されていません");
+            Debug.LogError($"{name}は{nameof(_muzzle)}がアサインされていません");
             _muzzle = PreDummy();
         }
         if (!_sight)
         {
-            Debug.LogError($"{name}はSightが選択されていません");
+            Debug.LogError($"{name}は{nameof(_sight)}がアサインされていません");
             _sight = PreDummy();
         }
+        _rb = GetComponent<Rigidbody>();
     }
 
     private void Update()
@@ -133,7 +154,14 @@ public class GunController : MonoBehaviour
         {
             Vector3 dir = new Vector3(_muzzle.eulerAngles.x + 90, _muzzle.eulerAngles.y, _muzzle.eulerAngles.z);
             var go = Instantiate(_ammos[_ammoNunber], _muzzle.position, _muzzle.rotation);
-            go.GetComponent<BulletController>()?.Fire(transform.root);
+            go.GetComponent<BulletController>()?.Fire(transform);
+
+            if (_rb)
+            {
+                float mass = go.GetComponent<Rigidbody>().mass;
+                _rb.AddForceAtPosition(-_muzzle.forward * mass * _ammos[_ammoNunber].Speed, _muzzle.position, ForceMode.Impulse);
+            }
+
             StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
         }
     }
