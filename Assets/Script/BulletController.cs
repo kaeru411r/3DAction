@@ -36,6 +36,8 @@ public class BulletController : MonoBehaviour
     /// <summary>砲口初速</summary>
     public float Speed { get { return _speed; } }
 
+    public float Gravity { get { return _gravity; } }
+
 
 
     private void Start()

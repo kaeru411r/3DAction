@@ -43,13 +43,29 @@ public class GunController : MonoBehaviour
 
 
 
-    public Transform Sight { get { return _sight; }}
+    public Transform Sight { get { return _sight; } }
 
     public Transform Barrel { get { return _barrel; } }
 
     public Transform Turret { get { return _turret; } }
 
     public Vector2 GunMoveSpeed { get { return _gunMoveSpeed; } }
+
+    public BulletController Bullet
+    {
+        get
+        {
+            if (_ammos[_ammoNunber] != null)
+            {
+                return _ammos[_ammoNunber];
+            }
+            else
+            {
+                Debug.LogError($"{name}の{nameof(_ammos)}には{_ammoNunber}はありません");
+                return null;
+            }
+        }
+    }
 
     private void Start()
     {
@@ -61,7 +77,7 @@ public class GunController : MonoBehaviour
         else if (_ammos.Contains(null))
         {
             StringBuilder sb = new StringBuilder();
-            for (int i = 0, n = 0 ; i < _ammos.Count; i++, n++)
+            for (int i = 0, n = 0; i < _ammos.Count; i++, n++)
             {
                 if (!_ammos[i])
                 {
