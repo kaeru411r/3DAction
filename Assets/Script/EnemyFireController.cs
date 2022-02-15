@@ -32,6 +32,20 @@ public class EnemyFireController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        _sight.LookAt(_target);
+        if (_target)
+        {
+            _sight.LookAt(_target);
+            Vector3 relativePosition = _target.position - _sight.position;
+            Vector3 angle = Quaternion.Euler(relativePosition) * Vector3.forward;
+            float misalignment = (_gunController.Barrel.eulerAngles - _sight.eulerAngles).magnitude;
+            misalignment = misalignment < 180 ? misalignment : Mathf.Abs(misalignment - 360);
+
+            if (misalignment <= _accuracy)
+            {
+                _gunController.Fire();
+            }
+        }
     }
+
+
 }

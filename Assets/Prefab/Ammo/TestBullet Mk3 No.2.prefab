@@ -3469,7 +3469,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 1490
-  damage: 500
+  _damage: 500
   _explosionDamage: 100
   _explosionRasius: 5
   _destroyTime: 30

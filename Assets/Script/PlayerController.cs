@@ -239,8 +239,8 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
     /// <summary>マウスでのFPS操作</summary>
     void MouseFPSAim()
     {
-        Vector3 barrel = _gunController.Barrel;
-        Vector3 turret = _gunController.Turret;
+        Vector3 barrel = _gunController.Barrel.localEulerAngles;
+        Vector3 turret = _gunController.Turret.localEulerAngles;
         Vector2 dif = _sight.localEulerAngles - new Vector3(barrel.x, turret.y);
         _sight.Rotate(_look.y * _mouseSensitivity.y, _look.x * _mouseSensitivity.x, 0);
 
@@ -285,8 +285,8 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
     void PadFPSAim()
     {
         Vector2 gunSpeed = _gunController.GunMoveSpeed * Time.deltaTime;
-        Vector3 barrel = _gunController.Barrel;
-        Vector3 turret = _gunController.Turret;
+        Vector3 barrel = _gunController.Barrel.localEulerAngles;
+        Vector3 turret = _gunController.Turret.localEulerAngles;
         _sight.localEulerAngles = new Vector3(barrel.x + gunSpeed.y * _look.y, turret.y + gunSpeed.x * _look.x);
     }
 

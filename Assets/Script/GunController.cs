@@ -44,11 +44,11 @@ public class GunController : MonoBehaviour
 
 
 
-    public Transform Sight { get { return _sight; } set { _sight = value; } }
+    public Transform Sight { get { return _sight; }}
 
-    public Vector3 Barrel { get { return _barrel.localEulerAngles; } }
+    public Transform Barrel { get { return _barrel; } }
 
-    public Vector3 Turret { get { return _turret.localEulerAngles; } }
+    public Transform Turret { get { return _turret; } }
 
     public Vector2 GunMoveSpeed { get { return _gunMoveSpeed; } }
 
