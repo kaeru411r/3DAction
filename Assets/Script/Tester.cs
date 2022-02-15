@@ -15,8 +15,4 @@ public class Tester : MonoBehaviour
         }
         ExplosionManager.Instance.Add(r);
     }
-    private void OnDisable()
-    {
-        ExplosionManager.Instance.Remove(r);
-    }
 }

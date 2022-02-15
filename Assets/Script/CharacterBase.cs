@@ -31,12 +31,7 @@ public class CharacterBase : MonoBehaviour
         {
             _rb = GetComponent<Rigidbody>();
         }
-        ExplosionManager.Instance.Add(_rb);
-    }
-
-    private void OnDisable()
-    {
-        ExplosionManager.Instance.Remove(_rb);
+        ExplosionManager.Instance.Add(this);
     }
 
     private void Update()

@@ -43,6 +43,7 @@ public class ExplosionManager : SingletonMonoBehaviour<ExplosionManager>
     /// <param name="explosionRadius"></param>
     public void Explosion(float explosionForce, Vector3 explosionPosition, float explosionRadius)
     {
+        RbNullCheck();
         foreach (var r in _simulationRbs)
         {
             r.AddExplosionForce(explosionForce, explosionPosition, explosionRadius);
@@ -62,12 +63,13 @@ public class ExplosionManager : SingletonMonoBehaviour<ExplosionManager>
         float damage = 0;
         if (explosionForce > 0)
         {
+            RbNullCheck();
             foreach (var r in _simulationRbs)
             {
                 r.AddExplosionForce(explosionForce, explosionPosition, explosionRadius);
             }
         }
-
+        CBNullCheck();
         foreach (var c in _simulationCBs)
         {
             float d = (explosionRadius - Vector3.Distance(explosionPosition, c.transform.position)) / explosionRadius * explosionDamage;
@@ -78,5 +80,28 @@ public class ExplosionManager : SingletonMonoBehaviour<ExplosionManager>
             }
         }
         return damage;
+    }
+
+    void CBNullCheck()
+    {
+        for(int i = 0; i < _simulationCBs.Count; i++)
+        {
+            if (!_simulationCBs[i])
+            {
+                _simulationCBs.RemoveAt(i);
+                i--;
+            }
+        }
+    }
+    void RbNullCheck()
+    {
+        for (int i = 0; i < _simulationRbs.Count; i++)
+        {
+            if (!_simulationRbs[i])
+            {
+                _simulationRbs.RemoveAt(i);
+                i--;
+            }
+        }
     }
 }
