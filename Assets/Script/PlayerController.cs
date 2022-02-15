@@ -172,7 +172,7 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
     {
         if (context.performed)
         {
-            CameraChange();
+            //CameraChange();
         }
     }
     /// <summary>右クリック及び左トリガー</summary>
