@@ -18,6 +18,8 @@ public class EnemyFireController : MonoBehaviour
     //[SerializeField, Range(1, 3)] float _allowanceTime;
     [Tooltip("弾道")]
     [SerializeField] AimMode _aimMode = AimMode.PointBlank;
+    [Tooltip("索敵範囲")]
+    [SerializeField] float _range = 100;
 
     /// <summary>標的のTransform</summary>
     Transform _target;
@@ -44,15 +46,18 @@ public class EnemyFireController : MonoBehaviour
     {
         if (_target)
         {
-            Vector3 pTarget = _target.position;
-        //if (_targetRb)
-        //{
-        //     pTarget = Prognosis();
-        //}
-
-            if (Aim(pTarget).Item1)
+            if (Vector3.Distance(transform.position, _target.position) <= _range)
             {
-                _gunController.Fire();
+                Vector3 pTarget = _target.position;
+                //if (_targetRb)
+                //{
+                //     pTarget = Prognosis();
+                //}
+
+                if (Aim(pTarget).Item1)
+                {
+                    _gunController.Fire();
+                }
             }
         }
     }
@@ -77,7 +82,7 @@ public class EnemyFireController : MonoBehaviour
 
         float t = 0;
 
-        if(d >= 0)
+        if (d >= 0)
         {
             float t0 = Mathf.Atan((-b - Mathf.Sqrt(d)) / 2);
             float t1 = Mathf.Atan((-b + Mathf.Sqrt(d)) / 2);
@@ -92,7 +97,7 @@ public class EnemyFireController : MonoBehaviour
             }
             //Debug.Log($"{t0 * 180 / Mathf.PI}, {t1 * 180 / Mathf.PI}, {t}");
 
-            _sight.Rotate(new Vector3( -(t + _sight.eulerAngles.x), 0, 0));
+            _sight.Rotate(new Vector3(-(t + _sight.eulerAngles.x), 0, 0));
         }
         else
         {
@@ -104,9 +109,9 @@ public class EnemyFireController : MonoBehaviour
         float misalignment = (barrel - s).magnitude;
         misalignment = misalignment < 180 ? misalignment : Mathf.Abs(misalignment - 360);
         //Debug.Log(misalignment);
-        if(misalignment <= _accuracy)
+        if (misalignment <= _accuracy)
         {
-            return (true , t);
+            return (true, t);
         }
         return (false, 0);
     }
@@ -146,7 +151,7 @@ public class EnemyFireController : MonoBehaviour
     //    {
     //        Debug.LogError($"{name}で所定回数以上のループを検知 t0 = {t0} t1 = {t1}");
     //    }
-        
+
     //    return _target.position + _targetRb.velocity * t1;
     //}
 
