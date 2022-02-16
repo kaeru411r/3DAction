@@ -61,8 +61,16 @@ public class BulletController : MonoBehaviour
                 Hit(_hit.transform);
             }
         }
-
     }
+
+    private void FixedUpdate()
+    {
+        if (_isFired)
+        {
+            //_rb.AddForce(0, -_gravity, 0, ForceMode.Acceleration);
+        }
+    }
+
     /// <summary>着弾の有無、及びその対象の確認</summary>
     private bool HitCheck()
     {
