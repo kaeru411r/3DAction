@@ -10,6 +10,15 @@ public class ExplosionManager : SingletonMonoBehaviour<ExplosionManager>
 
     List<Rigidbody> _simulationRbs = new List<Rigidbody>();
     List<CharacterBase> _simulationCBs = new List<CharacterBase>();
+    List<Z> z = new List<Z>();
+
+    private void Update()
+    {
+        foreach(var s in z)
+        {
+            Debug.DrawRay(s.a, s.b);
+        }
+    }
 
 
     /// <summary>爆発の影響を受けるオブジェクトのリストに登録する</summary>
@@ -90,9 +99,7 @@ public class ExplosionManager : SingletonMonoBehaviour<ExplosionManager>
     {
         RbNullCheck();
         CBNullCheck();
-        float damage = 0;
-        Dictionary<CharacterBase, (Vector3, Vector3)> cs = new Dictionary<CharacterBase, (Vector3, Vector3)>();
-        Dictionary<Rigidbody, (Vector3, Vector3)> rs = new Dictionary<Rigidbody, (Vector3, Vector3)>();
+        float addDamage = 0;
 
         for (int i = 0; i <= _segment; i++)
         {
@@ -101,47 +108,39 @@ public class ExplosionManager : SingletonMonoBehaviour<ExplosionManager>
                 for(int k = 0; k <= _segment; k++)
                 {
                     RaycastHit hit;
-                    Vector3 dir = new Vector3(-1 + (1 / (_segment / 2) * i), -1 + (1 / (_segment / 2) * j), -1 + (1 / (_segment / 2) * k));
+                    Vector3 dir = new Vector3(-1 + (i * (2f / _segment)), -1 + (j * (2f / _segment)), -1 + (k * (2f / _segment)));
                     Ray ray = new Ray(explosionPosition, dir.normalized);
                     if(Physics.Raycast(ray, out hit, explosionRadius)){
                         var c = hit.collider.gameObject.GetComponent<CharacterBase>();
                         if (c)
                         {
+                            float damage = explosionRadius - Vector3.Distance(explosionPosition, hit.point) / explosionRadius * explosionDamage;
+                            damage = Mathf.Max(0, damage);
                             if (_simulationCBs.Contains(c))
                             {
-                                cs[c] += (dir * (explosionRadius - Vector3.Distance(explosionPosition, hit.point)) / explosionRadius * explosionDamage, hit.point);
-                            }
-                            else
-                            {
-                                cs.Add(c, dir * (explosionRadius - Vector3.Distance(explosionPosition, hit.point)) / explosionRadius * explosionDamage);
+                                c.Shot(damage);
+                                addDamage += damage;
                             }
                         }
 
                         var r = hit.collider.gameObject.GetComponent<Rigidbody>();
                         if (r)
                         {
-                            if (rs.ContainsKey(r))
+                            float force = (explosionRadius - Vector3.Distance(explosionPosition, hit.point) / explosionRadius) * explosionForce;
+                            force = Mathf.Max(0, force);
+                            if (_simulationRbs.Contains(r))
                             {
-                                rs[r] += dir * (explosionRadius - Vector3.Distance(explosionPosition, hit.point)) / explosionRadius * explosionForce;
-                            }
-                            else
-                            {
-                                rs.Add(r, dir * (explosionRadius - Vector3.Distance(explosionPosition, hit.point)) / explosionRadius * explosionForce);
+                                Debug.Log(force);
+                                z.Add(new Z(hit.point, ray.direction * force));
+                                r.AddForceAtPosition(hit.point, ray.direction * force);
                             }
                         }
                     }
                 }
             }
         }
-        foreach(var r in rs)
-        {
-            if (_simulationRbs.Contains(r.Key))
-            {
-                r.Key.AddForceAtPosition(r.Value, )
-            }
-        }
 
-        return damage;
+        return addDamage;
     }
 
     void CBNullCheck()
@@ -168,4 +167,13 @@ public class ExplosionManager : SingletonMonoBehaviour<ExplosionManager>
     }
 }
 
-public struct 
+public struct Z
+{
+    public Vector3 a;
+    public Vector3 b;
+    public Z(Vector3 a, Vector3 b)
+    {
+        this.a = a;
+        this.b = b;
+    }
+}

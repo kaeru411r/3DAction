@@ -15,6 +15,11 @@ public class BombController : MonoBehaviour
 
     public void Blast()
     {
-        ExplosionManager.Instance.Explosion(_explosionForce, transform.position, _explosionRadius, _damage);
+        ExplosionManager.Instance.AdvancedExplosion(_explosionForce, transform.position, _explosionRadius, _damage);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Blast();
     }
 }
