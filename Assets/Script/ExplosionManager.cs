@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class ExplosionManager : SingletonMonoBehaviour<ExplosionManager>
 {
+    [Tooltip("爆発のシミュレーションの精度")]
+    [SerializeField, Range(1, 16)] int _segment = 7;
+    [SerializeField] LayerMask _layerMask;
+
     List<Rigidbody> _simulationRbs = new List<Rigidbody>();
     List<CharacterBase> _simulationCBs = new List<CharacterBase>();
 
@@ -82,6 +86,64 @@ public class ExplosionManager : SingletonMonoBehaviour<ExplosionManager>
         return damage;
     }
 
+    public float AdvancedExplosion(float explosionForce, Vector3 explosionPosition, float explosionRadius, float explosionDamage)
+    {
+        RbNullCheck();
+        CBNullCheck();
+        float damage = 0;
+        Dictionary<CharacterBase, (Vector3, Vector3)> cs = new Dictionary<CharacterBase, (Vector3, Vector3)>();
+        Dictionary<Rigidbody, (Vector3, Vector3)> rs = new Dictionary<Rigidbody, (Vector3, Vector3)>();
+
+        for (int i = 0; i <= _segment; i++)
+        {
+            for(int j = 0; j <= _segment; j++)
+            {
+                for(int k = 0; k <= _segment; k++)
+                {
+                    RaycastHit hit;
+                    Vector3 dir = new Vector3(-1 + (1 / (_segment / 2) * i), -1 + (1 / (_segment / 2) * j), -1 + (1 / (_segment / 2) * k));
+                    Ray ray = new Ray(explosionPosition, dir.normalized);
+                    if(Physics.Raycast(ray, out hit, explosionRadius)){
+                        var c = hit.collider.gameObject.GetComponent<CharacterBase>();
+                        if (c)
+                        {
+                            if (_simulationCBs.Contains(c))
+                            {
+                                cs[c] += (dir * (explosionRadius - Vector3.Distance(explosionPosition, hit.point)) / explosionRadius * explosionDamage, hit.point);
+                            }
+                            else
+                            {
+                                cs.Add(c, dir * (explosionRadius - Vector3.Distance(explosionPosition, hit.point)) / explosionRadius * explosionDamage);
+                            }
+                        }
+
+                        var r = hit.collider.gameObject.GetComponent<Rigidbody>();
+                        if (r)
+                        {
+                            if (rs.ContainsKey(r))
+                            {
+                                rs[r] += dir * (explosionRadius - Vector3.Distance(explosionPosition, hit.point)) / explosionRadius * explosionForce;
+                            }
+                            else
+                            {
+                                rs.Add(r, dir * (explosionRadius - Vector3.Distance(explosionPosition, hit.point)) / explosionRadius * explosionForce);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        foreach(var r in rs)
+        {
+            if (_simulationRbs.Contains(r.Key))
+            {
+                r.Key.AddForceAtPosition(r.Value, )
+            }
+        }
+
+        return damage;
+    }
+
     void CBNullCheck()
     {
         for(int i = 0; i < _simulationCBs.Count; i++)
@@ -105,3 +167,5 @@ public class ExplosionManager : SingletonMonoBehaviour<ExplosionManager>
         }
     }
 }
+
+public struct 

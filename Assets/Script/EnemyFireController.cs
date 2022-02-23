@@ -80,8 +80,11 @@ public class EnemyFireController : MonoBehaviour
             float h = target.y - sight.y;
             float l = Vector2.Distance(new Vector2(target.x, target.z), new Vector2(sight.x, sight.z));
 
+            //tan(theta)の二次関数 a * tan(theta) ^ 2 + b * tan(theta) + cの係数 (aは1なので省略)
             float b = -1 * (2 * v * v * l) / (g * l * l);
             float c = 1 + (2 * v * v * h) / (g * l * l);
+
+            //二次関数の解が存在するかを確かめる判別式
             float d = b * b - 4 * c;
 
             float t = 0;
