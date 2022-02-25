@@ -73,4 +73,9 @@ public class PanjandrumController : MonoBehaviour
         yield return new WaitForSeconds(time);
         Blast();
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Fire();
+    }
 }

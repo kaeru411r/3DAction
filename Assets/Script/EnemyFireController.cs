@@ -20,6 +20,8 @@ public class EnemyFireController : MonoBehaviour
     [SerializeField] AimMode _aimMode = AimMode.PointBlank;
     [Tooltip("索敵範囲")]
     [SerializeField] float _range = 100;
+    [Tooltip("Defaltレイヤーを選択")]
+    [SerializeField] LayerMask _layerMask;
 
     /// <summary>標的のTransform</summary>
     Transform _target;
@@ -68,50 +70,56 @@ public class EnemyFireController : MonoBehaviour
     /// <returns>照準と砲の角度の差  true 規定値以内 : false 規定値外 , </returns>
     (bool, float angle) Aim(Vector3 target)
     {
-        _sight.LookAt(target);
+        if (!Physics.Raycast(_sight.position, target - _sight.position, Vector3.Distance(target, _sight.position), _layerMask)){
+            _sight.LookAt(target);
+            //Debug.Log(1);
 
-        float g = _gunController.Bullet.Gravity;
-        float v = _gunController.Bullet.Speed;
-        Vector3 sight = _sight.transform.position;
-        float h = target.y - sight.y;
-        float l = Vector2.Distance(new Vector2(target.x, target.z), new Vector2(sight.x, sight.z));
+            float g = _gunController.Bullet.Gravity;
+            float v = _gunController.Bullet.Speed;
+            Vector3 sight = _sight.transform.position;
+            float h = target.y - sight.y;
+            float l = Vector2.Distance(new Vector2(target.x, target.z), new Vector2(sight.x, sight.z));
 
-        float b = -1 * (2 * v * v * l) / (g * l * l);
-        float c = 1 + (2 * v * v * h) / (g * l * l);
-        float d = b * b - 4 * c;
+            //tan(theta)の二次関数 a * tan(theta) ^ 2 + b * tan(theta) + cの係数 (aは1なので省略)
+            float b = -1 * (2 * v * v * l) / (g * l * l);
+            float c = 1 + (2 * v * v * h) / (g * l * l);
 
-        float t = 0;
+            //二次関数の解が存在するかを確かめる判別式
+            float d = b * b - 4 * c;
 
-        if (d >= 0)
-        {
-            float t0 = Mathf.Atan((-b - Mathf.Sqrt(d)) / 2);
-            float t1 = Mathf.Atan((-b + Mathf.Sqrt(d)) / 2);
+            float t = 0;
 
-            if (_aimMode == AimMode.PointBlank)
+            if (d >= 0)
             {
-                t = Mathf.Min(t0, t1) * 180 / Mathf.PI;
+                float t0 = Mathf.Atan((-b - Mathf.Sqrt(d)) / 2);
+                float t1 = Mathf.Atan((-b + Mathf.Sqrt(d)) / 2);
+
+                if (_aimMode == AimMode.PointBlank)
+                {
+                    t = Mathf.Min(t0, t1) * 180 / Mathf.PI;
+                }
+                else
+                {
+                    t = Mathf.Max(t0, t1) * 180 / Mathf.PI;
+                }
+                //Debug.Log($"{t0 * 180 / Mathf.PI}, {t1 * 180 / Mathf.PI}, {t}");
+
+                _sight.Rotate(new Vector3(-(t + _sight.eulerAngles.x), 0, 0));
             }
             else
             {
-                t = Mathf.Max(t0, t1) * 180 / Mathf.PI;
+                return (false, 0);
             }
-            //Debug.Log($"{t0 * 180 / Mathf.PI}, {t1 * 180 / Mathf.PI}, {t}");
 
-            _sight.Rotate(new Vector3(-(t + _sight.eulerAngles.x), 0, 0));
-        }
-        else
-        {
-            return (false, 0);
-        }
-
-        Vector2 barrel = new Vector2(_gunController.Barrel.eulerAngles.x, _gunController.Barrel.eulerAngles.y);
-        Vector2 s = new Vector2(_sight.eulerAngles.x, _sight.eulerAngles.y);
-        float misalignment = (barrel - s).magnitude;
-        misalignment = misalignment < 180 ? misalignment : Mathf.Abs(misalignment - 360);
-        //Debug.Log(misalignment);
-        if (misalignment <= _accuracy)
-        {
-            return (true, t);
+            Vector2 barrel = new Vector2(_gunController.Barrel.eulerAngles.x, _gunController.Barrel.eulerAngles.y);
+            Vector2 s = new Vector2(_sight.eulerAngles.x, _sight.eulerAngles.y);
+            float misalignment = (barrel - s).magnitude;
+            misalignment = misalignment < 180 ? misalignment : Mathf.Abs(misalignment - 360);
+            //Debug.Log(misalignment);
+            if (misalignment <= _accuracy)
+            {
+                return (true, t);
+            }
         }
         return (false, 0);
     }

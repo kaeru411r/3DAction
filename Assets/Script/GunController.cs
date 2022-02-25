@@ -24,9 +24,9 @@ public class GunController : MonoBehaviour
     [Tooltip("砲の動作スピード")]
     [SerializeField] Vector2 _gunMoveSpeed;
     [Tooltip("仰角")]
-    [SerializeField] float _elevationAngle = 90;
+    [SerializeField, Range(0, 90)] float _elevationAngle = 0;
     [Tooltip("俯角")]
-    [SerializeField] float _depressionAngle = 90;
+    [SerializeField, Range(-90, 0)] float _depressionAngle = 0;
     /// <summary>使う弾薬の種類</summary>
     int _ammoNunber;
     /// <summary>現在装填されてるか</summary>
@@ -132,10 +132,10 @@ public class GunController : MonoBehaviour
             //Debug.Log($"#1 {_sight.eulerAngles.x} {-_elevationAngle} {_sight.eulerAngles.x < -_elevationAngle}");
             _sight.localEulerAngles = new Vector3(-_elevationAngle, _sight.localEulerAngles.y, _sight.localEulerAngles.z);
         }
-        else if (x > _depressionAngle)
+        else if (x > -_depressionAngle)
         {
             //Debug.Log($"#2 {_sight.eulerAngles.x} {-_depressionAngle} {_sight.eulerAngles.x > _depressionAngle}");
-            _sight.localEulerAngles = new Vector3(_depressionAngle, _sight.localEulerAngles.y, _sight.localEulerAngles.z);
+            _sight.localEulerAngles = new Vector3(-_depressionAngle, _sight.localEulerAngles.y, _sight.localEulerAngles.z);
         }
     }
 

@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 using System.Text.RegularExpressions;
 using Cinemachine;
 using System;
+using UnityEngine.UI;
 
 
 /// <summary>
@@ -16,11 +17,11 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
 {
     GunController _gunController;
     CaterpillarController _caterpillarController;
+    CharacterBase _characterBase;
     /// <summary>照準先</summary>
     Transform _target;
     /// <summary>サイトオブジェクトのトランスフォーム</summary>
     Transform _sight;
-    [SerializeField] float a;
     [Tooltip("レティクル")]
     [SerializeField] Image _crosshair;
     [Tooltip("rayを飛ばす距離")]
@@ -43,6 +44,7 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
     [SerializeField] float _scopeMagnification = 2;
     [Tooltip("TPSカメラの参照トランスフォーム")]
     [SerializeField] Transform _tpsCamBass;
+    [SerializeField] Text _hpText;
     /// <summary>現在の視点</summary>
     [SerializeField] ViewMode _viewMode;
     /// <summary>移動用ベクトル</summary>
@@ -80,6 +82,7 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
     {
         _gunController = GetComponent<GunController>();
         _caterpillarController = GetComponent<CaterpillarController>();
+        _characterBase = GetComponent<CharacterBase>();
         _fpsFov = _fpsVCam.m_Lens.FieldOfView;
         _tpsVCam.m_Lens.FieldOfView = _tpsFov;
         _defaltLayerMask = Camera.main.cullingMask;
@@ -115,7 +118,6 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
     }
 
     #region 入力受付部
-
     /// <summary>WASD及び左スティック</summary>
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -195,6 +197,10 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
     // Update is called once per frame
     void Update()
     {
+        if (_hpText && _characterBase)
+        {
+            _hpText.text = $"HP {_characterBase.Hp}";
+        }
 
         if (_gunController)
         {
