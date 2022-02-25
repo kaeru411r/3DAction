@@ -13,16 +13,12 @@ public class CharacterBase : MonoBehaviour
     /// <summary>このインスタンスが有効か否か</summary>
     bool _isSleeping = false;
 
-
     /// <summary>このインスタンスが有効か否か</summary>
     public bool IsSleeping { get { return _isSleeping; } }
 
     public float Hp { get { return _hp; } }
 
 
-    void Start()
-    {
-    }
 
     private void OnEnable()
     {
@@ -43,11 +39,6 @@ public class CharacterBase : MonoBehaviour
     private void OnDisable()
     {
         _isSleeping = true;
-    }
-
-    private void Update()
-    {
-        //_rb.centerOfMass = Vector3.zero;
     }
 
     /// <summary>被弾時の処理</summary>

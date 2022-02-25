@@ -13,13 +13,13 @@ public class BombController : MonoBehaviour
     [Tooltip("基本ダメージ")]
     [SerializeField] float _damage;
 
-    public void Blast()
+    float Blast()
     {
-        ExplosionManager.Instance.AdvancedExplosion(_explosionForce, transform.position, _explosionRadius, _damage);
+        return ExplosionManager.Instance.AdvancedExplosion(_explosionForce, transform.position, _explosionRadius, _damage);
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void Update()
     {
-        Blast();
+        Debug.Log($"{Blast()}ダメージ与えた");
     }
 }
