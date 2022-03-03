@@ -169,7 +169,6 @@ public class ExplosionManager : SingletonMonoBehaviour<ExplosionManager>
                                 if (_simulationRbs.Contains(r))
                                 {
                                     float force = (explosionRadius - Vector3.Distance(explosionPosition, hit.point)) / explosionRadius * explosionForce;
-                                    force = explosionForce;
                                     force *= Mathf.Cos(angle);
                                     r.AddForceAtPosition(hit.normal * force, hit.point, ForceMode.Impulse);
                                 }
@@ -247,7 +246,6 @@ public class ExplosionManager : SingletonMonoBehaviour<ExplosionManager>
                                 if (_simulationRbs.Contains(r))
                                 {
                                     float force = (explosionRadius - Vector3.Distance(explosionPosition, hit.point)) / explosionRadius * explosionForce;
-                                    force = explosionForce;
                                     force *= Mathf.Cos(angle);
                                     r.AddForceAtPosition(hit.normal * force, hit.point, ForceMode.Impulse);
                                 }
