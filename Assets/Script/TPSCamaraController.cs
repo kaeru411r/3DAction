@@ -146,10 +146,10 @@ public class TPSCamaraController : MonoBehaviour
         }
         else if (_vCam.LookAt)
         {
-            int segment = 20;
+            int segment = 72;
             float line = Mathf.PI * 2 / segment;
             Vector3 pos = transform.position + transform.up * -1 * -_bottomLimit * _radius;
-            float radius = Mathf.Cos(_bottomLimit * Mathf.PI / 2) * _radius;
+            float radius = Mathf.Sqrt(_radius * _radius - _radius * _radius * _bottomLimit * _bottomLimit);
             for (float i = 0; i < Mathf.PI * 2; i += line)
             {
                 Vector3 start = pos + radius * Mathf.Cos(i) * transform.forward + radius * Mathf.Sin(i) * transform.right;
@@ -158,7 +158,7 @@ public class TPSCamaraController : MonoBehaviour
                 Gizmos.DrawLine(start, goal);
             }
             pos = transform.position + transform.up * -1 * -_upperLimit * _radius;
-            radius = Mathf.Cos(_upperLimit * Mathf.PI / 2) * _radius;
+            radius = Mathf.Sqrt(_radius * _radius - _radius * _radius * _upperLimit * _upperLimit);
             for (float i = 0; i < Mathf.PI * 2; i += line)
             {
                 Vector3 start = pos + radius * Mathf.Cos(i) * transform.forward + radius * Mathf.Sin(i) * transform.right;

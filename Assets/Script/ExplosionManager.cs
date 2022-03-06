@@ -45,6 +45,7 @@ public class ExplosionManager : SingletonMonoBehaviour<ExplosionManager>
     /// <param name="rb"></param>
     public void Add(Rigidbody rb)
     {
+        if(!_simulationRbs.Contains(rb))
         _simulationRbs.Add(rb);
     }
 
@@ -52,20 +53,23 @@ public class ExplosionManager : SingletonMonoBehaviour<ExplosionManager>
     /// <param name="rb"></param>
     public void Remove(Rigidbody rb)
     {
+        for(; _simulationRbs.Contains(rb); )
         _simulationRbs.Remove(rb);
     }
     /// <summary>爆発のダメージを受けるオブジェクトのリストに登録する</summary>
     /// <param name="cB"></param>
     public void Add(CharacterBase cB)
     {
-        _simulationCBs.Add(cB);
+        if (!_simulationCBs.Contains(cB))
+            _simulationCBs.Add(cB);
     }
 
     /// <summary>爆発のダメージを受けるオブジェクトのリストから除外する</summary>
     /// <param name="cB"></param>
     public void Remove(CharacterBase cB)
     {
-        _simulationCBs.Remove(cB);
+        for (; _simulationCBs.Contains(cB);)
+            _simulationCBs.Remove(cB);
     }
 
     /// <summary>
