@@ -8,7 +8,7 @@ public class CameraTest : MonoBehaviour
     [SerializeField] float _distance;
     [SerializeField] float _radius;
 
-    Color _lineColor = new Color(1, 0, 0, 0.7f);
+    Color _gizmosColor = new Color(1, 0, 0, 0.7f);
 
     const int _segment = 20;
 
@@ -34,7 +34,7 @@ public class CameraTest : MonoBehaviour
         {
             Vector3 start = pos + _radius * Mathf.Cos(i) * transform.forward + _radius * Mathf.Sin(i) * transform.right;
             Vector3 goal = pos + _radius * Mathf.Cos(i + line) * transform.forward + _radius * Mathf.Sin(i + line) * transform.right;
-            Gizmos.color = _lineColor;
+            Gizmos.color = _gizmosColor;
             Gizmos.DrawLine(start, goal);
         }
     }
