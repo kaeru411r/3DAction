@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CameraTest : MonoBehaviour
 {
-    [SerializeField] Transform _transform;
     [SerializeField] float _distance;
     [SerializeField] float _radius;
 
@@ -16,14 +15,12 @@ public class CameraTest : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        _transform.position = transform.position + transform.up * -1 * _distance;
-        _transform.rotation = transform.rotation; 
     }
 
     private void OnDrawGizmosSelected()
