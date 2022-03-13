@@ -130,7 +130,60 @@ public class TPSCamaraController : MonoBehaviour
 
         if (top < _mark.localPosition.y)            //カメラが範囲より上に出ていた時
         {
-            Debug.Log(1);
+            //Followを中心とし、カメラ上を通る円の回転軸の方向ベクトル
+            Vector3 n0 = Quaternion.Euler(0, 90, 0) * direction;
+            float d0 = n0.x * _followTr.position.x + n0.y * _followTr.position.y + n0.z * _followTr.position.z;
+            //制限の円の回転軸の方向ベクトル
+            Vector3 n1 = _followTr.up;
+            Vector3 cPos = _followTr.position + _followTr.up * top;
+            float d1 = n1.x * cPos.x + n1.y * cPos.y + n1.z * cPos.z;
+            //各円を含む二つの面の接線の方向ベクトル
+            Vector3 e = new Vector3(n0.y * n1.z - n0.z * n1.y, n0.z * n1.x - n0.x * n1.z, n0.x * n1.y - n0.y * n1.x);
+
+            Vector3 a = Vector3.zero;
+
+            if (e.x != 0f)
+            {
+                a = new Vector3((d0 * n1.y - d1 * n0.y) / e.z, (d0 * n1.x - d1 * n0.x) / -e.z, 0);
+            }
+            else if (e.y != 0f)
+            {
+                a = new Vector3((d0 * n1.z - d1 * n0.z) / -e.y, 0, (d0 * n1.x - d1 * n0.x) / -e.y);
+            }
+            else if (e.z != 0f)
+            {
+                a = new Vector3(0, (d0 * n1.z - d1 * n0.z) / e.x, (d0 * n1.y - d1 * n0.y) / -e.x);
+            }
+
+            Debug.DrawRay(a, e * 100);
+            Debug.DrawRay(a, e * -100);
+
+            Vector3 buf = (a - _followTr.position);
+            float d = Vector3.Dot(e, buf) * Vector3.Dot(e, a + _followTr.position) - (Vector3.Dot(a , a) - _radius * _radius);
+
+            Vector3 pos;
+
+            if (d > 0)
+            {
+                float t0 = -Vector3.Dot(e, buf) + Mathf.Sqrt(d);
+                float t1 = -Vector3.Dot(e, buf) - Mathf.Sqrt(d);
+                float t = Vector3.Distance(a + e * t0, transform.position) < Vector3.Distance(a + e * t1, transform.position) ? t0 : t1;
+                pos = a + e * t;
+                Debug.Log(d);
+            }
+            else if(d == 0)
+            {
+                float t = -Vector3.Dot(e, buf);
+                pos = a + e * t;
+            }
+            else
+            {
+                Debug.Log(d);
+                pos = transform.position;
+            }
+
+            transform.position = pos;
+
         }
         else if (bottom > _mark.localPosition.y)    //カメラが範囲より下に出ていた時
         {
@@ -153,7 +206,7 @@ public class TPSCamaraController : MonoBehaviour
     /// <summary>
     /// カメラのリグの表示
     /// </summary>
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos/*Selected*/()
     {
         Gizmos.color = _gizmosColor;
         if (!_vCam)
