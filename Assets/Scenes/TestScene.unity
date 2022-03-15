@@ -424,7 +424,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2066805952}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8c657b5d4489e9f4da53b7ae9d08a509, type: 3}
   m_Name: 
@@ -520,6 +520,8 @@ GameObject:
   - component: {fileID: 2107746224}
   - component: {fileID: 2107746223}
   - component: {fileID: 2107746222}
+  - component: {fileID: 2107746226}
+  - component: {fileID: 2107746225}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -615,7 +617,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _radius: 5
-  _mouseSpeed: {x: 0, y: 0}
+  _mouseSpeed: {x: 1, y: 1}
   _padSpeed: {x: 0, y: 0}
   _limit0: 0.64
   _limit1: -0.53
@@ -663,12 +665,12 @@ MonoBehaviour:
     m_ActionName: Player/Look(FPS GamePad)
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2066805952}
-        m_MethodName: 
-        m_Mode: 1
+      - m_Target: {fileID: 2107746225}
+        m_MethodName: Aim
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -795,3 +797,32 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 1708858402}
+--- !u!114 &2107746225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2107746217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e298e9bdeda36043a104961f235ae46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _c: {fileID: 2107746222}
+--- !u!54 &2107746226
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2107746217}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

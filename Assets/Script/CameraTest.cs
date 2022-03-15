@@ -23,16 +23,19 @@ public class CameraTest : MonoBehaviour
     {
     }
 
-    private void OnDrawGizmosSelected()
-    {
-        float line = Mathf.PI * 2 / _segment;
-        Vector3 pos = transform.position + transform.up * -1 * _distance;
-        for (float i = 0; i < Mathf.PI * 2; i += line)
-        {
-            Vector3 start = pos + _radius * Mathf.Cos(i) * transform.forward + _radius * Mathf.Sin(i) * transform.right;
-            Vector3 goal = pos + _radius * Mathf.Cos(i + line) * transform.forward + _radius * Mathf.Sin(i + line) * transform.right;
-            Gizmos.color = _gizmosColor;
-            Gizmos.DrawLine(start, goal);
-        }
-    }
+    //private void OnDrawGizmosSelected()
+    //{
+    //    float line = Mathf.PI * 2 / _segment;
+    //    Vector3 pos = transform.position + transform.up * -1 * _distance;
+    //    for (float i = 0; i < Mathf.PI * 2; i += line)
+    //    {
+    //        Vector3 start = pos + _radius * Mathf.Cos(i) * transform.forward + _radius * Mathf.Sin(i) * transform.right;
+    //        Vector3 goal = pos + _radius * Mathf.Cos(i + line) * transform.forward + _radius * Mathf.Sin(i + line) * transform.right;
+    //        Gizmos.color = _gizmosColor;
+    //        Gizmos.DrawLine(start, goal);
+    //    }
+    //}
+
 }
+
+

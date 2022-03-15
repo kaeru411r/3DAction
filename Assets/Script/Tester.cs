@@ -1,18 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Tester : MonoBehaviour
 {
-     Rigidbody r;
+    Vector2 _look = Vector2.zero;
+    [SerializeField] TPSCamaraController _c;
 
-    private void OnEnable()
+    public void Aim(InputAction.CallbackContext context)
     {
-        if (!r)
-        {
-            r = GetComponent<Rigidbody>();
-        }
-        ExplosionManager.Instance.Add(r);
+        _look = context.ReadValue<Vector2>();
+    }
+
+    private void Update()
+    {
+        _c.OnMouseLook(_look);
     }
 }
