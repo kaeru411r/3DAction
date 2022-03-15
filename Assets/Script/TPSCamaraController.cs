@@ -109,6 +109,11 @@ public class TPSCamaraController : MonoBehaviour
 
     }
 
+    private void LateUpdate()
+    {
+        Debug.Log($"{_mark.position == transform.position}");
+    }
+
     /// <summary>
     /// カメラの位置調整
     /// </summary>
@@ -123,8 +128,9 @@ public class TPSCamaraController : MonoBehaviour
 
         //カメラの向きにあわせて位置を調整
         _transposer.m_FollowOffset = direction * _radius;
+        transform.position = _followTr.position + _transposer.m_FollowOffset;
+        transform.LookAt(_followTr);
 
-        Debug.Log($"{_mark.position == transform.position}");
         _mark.position = transform.position;
         Debug.Log($"{_mark.position == transform.position}");
         float bottom = Mathf.Min(_limit0, _limit1) * _radius;

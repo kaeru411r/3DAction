@@ -617,7 +617,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _radius: 5
-  _mouseSpeed: {x: 0, y: 0}
+  _mouseSpeed: {x: 1, y: 1}
   _padSpeed: {x: 0, y: 0}
   _limit0: 0.64
   _limit1: -0.53
@@ -804,7 +804,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2107746217}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7e298e9bdeda36043a104961f235ae46, type: 3}
   m_Name: 
