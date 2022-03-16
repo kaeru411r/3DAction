@@ -23,6 +23,7 @@ public class TPSCamaraController : MonoBehaviour
     [SerializeField] float _limit0;
     [Tooltip("下の限界点"), Range(-1, 1)]
     [SerializeField] float _limit1;
+    [SerializeField] Transform _testMark;
 
     /// <summary>カメラの座標のフォローオブジェクトのローカル版</summary>
     Transform _mark;
@@ -92,6 +93,7 @@ public class TPSCamaraController : MonoBehaviour
 
     private void Update()
     {
+        Debug.Log(transform.rotation == _mark.rotation);
         //マウスとパッドでそれぞれカメラ旋回
         if (_isMouseorPad)
         {
@@ -129,22 +131,28 @@ public class TPSCamaraController : MonoBehaviour
         //カメラの向きにあわせて位置を調整
         _transposer.m_FollowOffset = direction * _radius;
         transform.position = _followTr.position + _transposer.m_FollowOffset;
-        transform.LookAt(_followTr);
+        //transform.LookAt(_followTr);
 
         _mark.position = transform.position;
-        Debug.Log($"{_mark.position == transform.position}");
+        _testMark.position = transform.position;
+        //Debug.Log($"{_mark.position}, {transform.position}");
+        //Debug.Log($"{_mark.position == transform.position}");
+        //if (_mark.position != transform.position)
+        //{
+        //    Debug.Log($"{_mark.position == transform.position}");
+        //}
         float bottom = Mathf.Min(_limit0, _limit1) * _radius;
         float top = Mathf.Max(_limit0, _limit1) * _radius;
 
         //Debug.Log($"{top}, {_mark.localPosition.y}");
-        if (top < _mark.localPosition.y)            //カメラが範囲より上に出ていた時
-        {
-            PositionCorrection(direction, top);
-        }
-        else if (bottom > _mark.localPosition.y)    //カメラが範囲より下に出ていた時
-        {
-            PositionCorrection(direction, bottom);
-        }
+        //if (top < _mark.localPosition.y)            //カメラが範囲より上に出ていた時
+        //{
+        //    PositionCorrection(direction, top);
+        //}
+        //else if (bottom > _mark.localPosition.y)    //カメラが範囲より下に出ていた時
+        //{
+        //    PositionCorrection(direction, bottom);
+        //}
 
     }
 
@@ -155,29 +163,30 @@ public class TPSCamaraController : MonoBehaviour
     {
 
         //Followを中心とし、カメラ上を通る円の回転軸の方向ベクトル
-        Vector3 n0 = Quaternion.Euler(0, 90, 0) * direction;
-        n0 = new Vector3(n0.x, 0, n0.z).normalized;
-        float d0 = n0.x * _followTr.position.x + n0.y * _followTr.position.y + n0.z * _followTr.position.z;
+        Vector3 v0 = Quaternion.Euler(0, 90, 0) * direction;
+        Vector3 v1 = _followTr.rotation * Vector3.forward;
+        v0 = new Vector3(v0.x, 0, v0.z).normalized;
+        float d0 = v0.x * _followTr.position.x + v0.y * _followTr.position.y + v0.z * _followTr.position.z;
         //制限の円の回転軸の方向ベクトル
-        Vector3 n1 = _followTr.up;
-        Vector3 cPos = _followTr.position + _followTr.up * limit;
-        float d1 = n1.x * cPos.x + n1.y * cPos.y + n1.z * cPos.z;
+        v1 = _followTr.up;
+        Vector3 cPos = _followTr.position + _followTr.rotation * new Vector3(0, limit, 0);
+        float d1 = v1.x * cPos.x + v1.y * cPos.y + v1.z * cPos.z;
         //各円を含む二つの面の接線の方向ベクトル
-        Vector3 e = new Vector3(n0.y * n1.z - n0.z * n1.y, n0.z * n1.x - n0.x * n1.z, n0.x * n1.y - n0.y * n1.x).normalized;
+        Vector3 e = new Vector3(v0.y * v1.z - v0.z * v1.y, v0.z * v1.x - v0.x * v1.z, v0.x * v1.y - v0.y * v1.x).normalized;
 
         Vector3 a = Vector3.zero;
 
         if (Mathf.Abs(e.z) > 0.01)
         {
-            a = new Vector3(0, (d0 * n1.z - d1 * n0.z) / e.x, (d0 * n1.y - d1 * n0.y) / -e.x);
+            a = new Vector3(0, (d0 * v1.z - d1 * v0.z) / e.x, (d0 * v1.y - d1 * v0.y) / -e.x);
         }
         else if (e.y != 0.0)
         {
-            a = new Vector3((d0 * n1.z - d1 * n0.z) / -e.y, 0, (d0 * n1.x - d1 * n0.x) / -e.y);
+            a = new Vector3((d0 * v1.z - d1 * v0.z) / -e.y, 0, (d0 * v1.x - d1 * v0.x) / -e.y);
         }
         else if (e.x != 0.0)
         {
-            a = new Vector3((d0 * n1.y - d1 * n0.y) / e.z, (d0 * n1.x - d1 * n0.x) / -e.z, 0);
+            a = new Vector3((d0 * v1.y - d1 * v0.y) / e.z, (d0 * v1.x - d1 * v0.x) / -e.z, 0);
         }
 
         Debug.DrawRay(a, e * 100);
@@ -204,7 +213,7 @@ public class TPSCamaraController : MonoBehaviour
         {
             pos = transform.position;
         }
-
+        _testMark.position = pos;
         _transposer.m_FollowOffset = pos - _followTr.position;
         transform.position = _followTr.position + _transposer.m_FollowOffset;
         transform.LookAt(_followTr);
