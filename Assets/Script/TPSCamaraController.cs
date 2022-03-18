@@ -45,7 +45,6 @@ public class TPSCamaraController : MonoBehaviour
 
     private void Start()
     {
-        OnPadLook(_x, _y);
         _vCam = GetComponent<CinemachineVirtualCamera>();
         if (_vCam.LookAt)
         {
@@ -108,7 +107,8 @@ public class TPSCamaraController : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log($"{_testMark.position == _followTr.position + _transposer.m_FollowOffset && _testMark.position == transform.position}");
+        OnPadLook(_x, _y);
+        Debug.Log($"{_testMark.position}, {transform.position}U1");
         //マウスとパッドでそれぞれカメラ旋回
         if (_isMouseorPad)
         {
@@ -123,13 +123,28 @@ public class TPSCamaraController : MonoBehaviour
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
 
         SetPosition();
+        //_mark.position = transform.position;
+        //_testMark.position = transform.position;
+        //Debug.Log($"{_testMark.position}, {transform.position}U2");
+        //if(transform.position != new Vector3(0, 0, -10) && p >= 20)
+        //{
+        //    UnityEditor.EditorApplication.isPaused = true;
+        //    Debug.Log($"{transform.position != new Vector3(0, 0, -10)}");
+        //}
+        //else
+        //{
+        //    Debug.Log($"{transform.position != new Vector3(0, 0, -10)}");
+        //}
+        //p++;
+        //Debug.Log(p);
 
     }
+    int p = 0; 
 
-    //private void LateUpdate()
-    //{
-    //    Debug.Log($"({_mark.position} == {transform.position}) == {_mark.position == transform.position}");
-    //}
+    private void LateUpdate()
+    {
+        Debug.Log($"{_mark.position}, {transform.position}L");
+    }
 
     /// <summary>
     /// カメラの位置調整
@@ -232,6 +247,7 @@ public class TPSCamaraController : MonoBehaviour
         _transposer.m_FollowOffset = pos - _followTr.position;
         transform.position = _followTr.position + _transposer.m_FollowOffset;
         transform.LookAt(_followTr);
+        Debug.Log($"{_testMark.position == transform.position}");
 
     }
 
