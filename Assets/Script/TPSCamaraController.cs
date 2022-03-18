@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
-using UnityEngine.InputSystem;
 
 /// <summary>
 /// TPSカメラの操作をするクラス
@@ -24,6 +23,9 @@ public class TPSCamaraController : MonoBehaviour
     [Tooltip("下の限界点"), Range(-1, 1)]
     [SerializeField] float _limit1;
     [SerializeField] Transform _testMark;
+    [SerializeField, Range(-1, 1)] float _x;
+    [SerializeField, Range(-1, 1)] float _y;
+
 
     /// <summary>カメラの座標のフォローオブジェクトのローカル版</summary>
     Transform _mark;
@@ -43,6 +45,7 @@ public class TPSCamaraController : MonoBehaviour
 
     private void Start()
     {
+        OnPadLook(_x, _y);
         _vCam = GetComponent<CinemachineVirtualCamera>();
         if (_vCam.LookAt)
         {
@@ -83,6 +86,12 @@ public class TPSCamaraController : MonoBehaviour
         _look = look;
         _isMouseorPad = true;
     }
+    /// <summary>マウス移動</summary>
+    public void OnMouseLook(float x, float y)
+    {
+        _look = new Vector2(x, y);
+        _isMouseorPad = true;
+    }
 
     /// <summary>Pad移動</summary>
     public void OnPadLook(Vector2 look)
@@ -90,10 +99,16 @@ public class TPSCamaraController : MonoBehaviour
         _look = look;
         _isMouseorPad = false;
     }
+    /// <summary>Pad移動</summary>
+    public void OnPadLook(float x, float y)
+    {
+        _look = new Vector2(x, y);
+        _isMouseorPad = false;
+    }
 
     private void Update()
     {
-        Debug.Log(transform.rotation == _mark.rotation);
+        Debug.Log($"{_testMark.position == _followTr.position + _transposer.m_FollowOffset && _testMark.position == transform.position}");
         //マウスとパッドでそれぞれカメラ旋回
         if (_isMouseorPad)
         {
@@ -105,16 +120,16 @@ public class TPSCamaraController : MonoBehaviour
         }
 
         //ロールを0に
-        //transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
+        transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
 
         SetPosition();
 
     }
 
-    private void LateUpdate()
-    {
-        Debug.Log($"{_mark.position == transform.position}");
-    }
+    //private void LateUpdate()
+    //{
+    //    Debug.Log($"({_mark.position} == {transform.position}) == {_mark.position == transform.position}");
+    //}
 
     /// <summary>
     /// カメラの位置調整
@@ -145,14 +160,14 @@ public class TPSCamaraController : MonoBehaviour
         float top = Mathf.Max(_limit0, _limit1) * _radius;
 
         //Debug.Log($"{top}, {_mark.localPosition.y}");
-        //if (top < _mark.localPosition.y)            //カメラが範囲より上に出ていた時
-        //{
-        //    PositionCorrection(direction, top);
-        //}
-        //else if (bottom > _mark.localPosition.y)    //カメラが範囲より下に出ていた時
-        //{
-        //    PositionCorrection(direction, bottom);
-        //}
+        if (top < _mark.localPosition.y)            //カメラが範囲より上に出ていた時
+        {
+            PositionCorrection(direction, top);
+        }
+        else if (bottom > _mark.localPosition.y)    //カメラが範囲より下に出ていた時
+        {
+            PositionCorrection(direction, bottom);
+        }
 
     }
 
@@ -169,7 +184,7 @@ public class TPSCamaraController : MonoBehaviour
         float d0 = v0.x * _followTr.position.x + v0.y * _followTr.position.y + v0.z * _followTr.position.z;
         //制限の円の回転軸の方向ベクトル
         v1 = _followTr.up;
-        Vector3 cPos = _followTr.position + _followTr.rotation * new Vector3(0, limit, 0);
+        Vector3 cPos = _followTr.position + _followTr.up * -1 * -limit;
         float d1 = v1.x * cPos.x + v1.y * cPos.y + v1.z * cPos.z;
         //各円を含む二つの面の接線の方向ベクトル
         Vector3 e = new Vector3(v0.y * v1.z - v0.z * v1.y, v0.z * v1.x - v0.x * v1.z, v0.x * v1.y - v0.y * v1.x).normalized;
@@ -277,6 +292,4 @@ public class TPSCamaraController : MonoBehaviour
             }
         }
     }
-
-
 }
