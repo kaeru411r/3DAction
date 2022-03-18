@@ -108,7 +108,7 @@ public class TPSCamaraController : MonoBehaviour
     private void Update()
     {
         OnPadLook(_x, _y);
-        Debug.Log($"{_testMark.position}, {transform.position}U1");
+        //Debug.Log($"{_testMark.position}, {transform.position}U1");
         //マウスとパッドでそれぞれカメラ旋回
         if (_isMouseorPad)
         {
@@ -143,7 +143,7 @@ public class TPSCamaraController : MonoBehaviour
 
     private void LateUpdate()
     {
-        Debug.Log($"{_mark.position}, {transform.position}L");
+        //Debug.Log($"{_mark.position}, {transform.position}L");
     }
 
     /// <summary>
@@ -171,17 +171,15 @@ public class TPSCamaraController : MonoBehaviour
         //{
         //    Debug.Log($"{_mark.position == transform.position}");
         //}
-        float bottom = Mathf.Min(_limit0, _limit1) * _radius;
-        float top = Mathf.Max(_limit0, _limit1) * _radius;
 
         //Debug.Log($"{top}, {_mark.localPosition.y}");
-        if (top < _mark.localPosition.y)            //カメラが範囲より上に出ていた時
+        if (_limit0 * _radius < _mark.localPosition.y)            //カメラが範囲より上に出ていた時
         {
-            PositionCorrection(direction, top);
+            PositionCorrection(direction, _limit0);
         }
-        else if (bottom > _mark.localPosition.y)    //カメラが範囲より下に出ていた時
+        else if (_limit1 * _radius > _mark.localPosition.y)    //カメラが範囲より下に出ていた時
         {
-            PositionCorrection(direction, bottom);
+            PositionCorrection(direction, _limit1);
         }
 
     }
@@ -194,33 +192,47 @@ public class TPSCamaraController : MonoBehaviour
 
         //Followを中心とし、カメラ上を通る円の回転軸の方向ベクトル
         Vector3 v0 = Quaternion.Euler(0, 90, 0) * direction;
-        Vector3 v1 = _followTr.rotation * Vector3.forward;
         v0 = new Vector3(v0.x, 0, v0.z).normalized;
+        Debug.DrawRay(_followTr.position, v0);
         float d0 = v0.x * _followTr.position.x + v0.y * _followTr.position.y + v0.z * _followTr.position.z;
         //制限の円の回転軸の方向ベクトル
-        v1 = _followTr.up;
-        Vector3 cPos = _followTr.position + _followTr.up * -1 * -limit;
+        Vector3 v1 = _followTr.up;
+        Vector3 cPos = _followTr.position + _followTr.up * -1 * -limit * _radius;
+        Debug.DrawRay(cPos, v1);
         float d1 = v1.x * cPos.x + v1.y * cPos.y + v1.z * cPos.z;
         //各円を含む二つの面の接線の方向ベクトル
         Vector3 e = new Vector3(v0.y * v1.z - v0.z * v1.y, v0.z * v1.x - v0.x * v1.z, v0.x * v1.y - v0.y * v1.x).normalized;
 
         Vector3 a = Vector3.zero;
 
-        if (Mathf.Abs(e.z) > 0.01)
+        if (e.z != 0)
         {
-            a = new Vector3(0, (d0 * v1.z - d1 * v0.z) / e.x, (d0 * v1.y - d1 * v0.y) / -e.x);
+            a = new Vector3((d0 * v1.y - d1 * v0.y) / e.z, (d0 * v1.x - d1 * v0.x ) / (-e.z), 0);
+            Debug.Log($"1 {e}");
         }
-        else if (e.y != 0.0)
+        else if (e.y != 0)
         {
-            a = new Vector3((d0 * v1.z - d1 * v0.z) / -e.y, 0, (d0 * v1.x - d1 * v0.x) / -e.y);
+            a = new Vector3((d0 * v1.z - d1 * v0.z) / (-e.y), 0, (d0 * v1.x - d1 * v0.x) / e.y);
+            Debug.Log($"2 {e}");
         }
-        else if (e.x != 0.0)
+        else if (e.x != 0)
         {
-            a = new Vector3((d0 * v1.y - d1 * v0.y) / e.z, (d0 * v1.x - d1 * v0.x) / -e.z, 0);
+            a = new Vector3(0, (d0 * v1.z - d1 * v0.z) / e.x, (d0 * v1.y - d1 * v0.y ) / (-e.x));
+            Debug.Log($"3 {e}");
         }
 
         Debug.DrawRay(a, e * 100);
         Debug.DrawRay(a, e * -100);
+        //線の本数
+        int segment = 72;
+        //線一本あたりの角度
+        float theta = Mathf.PI * 2 / segment;;
+        for (float i = 0; i < Mathf.PI * 2; i += theta)
+        {
+            Vector3 start = _followTr.position + _radius * Mathf.Cos(i) * direction + _radius * Mathf.Sin(i) * (Quaternion.Euler(90, 0, 0) * direction);
+            Vector3 goal = _followTr.position + _radius * Mathf.Cos(i + theta) * direction + _radius * Mathf.Sin(i + theta) * (Quaternion.Euler(90, 0, 0) * direction);
+            Debug.DrawLine(start, goal, _gizmosColor);
+        }
 
         Vector3 buf = (a - _followTr.position);
         float d = Vector3.Dot(e, buf) * Vector3.Dot(e, a + _followTr.position) - (Vector3.Dot(a, a) - _radius * _radius);
@@ -247,8 +259,8 @@ public class TPSCamaraController : MonoBehaviour
         _transposer.m_FollowOffset = pos - _followTr.position;
         transform.position = _followTr.position + _transposer.m_FollowOffset;
         transform.LookAt(_followTr);
-        Debug.Log($"{_testMark.position == transform.position}");
-
+        //Debug.Log($"{_testMark.position == transform.position}");
+        UnityEditor.EditorApplication.isPaused = true;
     }
 
 
