@@ -194,12 +194,12 @@ public class TPSCamaraController : MonoBehaviour
         Vector3 v0 = Quaternion.Euler(0, 90, 0) * direction;
         v0 = new Vector3(v0.x, 0, v0.z).normalized;
         Debug.DrawRay(_followTr.position, v0);
-        float d0 = v0.x * _followTr.position.x + v0.y * _followTr.position.y + v0.z * _followTr.position.z;
+        float d0 = -(-v0.x * _followTr.position.x - v0.y * _followTr.position.y - v0.z * _followTr.position.z);
         //制限の円の回転軸の方向ベクトル
         Vector3 v1 = _followTr.up;
         Vector3 cPos = _followTr.position + _followTr.up * -1 * -limit * _radius;
         Debug.DrawRay(cPos, v1);
-        float d1 = v1.x * cPos.x + v1.y * cPos.y + v1.z * cPos.z;
+        float d1 = -(-v1.x * cPos.x - v1.y * cPos.y - v1.z * cPos.z);
         //各円を含む二つの面の接線の方向ベクトル
         Vector3 e = new Vector3(v0.y * v1.z - v0.z * v1.y, v0.z * v1.x - v0.x * v1.z, v0.x * v1.y - v0.y * v1.x).normalized;
 
@@ -221,8 +221,11 @@ public class TPSCamaraController : MonoBehaviour
             Debug.Log($"3 {e}");
         }
 
-        Debug.DrawRay(a, e * 100);
-        Debug.DrawRay(a, e * -100);
+        Debug.DrawLine(a + e * 100, a + e * -100);
+        if(a.x * v0.x + a.y * v0.y + a.z * v0.z == d1)
+        {
+            Debug.Log(true);
+        }
         //線の本数
         int segment = 72;
         //線一本あたりの角度
