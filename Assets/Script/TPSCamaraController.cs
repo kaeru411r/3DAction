@@ -139,7 +139,7 @@ public class TPSCamaraController : MonoBehaviour
         //Debug.Log(p);
 
     }
-    int p = 0; 
+    int p = 0;
 
     private void LateUpdate()
     {
@@ -201,13 +201,13 @@ public class TPSCamaraController : MonoBehaviour
         Debug.DrawRay(cPos, v1);
         float d1 = -(-v1.x * cPos.x - v1.y * cPos.y - v1.z * cPos.z);
         //各円を含む二つの面の接線の方向ベクトル
-        Vector3 e = new Vector3(v0.y * v1.z - v0.z * v1.y, v0.z * v1.x - v0.x * v1.z, v0.x * v1.y - v0.y * v1.x).normalized;
+        Vector3 e = new Vector3(v0.y * v1.z - v0.z * v1.y, v0.z * v1.x - v0.x * v1.z, v0.x * v1.y - v0.y * v1.x);
 
         Vector3 a = Vector3.zero;
 
         if (e.z != 0)
         {
-            a = new Vector3((d0 * v1.y - d1 * v0.y) / e.z, (d0 * v1.x - d1 * v0.x ) / (-e.z), 0);
+            a = new Vector3((d0 * v1.y - d1 * v0.y) / e.z, (d0 * v1.x - d1 * v0.x) / (-e.z), 0);
             Debug.Log($"1 {e}");
         }
         else if (e.y != 0)
@@ -217,19 +217,17 @@ public class TPSCamaraController : MonoBehaviour
         }
         else if (e.x != 0)
         {
-            a = new Vector3(0, (d0 * v1.z - d1 * v0.z) / e.x, (d0 * v1.y - d1 * v0.y ) / (-e.x));
+            a = new Vector3(0, (d0 * v1.z - d1 * v0.z) / e.x, (d0 * v1.y - d1 * v0.y) / (-e.x));
             Debug.Log($"3 {e}");
         }
+        e.Normalize();
 
         Debug.DrawLine(a + e * 100, a + e * -100);
-        if(a.x * v0.x + a.y * v0.y + a.z * v0.z == d1)
-        {
-            Debug.Log(true);
-        }
+        Debug.Log($"({a.x * v0.x + a.y * v0.y + a.z * v0.z} == {d1}) == {a.x * v0.x + a.y * v0.y + a.z * v0.z == d1}");
         //線の本数
         int segment = 72;
         //線一本あたりの角度
-        float theta = Mathf.PI * 2 / segment;;
+        float theta = Mathf.PI * 2 / segment; ;
         for (float i = 0; i < Mathf.PI * 2; i += theta)
         {
             Vector3 start = _followTr.position + _radius * Mathf.Cos(i) * direction + _radius * Mathf.Sin(i) * (Quaternion.Euler(90, 0, 0) * direction);
@@ -263,7 +261,7 @@ public class TPSCamaraController : MonoBehaviour
         transform.position = _followTr.position + _transposer.m_FollowOffset;
         transform.LookAt(_followTr);
         //Debug.Log($"{_testMark.position == transform.position}");
-        UnityEditor.EditorApplication.isPaused = true;
+        //UnityEditor.EditorApplication.isPaused = true;
     }
 
 
