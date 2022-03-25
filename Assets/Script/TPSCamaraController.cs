@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
-using UnityEngine.InputSystem;
 
 /// <summary>
 /// TPSカメラの操作をするクラス
@@ -23,6 +22,10 @@ public class TPSCamaraController : MonoBehaviour
     [SerializeField] float _limit0;
     [Tooltip("下の限界点"), Range(-1, 1)]
     [SerializeField] float _limit1;
+    [SerializeField] Transform _testMark;
+    [SerializeField, Range(-1, 1)] float _x;
+    [SerializeField, Range(-1, 1)] float _y;
+
 
     /// <summary>カメラの座標のフォローオブジェクトのローカル版</summary>
     Transform _mark;
@@ -82,6 +85,12 @@ public class TPSCamaraController : MonoBehaviour
         _look = look;
         _isMouseorPad = true;
     }
+    /// <summary>マウス移動</summary>
+    public void OnMouseLook(float x, float y)
+    {
+        _look = new Vector2(x, y);
+        _isMouseorPad = true;
+    }
 
     /// <summary>Pad移動</summary>
     public void OnPadLook(Vector2 look)
@@ -89,9 +98,17 @@ public class TPSCamaraController : MonoBehaviour
         _look = look;
         _isMouseorPad = false;
     }
+    /// <summary>Pad移動</summary>
+    public void OnPadLook(float x, float y)
+    {
+        _look = new Vector2(x, y);
+        _isMouseorPad = false;
+    }
 
     private void Update()
     {
+        OnPadLook(_x, _y);
+        //Debug.Log($"{_testMark.position}, {transform.position}U1");
         //マウスとパッドでそれぞれカメラ旋回
         if (_isMouseorPad)
         {
@@ -103,15 +120,30 @@ public class TPSCamaraController : MonoBehaviour
         }
 
         //ロールを0に
-        //transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
+        transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
 
         SetPosition();
+        //_mark.position = transform.position;
+        //_testMark.position = transform.position;
+        //Debug.Log($"{_testMark.position}, {transform.position}U2");
+        //if(transform.position != new Vector3(0, 0, -10) && p >= 20)
+        //{
+        //    UnityEditor.EditorApplication.isPaused = true;
+        //    Debug.Log($"{transform.position != new Vector3(0, 0, -10)}");
+        //}
+        //else
+        //{
+        //    Debug.Log($"{transform.position != new Vector3(0, 0, -10)}");
+        //}
+        //p++;
+        //Debug.Log(p);
 
     }
+    int p = 0;
 
     private void LateUpdate()
     {
-        Debug.Log($"{_mark.position == transform.position}");
+        //Debug.Log($"{_mark.position}, {transform.position}L");
     }
 
     /// <summary>
@@ -129,21 +161,25 @@ public class TPSCamaraController : MonoBehaviour
         //カメラの向きにあわせて位置を調整
         _transposer.m_FollowOffset = direction * _radius;
         transform.position = _followTr.position + _transposer.m_FollowOffset;
-        transform.LookAt(_followTr);
+        //transform.LookAt(_followTr);
 
         _mark.position = transform.position;
-        Debug.Log($"{_mark.position == transform.position}");
-        float bottom = Mathf.Min(_limit0, _limit1) * _radius;
-        float top = Mathf.Max(_limit0, _limit1) * _radius;
+        _testMark.position = transform.position;
+        //Debug.Log($"{_mark.position}, {transform.position}");
+        //Debug.Log($"{_mark.position == transform.position}");
+        //if (_mark.position != transform.position)
+        //{
+        //    Debug.Log($"{_mark.position == transform.position}");
+        //}
 
         //Debug.Log($"{top}, {_mark.localPosition.y}");
-        if (top < _mark.localPosition.y)            //カメラが範囲より上に出ていた時
+        if (_limit0 * _radius < _mark.localPosition.y)            //カメラが範囲より上に出ていた時
         {
-            PositionCorrection(direction, top);
+            PositionCorrection(direction, _limit0);
         }
-        else if (bottom > _mark.localPosition.y)    //カメラが範囲より下に出ていた時
+        else if (_limit1 * _radius > _mark.localPosition.y)    //カメラが範囲より下に出ていた時
         {
-            PositionCorrection(direction, bottom);
+            PositionCorrection(direction, _limit1);
         }
 
     }
@@ -155,33 +191,49 @@ public class TPSCamaraController : MonoBehaviour
     {
 
         //Followを中心とし、カメラ上を通る円の回転軸の方向ベクトル
-        Vector3 n0 = Quaternion.Euler(0, 90, 0) * direction;
-        n0 = new Vector3(n0.x, 0, n0.z).normalized;
-        float d0 = n0.x * _followTr.position.x + n0.y * _followTr.position.y + n0.z * _followTr.position.z;
+        Vector3 v0 = Quaternion.Euler(0, 90, 0) * direction;
+        v0 = new Vector3(v0.x, 0, v0.z).normalized;
+        Debug.DrawRay(_followTr.position, v0);
+        float d0 = -(-v0.x * _followTr.position.x - v0.y * _followTr.position.y - v0.z * _followTr.position.z);
         //制限の円の回転軸の方向ベクトル
-        Vector3 n1 = _followTr.up;
-        Vector3 cPos = _followTr.position + _followTr.up * limit;
-        float d1 = n1.x * cPos.x + n1.y * cPos.y + n1.z * cPos.z;
+        Vector3 v1 = _followTr.up;
+        Vector3 cPos = _followTr.position + _followTr.up * -1 * -limit * _radius;
+        Debug.DrawRay(cPos, v1);
+        float d1 = -(-v1.x * cPos.x - v1.y * cPos.y - v1.z * cPos.z);
         //各円を含む二つの面の接線の方向ベクトル
-        Vector3 e = new Vector3(n0.y * n1.z - n0.z * n1.y, n0.z * n1.x - n0.x * n1.z, n0.x * n1.y - n0.y * n1.x).normalized;
+        Vector3 e = new Vector3(v0.y * v1.z - v0.z * v1.y, v0.z * v1.x - v0.x * v1.z, v0.x * v1.y - v0.y * v1.x);
 
         Vector3 a = Vector3.zero;
 
-        if (Mathf.Abs(e.z) > 0.01)
+        if (e.z != 0)
         {
-            a = new Vector3(0, (d0 * n1.z - d1 * n0.z) / e.x, (d0 * n1.y - d1 * n0.y) / -e.x);
+            a = new Vector3((d0 * v1.y - d1 * v0.y) / e.z, (d0 * v1.x - d1 * v0.x) / (-e.z), 0);
+            Debug.Log($"1 {e}");
         }
-        else if (e.y != 0.0)
+        else if (e.y != 0)
         {
-            a = new Vector3((d0 * n1.z - d1 * n0.z) / -e.y, 0, (d0 * n1.x - d1 * n0.x) / -e.y);
+            a = new Vector3((d0 * v1.z - d1 * v0.z) / (-e.y), 0, (d0 * v1.x - d1 * v0.x) / e.y);
+            Debug.Log($"2 {e}");
         }
-        else if (e.x != 0.0)
+        else if (e.x != 0)
         {
-            a = new Vector3((d0 * n1.y - d1 * n0.y) / e.z, (d0 * n1.x - d1 * n0.x) / -e.z, 0);
+            a = new Vector3(0, (d0 * v1.z - d1 * v0.z) / e.x, (d0 * v1.y - d1 * v0.y) / (-e.x));
+            Debug.Log($"3 {e}");
         }
+        e.Normalize();
 
-        Debug.DrawRay(a, e * 100);
-        Debug.DrawRay(a, e * -100);
+        Debug.DrawLine(a + e * 100, a + e * -100);
+        Debug.Log($"({a.x * v0.x + a.y * v0.y + a.z * v0.z} == {d1}) == {a.x * v0.x + a.y * v0.y + a.z * v0.z == d1}");
+        //線の本数
+        int segment = 72;
+        //線一本あたりの角度
+        float theta = Mathf.PI * 2 / segment; ;
+        for (float i = 0; i < Mathf.PI * 2; i += theta)
+        {
+            Vector3 start = _followTr.position + _radius * Mathf.Cos(i) * direction + _radius * Mathf.Sin(i) * (Quaternion.Euler(90, 0, 0) * direction);
+            Vector3 goal = _followTr.position + _radius * Mathf.Cos(i + theta) * direction + _radius * Mathf.Sin(i + theta) * (Quaternion.Euler(90, 0, 0) * direction);
+            Debug.DrawLine(start, goal, _gizmosColor);
+        }
 
         Vector3 buf = (a - _followTr.position);
         float d = Vector3.Dot(e, buf) * Vector3.Dot(e, a + _followTr.position) - (Vector3.Dot(a, a) - _radius * _radius);
@@ -204,11 +256,12 @@ public class TPSCamaraController : MonoBehaviour
         {
             pos = transform.position;
         }
-
+        _testMark.position = pos;
         _transposer.m_FollowOffset = pos - _followTr.position;
         transform.position = _followTr.position + _transposer.m_FollowOffset;
         transform.LookAt(_followTr);
-
+        //Debug.Log($"{_testMark.position == transform.position}");
+        //UnityEditor.EditorApplication.isPaused = true;
     }
 
 
@@ -268,6 +321,4 @@ public class TPSCamaraController : MonoBehaviour
             }
         }
     }
-
-
 }
