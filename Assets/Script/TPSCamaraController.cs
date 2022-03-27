@@ -171,15 +171,16 @@ public class TPSCamaraController : MonoBehaviour
         //{
         //    Debug.Log($"{_mark.position == transform.position}");
         //}
-
+        float top = Mathf.Max(_limit0, _limit1);
+        float bottom = Mathf.Min(_limit0, _limit1);
         //Debug.Log($"{top}, {_mark.localPosition.y}");
-        if (_limit0 * _radius < _mark.localPosition.y)            //カメラが範囲より上に出ていた時
+        if (top * _radius < _mark.localPosition.y)            //カメラが範囲より上に出ていた時
         {
-            PositionCorrection(direction, _limit0);
+            PositionCorrection(direction, top);
         }
-        else if (_limit1 * _radius > _mark.localPosition.y)    //カメラが範囲より下に出ていた時
+        else if (bottom * _radius > _mark.localPosition.y)    //カメラが範囲より下に出ていた時
         {
-            PositionCorrection(direction, _limit1);
+            PositionCorrection(direction, bottom);
         }
 
     }
@@ -220,9 +221,9 @@ public class TPSCamaraController : MonoBehaviour
             a = new Vector3(0, (d0 * v1.z - d1 * v0.z) / e.x, (d0 * v1.y - d1 * v0.y) / (-e.x));
             Debug.Log($"3 {e}");
         }
-        e.Normalize();
+        //e.Normalize();
 
-        Debug.DrawLine(a + e * 100, a + e * -100);
+        Debug.DrawLine(a + e.normalized * 100, a + e.normalized  * -100);
         Debug.Log($"({a.x * v0.x + a.y * v0.y + a.z * v0.z} == {d1}) == {a.x * v0.x + a.y * v0.y + a.z * v0.z == d1}");
         //線の本数
         int segment = 72;
@@ -236,25 +237,27 @@ public class TPSCamaraController : MonoBehaviour
         }
 
         Vector3 buf = (a - _followTr.position);
-        float d = Vector3.Dot(e, buf) * Vector3.Dot(e, a + _followTr.position) - (Vector3.Dot(a, a) - _radius * _radius);
+        float d = Vector3.Dot(e.normalized, buf) * Vector3.Dot(e.normalized, buf) - (Vector3.Dot((a - _followTr.position).normalized, (a - _followTr.position).normalized) - _radius * _radius);
 
         Vector3 pos;
-
         if (d > 0)
         {
-            float t0 = -Vector3.Dot(e, buf) + Mathf.Sqrt(d);
-            float t1 = -Vector3.Dot(e, buf) - Mathf.Sqrt(d);
-            float t = Vector3.Distance(a + e * t0, transform.position) < Vector3.Distance(a + e * t1, transform.position) ? t0 : t1;
-            pos = a + e * t;
+            float t0 = -Vector3.Dot(e.normalized, buf) + Mathf.Sqrt(d);
+            float t1 = -Vector3.Dot(e.normalized, buf) - Mathf.Sqrt(d);
+            float t = Vector3.Distance(a + e.normalized * t0, transform.position) < Vector3.Distance(a + e.normalized * t1, transform.position) ? t0 : t1;
+            pos = a + e.normalized * t;
+            Debug.Log(1);
         }
         else if (d == 0)
         {
             float t = -Vector3.Dot(e, buf);
             pos = a + e * t;
+            Debug.Log(2);
         }
         else
         {
             pos = transform.position;
+            Debug.Log(3);
         }
         _testMark.position = pos;
         _transposer.m_FollowOffset = pos - _followTr.position;
