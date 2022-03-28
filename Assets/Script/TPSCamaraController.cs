@@ -139,7 +139,6 @@ public class TPSCamaraController : MonoBehaviour
         //Debug.Log(p);
 
     }
-    int p = 0;
 
     private void LateUpdate()
     {
@@ -171,18 +170,19 @@ public class TPSCamaraController : MonoBehaviour
         //{
         //    Debug.Log($"{_mark.position == transform.position}");
         //}
-        float top = Mathf.Max(_limit0, _limit1);
-        float bottom = Mathf.Min(_limit0, _limit1);
-        //Debug.Log($"{top}, {_mark.localPosition.y}");
-        if (top * _radius < _mark.localPosition.y)            //カメラが範囲より上に出ていた時
-        {
-            PositionCorrection(direction, top);
-        }
-        else if (bottom * _radius > _mark.localPosition.y)    //カメラが範囲より下に出ていた時
-        {
-            PositionCorrection(direction, bottom);
-        }
 
+        //Debug.Log($"{top}, {_mark.localPosition.y}");
+        if (_limit0 * _radius < _mark.localPosition.y)            //カメラが範囲より上に出ていた時
+        {
+            PositionCorrection(direction, _limit0);
+        }
+        else if (_limit1 * _radius > _mark.localPosition.y)    //カメラが範囲より下に出ていた時
+        {
+            PositionCorrection(direction, _limit1);
+        }
+        else
+        {
+        }
     }
 
     /// <summary>
@@ -209,22 +209,18 @@ public class TPSCamaraController : MonoBehaviour
         if (e.z != 0)
         {
             a = new Vector3((d0 * v1.y - d1 * v0.y) / e.z, (d0 * v1.x - d1 * v0.x) / (-e.z), 0);
-            Debug.Log($"1 {e}");
         }
         else if (e.y != 0)
         {
             a = new Vector3((d0 * v1.z - d1 * v0.z) / (-e.y), 0, (d0 * v1.x - d1 * v0.x) / e.y);
-            Debug.Log($"2 {e}");
         }
         else if (e.x != 0)
         {
             a = new Vector3(0, (d0 * v1.z - d1 * v0.z) / e.x, (d0 * v1.y - d1 * v0.y) / (-e.x));
-            Debug.Log($"3 {e}");
         }
-        //e.Normalize();
+        e.Normalize();
 
-        Debug.DrawLine(a + e.normalized * 100, a + e.normalized  * -100);
-        Debug.Log($"({a.x * v0.x + a.y * v0.y + a.z * v0.z} == {d1}) == {a.x * v0.x + a.y * v0.y + a.z * v0.z == d1}");
+        Debug.DrawLine(a + e * 100, a + e * -100);
         //線の本数
         int segment = 72;
         //線一本あたりの角度
@@ -236,30 +232,28 @@ public class TPSCamaraController : MonoBehaviour
             Debug.DrawLine(start, goal, _gizmosColor);
         }
 
-        Vector3 buf = (a - _followTr.position);
-        float d = Vector3.Dot(e.normalized, buf) * Vector3.Dot(e.normalized, buf) - (Vector3.Dot((a - _followTr.position).normalized, (a - _followTr.position).normalized) - _radius * _radius);
+        Vector3 buf0 = (a - _followTr.position);
+        float d = Vector3.Dot(e, buf0) * Vector3.Dot(e, buf0) - (buf0.magnitude * buf0.magnitude - _radius * _radius);
 
         Vector3 pos;
+
         if (d > 0)
         {
-            float t0 = -Vector3.Dot(e.normalized, buf) + Mathf.Sqrt(d);
-            float t1 = -Vector3.Dot(e.normalized, buf) - Mathf.Sqrt(d);
-            float t = Vector3.Distance(a + e.normalized * t0, transform.position) < Vector3.Distance(a + e.normalized * t1, transform.position) ? t0 : t1;
-            pos = a + e.normalized * t;
-            Debug.Log(1);
+            float t0 = -Vector3.Dot(e, buf0) + Mathf.Sqrt(d);
+            float t1 = -Vector3.Dot(e, buf0) - Mathf.Sqrt(d);
+            float t = Vector3.Distance(a + e * t0, transform.position) < Vector3.Distance(a + e * t1, transform.position) ? t0 : t1;
+            pos = a + e * t;
         }
         else if (d == 0)
         {
-            float t = -Vector3.Dot(e, buf);
+            float t = -Vector3.Dot(e, buf0);
             pos = a + e * t;
-            Debug.Log(2);
         }
         else
         {
             pos = transform.position;
-            Debug.Log(3);
         }
-        _testMark.position = pos;
+        _testMark.position = a;
         _transposer.m_FollowOffset = pos - _followTr.position;
         transform.position = _followTr.position + _transposer.m_FollowOffset;
         transform.LookAt(_followTr);
@@ -273,7 +267,7 @@ public class TPSCamaraController : MonoBehaviour
     /// <summary>
     /// カメラのリグの表示
     /// </summary>
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos/*Selected*/()
     {
         Gizmos.color = _gizmosColor;
         if (!_vCam)
