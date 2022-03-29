@@ -180,18 +180,19 @@ public class TPSCamaraController : MonoBehaviour
         Vector3 e = new Vector3(v0.y * v1.z - v0.z * v1.y, v0.z * v1.x - v0.x * v1.z, v0.x * v1.y - v0.y * v1.x);
 
         Vector3 a = Vector3.zero;
+        Debug.Log(e.magnitude);
 
-        if (e.z != 0)
+        if (Mathf.Abs(e.z) > 0.1f)
         {
             a = new Vector3((d0 * v1.y - d1 * v0.y) / e.z, (d0 * v1.x - d1 * v0.x) / (-e.z), 0);
             Debug.Log($"p1");
         }
-        else if (e.y != 0)
+        else if (Mathf.Abs(e.y) > 0.1f)
         {
             a = new Vector3((d0 * v1.z - d1 * v0.z) / (-e.y), 0, (d0 * v1.x - d1 * v0.x) / e.y);
             Debug.Log($"p2");
         }
-        else if (e.x != 0)
+        else if (Mathf.Abs(e.x) > 0.1f)
         {
             a = new Vector3(0, (d0 * v1.z - d1 * v0.z) / e.x, (d0 * v1.y - d1 * v0.y) / (-e.x));
             Debug.Log($"p3");
@@ -237,7 +238,7 @@ public class TPSCamaraController : MonoBehaviour
         _transposer.m_FollowOffset = pos - _followTr.position;
         transform.position = _followTr.position + _transposer.m_FollowOffset;
         transform.LookAt(_followTr);
-        UnityEditor.EditorApplication.isPaused = true;
+        //UnityEditor.EditorApplication.isPaused = true;
     }
 
 
