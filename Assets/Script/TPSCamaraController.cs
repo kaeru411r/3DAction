@@ -108,7 +108,6 @@ public class TPSCamaraController : MonoBehaviour
     private void Update()
     {
         OnPadLook(_x, _y);
-        //Debug.Log($"{_testMark.position}, {transform.position}U1");
         //マウスとパッドでそれぞれカメラ旋回
         if (_isMouseorPad)
         {
@@ -123,27 +122,8 @@ public class TPSCamaraController : MonoBehaviour
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
 
         SetPosition();
-        //_mark.position = transform.position;
-        //_testMark.position = transform.position;
-        //Debug.Log($"{_testMark.position}, {transform.position}U2");
-        //if(transform.position != new Vector3(0, 0, -10) && p >= 20)
-        //{
-        //    UnityEditor.EditorApplication.isPaused = true;
-        //    Debug.Log($"{transform.position != new Vector3(0, 0, -10)}");
-        //}
-        //else
-        //{
-        //    Debug.Log($"{transform.position != new Vector3(0, 0, -10)}");
-        //}
-        //p++;
-        //Debug.Log(p);
-
     }
 
-    private void LateUpdate()
-    {
-        //Debug.Log($"{_mark.position}, {transform.position}L");
-    }
 
     /// <summary>
     /// カメラの位置調整
@@ -152,6 +132,7 @@ public class TPSCamaraController : MonoBehaviour
     {
         //カメラの向きの単位ベクトル
         Vector3 direction = transform.rotation * Vector3.back;
+        Debug.Log(direction);
 
         //デバッグ用可視線照射
         Vector3 position = _lookTr.position;
@@ -160,25 +141,19 @@ public class TPSCamaraController : MonoBehaviour
         //カメラの向きにあわせて位置を調整
         _transposer.m_FollowOffset = direction * _radius;
         transform.position = _followTr.position + _transposer.m_FollowOffset;
-        //transform.LookAt(_followTr);
 
         _mark.position = transform.position;
         _testMark.position = transform.position;
-        //Debug.Log($"{_mark.position}, {transform.position}");
-        //Debug.Log($"{_mark.position == transform.position}");
-        //if (_mark.position != transform.position)
-        //{
-        //    Debug.Log($"{_mark.position == transform.position}");
-        //}
 
-        //Debug.Log($"{top}, {_mark.localPosition.y}");
-        if (_limit0 * _radius < _mark.localPosition.y)            //カメラが範囲より上に出ていた時
+        float top = Mathf.Max(_limit0, _limit1);
+        float bottom = Mathf.Min(_limit0, _limit1);
+        if (top * _radius < _mark.localPosition.y)            //カメラが範囲より上に出ていた時
         {
-            PositionCorrection(direction, _limit0);
+            PositionCorrection(direction, top);
         }
-        else if (_limit1 * _radius > _mark.localPosition.y)    //カメラが範囲より下に出ていた時
+        else if (bottom * _radius > _mark.localPosition.y)    //カメラが範囲より下に出ていた時
         {
-            PositionCorrection(direction, _limit1);
+            PositionCorrection(direction, bottom);
         }
         else
         {
@@ -205,30 +180,36 @@ public class TPSCamaraController : MonoBehaviour
         Vector3 e = new Vector3(v0.y * v1.z - v0.z * v1.y, v0.z * v1.x - v0.x * v1.z, v0.x * v1.y - v0.y * v1.x);
 
         Vector3 a = Vector3.zero;
+        Debug.Log(e.magnitude);
 
-        if (e.z != 0)
+        if (Mathf.Abs(e.z) > 0.1f)
         {
             a = new Vector3((d0 * v1.y - d1 * v0.y) / e.z, (d0 * v1.x - d1 * v0.x) / (-e.z), 0);
+            Debug.Log($"p1");
         }
-        else if (e.y != 0)
+        else if (Mathf.Abs(e.y) > 0.1f)
         {
             a = new Vector3((d0 * v1.z - d1 * v0.z) / (-e.y), 0, (d0 * v1.x - d1 * v0.x) / e.y);
+            Debug.Log($"p2");
         }
-        else if (e.x != 0)
+        else if (Mathf.Abs(e.x) > 0.1f)
         {
             a = new Vector3(0, (d0 * v1.z - d1 * v0.z) / e.x, (d0 * v1.y - d1 * v0.y) / (-e.x));
+            Debug.Log($"p3");
         }
+        Debug.Log($"{a}, {e}");
         e.Normalize();
 
         Debug.DrawLine(a + e * 100, a + e * -100);
+
         //線の本数
         int segment = 72;
         //線一本あたりの角度
         float theta = Mathf.PI * 2 / segment; ;
         for (float i = 0; i < Mathf.PI * 2; i += theta)
         {
-            Vector3 start = _followTr.position + _radius * Mathf.Cos(i) * direction + _radius * Mathf.Sin(i) * (Quaternion.Euler(90, 0, 0) * direction);
-            Vector3 goal = _followTr.position + _radius * Mathf.Cos(i + theta) * direction + _radius * Mathf.Sin(i + theta) * (Quaternion.Euler(90, 0, 0) * direction);
+            Vector3 start = _followTr.position + _radius * Mathf.Cos(i) * Vector3.up + _radius * Mathf.Sin(i) * (Quaternion.Euler(0, 90, 0) * v0);
+            Vector3 goal = _followTr.position + _radius * Mathf.Cos(i + theta) * Vector3.up + _radius * Mathf.Sin(i + theta) * (Quaternion.Euler(0, 90, 0) * v0);
             Debug.DrawLine(start, goal, _gizmosColor);
         }
 
@@ -257,7 +238,6 @@ public class TPSCamaraController : MonoBehaviour
         _transposer.m_FollowOffset = pos - _followTr.position;
         transform.position = _followTr.position + _transposer.m_FollowOffset;
         transform.LookAt(_followTr);
-        //Debug.Log($"{_testMark.position == transform.position}");
         //UnityEditor.EditorApplication.isPaused = true;
     }
 
