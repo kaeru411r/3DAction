@@ -18,9 +18,9 @@ public class TPSCamaraController : MonoBehaviour
     [SerializeField] Vector2 _mouseSpeed;
     [Tooltip("パッドのカメラ速度")]
     [SerializeField] Vector2 _padSpeed;
-    [Tooltip("上の限界点"), Range(-1, 1)]
+    [Tooltip("上の限界点"), Range(-0.9999f, 0.9999f)]
     [SerializeField] float _limit0;
-    [Tooltip("下の限界点"), Range(-1, 1)]
+    [Tooltip("下の限界点"), Range(-0.9999f, 0.9999f)]
     [SerializeField] float _limit1;
     [SerializeField] Transform _testMark;
     [SerializeField, Range(-1, 1)] float _x;
@@ -107,16 +107,24 @@ public class TPSCamaraController : MonoBehaviour
 
     private void Update()
     {
-        OnPadLook(_x, _y);
+        //OnPadLook(_x, _y);
+        Vector2 look;
         //マウスとパッドでそれぞれカメラ旋回
         if (_isMouseorPad)
         {
-            transform.Rotate(new Vector3(_look.y, _look.x) * _mouseSpeed);
+            look = new Vector3(_look.y, _look.x) * _mouseSpeed;
         }
         else
         {
-            transform.Rotate(new Vector3(_look.y, _look.x) * _padSpeed * Time.deltaTime);
+            look = new Vector3(_look.y, _look.x) * _padSpeed * Time.deltaTime;
         }
+
+        float asd = (_followTr.position.y - transform.position.y) / _radius;
+        float xCorrection = Mathf.Sqrt(_radius * _radius - _radius * _radius * asd * asd);
+        //xCorrection = Mathf.Max(0.1f, xCorrection);
+        look = new Vector2(look.x, look.y * xCorrection);
+
+        transform.Rotate(look.x, look.y, 0);
 
         //ロールを0に
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
