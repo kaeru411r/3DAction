@@ -107,7 +107,7 @@ public class TPSCamaraController : MonoBehaviour
 
     private void Update()
     {
-        //OnPadLook(_x, _y);
+        OnPadLook(_x, _y);
         Vector2 look;
         //マウスとパッドでそれぞれカメラ旋回
         if (_isMouseorPad)
@@ -189,18 +189,21 @@ public class TPSCamaraController : MonoBehaviour
 
         Vector3 a = Vector3.zero;
         Debug.Log(e.magnitude);
+        float x = Mathf.Abs(0.5f - Mathf.Abs(e.x));
+        float y = Mathf.Abs(0.5f - Mathf.Abs(e.y));
+        float z = Mathf.Abs(0.5f - Mathf.Abs(e.z));
 
-        if (Mathf.Abs(e.z) > 0.1f)
+        if (z <= x && z <= y && e.z != 0)
         {
             a = new Vector3((d0 * v1.y - d1 * v0.y) / e.z, (d0 * v1.x - d1 * v0.x) / (-e.z), 0);
             Debug.Log($"p1");
         }
-        else if (Mathf.Abs(e.y) > 0.1f)
+        else if (y <= x && y <= z && e.y != 0)
         {
             a = new Vector3((d0 * v1.z - d1 * v0.z) / (-e.y), 0, (d0 * v1.x - d1 * v0.x) / e.y);
             Debug.Log($"p2");
         }
-        else if (Mathf.Abs(e.x) > 0.1f)
+        else if (x <= y && x <= z && e.x != 0)
         {
             a = new Vector3(0, (d0 * v1.z - d1 * v0.z) / e.x, (d0 * v1.y - d1 * v0.y) / (-e.x));
             Debug.Log($"p3");
