@@ -18,7 +18,7 @@ public class TPSCamaraController : MonoBehaviour
     [SerializeField] Vector2 _mouseSpeed;
     [Tooltip("パッドのカメラ速度")]
     [SerializeField] Vector2 _padSpeed;
-    [Tooltip("上の限界点"), Range(-0.9999f, 0.9999f)]
+    [Tooltip("上の限界点"), Range(-0.9999f, 1)]
     [SerializeField] float _limit0;
     [Tooltip("下の限界点"), Range(-0.9999f, 0.9999f)]
     [SerializeField] float _limit1;
@@ -118,16 +118,28 @@ public class TPSCamaraController : MonoBehaviour
         {
             look = new Vector3(_look.y, _look.x) * _padSpeed * Time.deltaTime;
         }
-
-        float asd = (_followTr.position.y - transform.position.y) / _radius;
-        float xCorrection = Mathf.Sqrt(_radius * _radius - _radius * _radius * asd * asd);
+        float radius = _radius * 1.0005f;
+        float height = (_followTr.position.y - transform.position.y);
+        float xCorrection = Mathf.Sqrt(radius * radius - height * height) / _radius;
         //xCorrection = Mathf.Max(0.1f, xCorrection);
         look = new Vector2(look.x, look.y * xCorrection);
 
-        transform.Rotate(look.x, look.y, 0);
+        //Debug.Log($"{transform.eulerAngles} {transform.rotation}");
+        if (look.x + transform.eulerAngles.x < 90)
+        {
+            Debug.Log(1);
+            transform.Rotate(look.x, look.y, 0);
+            transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
+        }
+        else if (Mathf.Abs(look.y) >= float.Epsilon)
+        {
+            Debug.Log(2);
+            transform.Rotate(0, look.y, 0);
+            transform.eulerAngles = new Vector3(90, transform.eulerAngles.y, transform.eulerAngles.z);
+        }
+        Debug.Log($"{transform.eulerAngles} {transform.rotation} {look / Time.deltaTime}");
 
         //ロールを0に
-        transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
 
         SetPosition();
     }
@@ -140,7 +152,6 @@ public class TPSCamaraController : MonoBehaviour
     {
         //カメラの向きの単位ベクトル
         Vector3 direction = transform.rotation * Vector3.back;
-        Debug.Log(direction);
 
         //デバッグ用可視線照射
         Vector3 position = _lookTr.position;
@@ -188,7 +199,6 @@ public class TPSCamaraController : MonoBehaviour
         Vector3 e = new Vector3(v0.y * v1.z - v0.z * v1.y, v0.z * v1.x - v0.x * v1.z, v0.x * v1.y - v0.y * v1.x);
 
         Vector3 a = Vector3.zero;
-        Debug.Log(e.magnitude);
         float x = Mathf.Abs(0.5f - Mathf.Abs(e.x));
         float y = Mathf.Abs(0.5f - Mathf.Abs(e.y));
         float z = Mathf.Abs(0.5f - Mathf.Abs(e.z));
@@ -196,19 +206,15 @@ public class TPSCamaraController : MonoBehaviour
         if (z <= x && z <= y && e.z != 0)
         {
             a = new Vector3((d0 * v1.y - d1 * v0.y) / e.z, (d0 * v1.x - d1 * v0.x) / (-e.z), 0);
-            Debug.Log($"p1");
         }
         else if (y <= x && y <= z && e.y != 0)
         {
             a = new Vector3((d0 * v1.z - d1 * v0.z) / (-e.y), 0, (d0 * v1.x - d1 * v0.x) / e.y);
-            Debug.Log($"p2");
         }
         else if (x <= y && x <= z && e.x != 0)
         {
             a = new Vector3(0, (d0 * v1.z - d1 * v0.z) / e.x, (d0 * v1.y - d1 * v0.y) / (-e.x));
-            Debug.Log($"p3");
         }
-        Debug.Log($"{a}, {e}");
         e.Normalize();
 
         Debug.DrawLine(a + e * 100, a + e * -100);

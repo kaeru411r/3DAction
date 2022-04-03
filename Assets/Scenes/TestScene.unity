@@ -1003,8 +1003,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _radius: 5
   _mouseSpeed: {x: 1, y: 1}
-  _padSpeed: {x: 10, y: 10}
-  _limit0: 0.9999
+  _padSpeed: {x: 20, y: 20}
+  _limit0: 1
   _limit1: -0.53
   _testMark: {fileID: 1439734349}
   _x: 1
