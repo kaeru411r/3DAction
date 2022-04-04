@@ -5,16 +5,14 @@ using UnityEngine.InputSystem;
 
 public class Tester : MonoBehaviour
 {
-    [SerializeField] TPSCamaraController _tps;
+    [SerializeField] float _x;
+    [SerializeField] float _y;
+    [SerializeField] float _z;
+
 
 
     private void Update()
     {
-
-    }
-
-    public void Onlook(InputAction.CallbackContext context)
-    {
-        _tps.OnMouseLook(context.ReadValue<Vector2>());
+        transform.Rotate(_x, _y, _z);
     }
 }

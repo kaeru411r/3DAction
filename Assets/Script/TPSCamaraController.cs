@@ -4,7 +4,7 @@ using UnityEngine;
 using Cinemachine;
 
 /// <summary>
-/// TPSカメラの操作をするクラス
+/// TPSカメラの制御をするクラス
 /// </summary>
 
 [RequireComponent(typeof(CinemachineVirtualCamera))]
@@ -18,9 +18,9 @@ public class TPSCamaraController : MonoBehaviour
     [SerializeField] Vector2 _mouseSpeed;
     [Tooltip("パッドのカメラ速度")]
     [SerializeField] Vector2 _padSpeed;
-    [Tooltip("上の限界点"), Range(-0.9999f, 1)]
+    [Tooltip("上の限界点"), Range(-1, 1)]
     [SerializeField] float _limit0;
-    [Tooltip("下の限界点"), Range(-0.9999f, 0.9999f)]
+    [Tooltip("下の限界点"), Range(-1, 1)]
     [SerializeField] float _limit1;
     [SerializeField] Transform _testMark;
     [SerializeField, Range(-1, 1)] float _x;
@@ -118,11 +118,12 @@ public class TPSCamaraController : MonoBehaviour
         {
             look = new Vector3(_look.y, _look.x) * _padSpeed * Time.deltaTime;
         }
-        float radius = _radius * 1.0005f;
+        float radius = _radius * 1.01f;
         float height = (_followTr.position.y - transform.position.y);
         float xCorrection = Mathf.Sqrt(radius * radius - height * height) / _radius;
         //xCorrection = Mathf.Max(0.1f, xCorrection);
         look = new Vector2(look.x, look.y * xCorrection);
+        Debug.Log($"{transform.eulerAngles} {transform.rotation} {transform.eulerAngles.z}");
 
         //Debug.Log($"{transform.eulerAngles} {transform.rotation}");
         if (look.x + transform.eulerAngles.x < 90)
@@ -134,14 +135,15 @@ public class TPSCamaraController : MonoBehaviour
         else if (Mathf.Abs(look.y) >= float.Epsilon)
         {
             Debug.Log(2);
-            transform.Rotate(0, look.y, 0);
-            transform.eulerAngles = new Vector3(90, transform.eulerAngles.y, transform.eulerAngles.z);
+            transform.Rotate(0, 0, -look.y);
+            //transform.eulerAngles = new Vector3(90, transform.eulerAngles.y, transform.eulerAngles.z);
         }
-        Debug.Log($"{transform.eulerAngles} {transform.rotation} {look / Time.deltaTime}");
+        Debug.Log($"{transform.eulerAngles} {transform.rotation} {transform.eulerAngles.z}");
 
         //ロールを0に
 
         SetPosition();
+        Debug.Log($"{transform.eulerAngles} {transform.rotation} {transform.eulerAngles.z}");
     }
 
 
@@ -166,11 +168,11 @@ public class TPSCamaraController : MonoBehaviour
 
         float top = Mathf.Max(_limit0, _limit1);
         float bottom = Mathf.Min(_limit0, _limit1);
-        if (top * _radius < _mark.localPosition.y)            //カメラが範囲より上に出ていた時
+        if (top * _radius < _mark.localPosition.y && Mathf.Abs(top) >= 1)            //カメラが範囲より上に出ていた時
         {
             PositionCorrection(direction, top);
         }
-        else if (bottom * _radius > _mark.localPosition.y)    //カメラが範囲より下に出ていた時
+        else if (bottom * _radius > _mark.localPosition.y && Mathf.Abs(bottom) >= 1)    //カメラが範囲より下に出ていた時
         {
             PositionCorrection(direction, bottom);
         }
