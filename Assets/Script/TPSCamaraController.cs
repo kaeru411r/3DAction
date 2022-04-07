@@ -107,7 +107,7 @@ public class TPSCamaraController : MonoBehaviour
 
     private void Update()
     {
-        OnPadLook(_x, _y);
+        //OnPadLook(_x, _y);
         Vector2 look;
         //マウスとパッドでそれぞれカメラ旋回
         if (_isMouseorPad)
@@ -118,25 +118,21 @@ public class TPSCamaraController : MonoBehaviour
         {
             look = new Vector3(_look.y, _look.x) * _padSpeed * Time.deltaTime;
         }
-        float radius = _radius * 1.01f;
-        float height = (_followTr.position.y - transform.position.y);
-        float xCorrection = Mathf.Sqrt(radius * radius - height * height) / _radius;
-        //xCorrection = Mathf.Max(0.1f, xCorrection);
-        look = new Vector2(look.x, look.y * xCorrection);
-        Debug.Log($"{transform.eulerAngles} {transform.rotation} {transform.eulerAngles.z}");
 
-        //Debug.Log($"{transform.eulerAngles} {transform.rotation}");
-        if (look.x + transform.eulerAngles.x < 90)
+
+        float rX = transform.eulerAngles.x < 180 ? transform.eulerAngles.x : transform.eulerAngles.x - 360;
+        if (Mathf.Abs(look.x + rX) < 90)
         {
             Debug.Log(1);
-            transform.Rotate(look.x, look.y, 0);
+            transform.eulerAngles += new Vector3(look.x, look.y, 0);
             transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
         }
         else if (Mathf.Abs(look.y) >= float.Epsilon)
         {
-            Debug.Log(2);
             transform.Rotate(0, 0, -look.y);
-            //transform.eulerAngles = new Vector3(90, transform.eulerAngles.y, transform.eulerAngles.z);
+        }
+        else
+        {
         }
         Debug.Log($"{transform.eulerAngles} {transform.rotation} {transform.eulerAngles.z}");
 
@@ -257,7 +253,6 @@ public class TPSCamaraController : MonoBehaviour
         _transposer.m_FollowOffset = pos - _followTr.position;
         transform.position = _followTr.position + _transposer.m_FollowOffset;
         transform.LookAt(_followTr);
-        //UnityEditor.EditorApplication.isPaused = true;
     }
 
 
