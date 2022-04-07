@@ -5,16 +5,28 @@ using UnityEngine.InputSystem;
 
 public class Tester : MonoBehaviour
 {
-    [SerializeField] TPSCamaraController _tps;
+    Vector2 _look;
+    TPSCamaraController _TPSCamaraController;
 
+    public void OnLook(InputAction.CallbackContext callbackContext)
+    {
+        _look = callbackContext.ReadValue<Vector2>();
+    }
+
+    private void Start()
+    {
+        _TPSCamaraController = GetComponent<TPSCamaraController>();
+    }
 
     private void Update()
     {
-
-    }
-
-    public void Onlook(InputAction.CallbackContext context)
-    {
-        _tps.OnMouseLook(context.ReadValue<Vector2>());
+        if (_TPSCamaraController)
+        {
+            _TPSCamaraController.OnMouseLook(_look);
+        }
+        else
+        {
+            Debug.LogError(1);
+        }
     }
 }
