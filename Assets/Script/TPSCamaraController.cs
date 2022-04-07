@@ -107,7 +107,7 @@ public class TPSCamaraController : MonoBehaviour
 
     private void Update()
     {
-        //OnPadLook(_x, _y);
+        OnPadLook(_x, _y);
         Vector2 look;
         //マウスとパッドでそれぞれカメラ旋回
         if (_isMouseorPad)
@@ -119,27 +119,32 @@ public class TPSCamaraController : MonoBehaviour
             look = new Vector3(_look.y, _look.x) * _padSpeed * Time.deltaTime;
         }
 
-
-        float rX = transform.eulerAngles.x < 180 ? transform.eulerAngles.x : transform.eulerAngles.x - 360;
-        if (Mathf.Abs(look.x + rX) < 90)
+        //回転後のx
+        float cX = transform.eulerAngles.x < 180 ? transform.eulerAngles.x + look.x: transform.eulerAngles.x - 360 + look.x;
+        if (Mathf.Abs(cX) < 90)                //移動の結果頂点に到達しないとき
         {
-            Debug.Log(1);
             transform.eulerAngles += new Vector3(look.x, look.y, 0);
-            transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
         }
         else if (Mathf.Abs(look.y) >= float.Epsilon)
         {
-            transform.Rotate(0, 0, -look.y);
+            if (cX > 0)
+            {
+                transform.eulerAngles = new Vector3(90, transform.eulerAngles.y + look.y, transform.eulerAngles.z);
+            }
+            else
+            {
+                transform.eulerAngles = new Vector3(-90, transform.eulerAngles.y + look.y, transform.eulerAngles.z);
+            }
         }
         else
         {
         }
-        Debug.Log($"{transform.eulerAngles} {transform.rotation} {transform.eulerAngles.z}");
+        //Debug.Log($"{transform.eulerAngles} {transform.rotation} {transform.eulerAngles.z}");
 
         //ロールを0に
 
         SetPosition();
-        Debug.Log($"{transform.eulerAngles} {transform.rotation} {transform.eulerAngles.z}");
+        //Debug.Log($"{transform.eulerAngles} {transform.rotation} {transform.eulerAngles.z}");
     }
 
 
@@ -164,11 +169,11 @@ public class TPSCamaraController : MonoBehaviour
 
         float top = Mathf.Max(_limit0, _limit1);
         float bottom = Mathf.Min(_limit0, _limit1);
-        if (top * _radius < _mark.localPosition.y && Mathf.Abs(top) >= 1)            //カメラが範囲より上に出ていた時
+        if (top * _radius < _mark.localPosition.y && Mathf.Abs(top) < 1)            //カメラが範囲より上に出ていた時
         {
             PositionCorrection(direction, top);
         }
-        else if (bottom * _radius > _mark.localPosition.y && Mathf.Abs(bottom) >= 1)    //カメラが範囲より下に出ていた時
+        else if (bottom * _radius > _mark.localPosition.y && Mathf.Abs(bottom) < 1)    //カメラが範囲より下に出ていた時
         {
             PositionCorrection(direction, bottom);
         }

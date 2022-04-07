@@ -1096,12 +1096,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _radius: 5
   _mouseSpeed: {x: 1, y: 1}
-  _padSpeed: {x: 20, y: 20}
+  _padSpeed: {x: 200000, y: 20}
   _limit0: 1
-  _limit1: -0.53
+  _limit1: -1
   _testMark: {fileID: 1439734349}
   _x: 1
-  _y: 1
+  _y: -1
 --- !u!114 &2107746223
 MonoBehaviour:
   m_ObjectHideFlags: 0
