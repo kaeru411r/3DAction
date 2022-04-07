@@ -120,7 +120,7 @@ public class TPSCamaraController : MonoBehaviour
         }
 
         //回転後のx
-        float cX = transform.eulerAngles.x < 180 ? transform.eulerAngles.x + look.x: transform.eulerAngles.x - 360 + look.x;
+        float cX = transform.eulerAngles.x < 180 ? transform.eulerAngles.x + look.x : transform.eulerAngles.x - 360 + look.x;
         if (Mathf.Abs(cX) < 90)                //移動の結果頂点に到達しないとき
         {
             transform.eulerAngles += new Vector3(look.x, look.y, 0);
@@ -136,9 +136,7 @@ public class TPSCamaraController : MonoBehaviour
                 transform.eulerAngles = new Vector3(-90, transform.eulerAngles.y + look.y, transform.eulerAngles.z);
             }
         }
-        else
-        {
-        }
+        else { }
         //Debug.Log($"{transform.eulerAngles} {transform.rotation} {transform.eulerAngles.z}");
 
         //ロールを0に
@@ -177,9 +175,7 @@ public class TPSCamaraController : MonoBehaviour
         {
             PositionCorrection(direction, bottom);
         }
-        else
-        {
-        }
+        else { }
     }
 
     /// <summary>
@@ -190,7 +186,11 @@ public class TPSCamaraController : MonoBehaviour
 
         //Followを中心とし、カメラ上を通る円の回転軸の方向ベクトル
         Vector3 v0 = Quaternion.Euler(0, 90, 0) * direction;
-        v0 = new Vector3(v0.x, 0, v0.z).normalized;
+        if (Mathf.Abs(v0.x) + Mathf.Abs(v0.z) >= float.Epsilon)
+        {
+            v0 = new Vector3(v0.x, 0, v0.z).normalized;
+            Debug.Log(v0);
+        }
         Debug.DrawRay(_followTr.position, v0);
         float d0 = -(-v0.x * _followTr.position.x - v0.y * _followTr.position.y - v0.z * _followTr.position.z);
         //制限の円の回転軸の方向ベクトル
@@ -206,6 +206,7 @@ public class TPSCamaraController : MonoBehaviour
         float y = Mathf.Abs(0.5f - Mathf.Abs(e.y));
         float z = Mathf.Abs(0.5f - Mathf.Abs(e.z));
 
+
         if (z <= x && z <= y && e.z != 0)
         {
             a = new Vector3((d0 * v1.y - d1 * v0.y) / e.z, (d0 * v1.x - d1 * v0.x) / (-e.z), 0);
@@ -218,6 +219,8 @@ public class TPSCamaraController : MonoBehaviour
         {
             a = new Vector3(0, (d0 * v1.z - d1 * v0.z) / e.x, (d0 * v1.y - d1 * v0.y) / (-e.x));
         }
+        else { }
+
         e.Normalize();
 
         Debug.DrawLine(a + e * 100, a + e * -100);
