@@ -186,11 +186,13 @@ public class TPSCamaraController : MonoBehaviour
 
         //Followを中心とし、カメラ上を通る円の回転軸の方向ベクトル
         Vector3 v0 = Quaternion.Euler(0, 90, 0) * direction;
-        if (Mathf.Abs(v0.x) + Mathf.Abs(v0.z) >= float.Epsilon)
-        {
+        //if (Mathf.Abs(v0.x) + Mathf.Abs(v0.z) >= float.Epsilon * 2)
+        //{
             v0 = new Vector3(v0.x, 0, v0.z).normalized;
-            Debug.Log(v0);
-        }
+            //v0 = new Vector3(v0.x, 0, v0.z);
+            //v0 = (v0 / v0.magnitude).normalized;
+            Debug.Log(v0.normalized.magnitude);
+        //}
         Debug.DrawRay(_followTr.position, v0);
         float d0 = -(-v0.x * _followTr.position.x - v0.y * _followTr.position.y - v0.z * _followTr.position.z);
         //制限の円の回転軸の方向ベクトル
