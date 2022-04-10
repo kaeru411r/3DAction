@@ -188,10 +188,10 @@ public class TPSCamaraController : MonoBehaviour
         Vector3 v0 = Quaternion.Euler(0, 90, 0) * direction;
         //if (Mathf.Abs(v0.x) + Mathf.Abs(v0.z) >= float.Epsilon * 2)
         //{
-            v0 = new Vector3(v0.x, 0, v0.z).normalized;
-            //v0 = new Vector3(v0.x, 0, v0.z);
-            //v0 = (v0 / v0.magnitude).normalized;
-            Debug.Log(v0.normalized.magnitude);
+        v0 = new Vector3(v0.x, 0, v0.z).normalized;
+        //v0 = new Vector3(v0.x, 0, v0.z);
+        //v0 = (v0 / v0.magnitude).normalized;
+        Debug.Log(v0.normalized.magnitude);
         //}
         Debug.DrawRay(_followTr.position, v0);
         float d0 = -(-v0.x * _followTr.position.x - v0.y * _followTr.position.y - v0.z * _followTr.position.z);
