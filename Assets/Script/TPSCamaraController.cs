@@ -164,6 +164,22 @@ public class TPSCamaraController : MonoBehaviour
 
         _mark.position = transform.position;
         _testMark.position = transform.position;
+        //線の本数
+        int segment = 72;
+        //線一本あたりの角度
+        float theta = Mathf.PI * 2 / segment;
+        //円の中心の座標
+        Vector3 pos = _followTr.position + _followTr.up * -1 * -_limit1 * _radius;
+        //円の半径
+        float radius = Mathf.Sqrt(_radius * _radius - _radius * _radius * _limit1 * _limit1);
+        float radiusX = radius * Mathf.Cos(_followTr.eulerAngles.x / 180 * Mathf.PI);
+        float radiusZ = radius * Mathf.Cos(_followTr.eulerAngles.z / 180 * Mathf.PI);
+        for (float i = 0; i < Mathf.PI * 2; i += theta)
+        {
+            Vector3 start = pos + radiusX * Mathf.Cos(i) * Vector3.forward + radiusZ * Mathf.Sin(i) * Vector3.right;
+            Vector3 goal = pos + radiusX * Mathf.Cos(i + theta) * Vector3.forward + radiusZ * Mathf.Sin(i + theta) * Vector3.right;
+            Debug.DrawLine(start, goal, _gizmosColor);
+        }
 
         float top = Mathf.Max(_limit0, _limit1);
         float bottom = Mathf.Min(_limit0, _limit1);
@@ -179,7 +195,7 @@ public class TPSCamaraController : MonoBehaviour
     }
 
     /// <summary>
-    /// カメラの位置が範囲内に収まっているかチェックする
+    /// カメラの位置を範囲内に修正する
     /// </summary>
     void PositionCorrection(Vector3 direction, float limit)
     {
@@ -263,6 +279,32 @@ public class TPSCamaraController : MonoBehaviour
         _transposer.m_FollowOffset = pos - _followTr.position;
         transform.position = _followTr.position + _transposer.m_FollowOffset;
         transform.LookAt(_followTr);
+    }
+
+
+
+    /// <summary>
+    /// カメラの位置を範囲内に修正する
+    /// </summary>
+    void PositionCorrection2(Vector3 direction, float limit)
+    {
+
+        //線の本数
+        int segment = 72;
+        //線一本あたりの角度
+        float theta = Mathf.PI * 2 / segment;
+        //円の中心の座標
+        Vector3 pos = _followTr.position + _followTr.up * -1 * -_limit1 * _radius;
+        //円の半径
+        float radius = Mathf.Sqrt(_radius * _radius - _radius * _radius * _limit1 * _limit1);
+        float radiusX = radius * Mathf.Cos(_followTr.eulerAngles.x);
+        float radiusZ = radius * Mathf.Cos(_followTr.eulerAngles.z);
+        for (float i = 0; i < Mathf.PI * 2; i += theta)
+        {
+            Vector3 start = pos + radiusX * Mathf.Cos(i) * Vector3.right + radiusZ * Mathf.Sin(i) * Vector3.forward;
+            Vector3 goal = pos + radiusX * Mathf.Cos(i + theta) * Vector3.right + radiusZ * Mathf.Sin(i + theta) * Vector3.forward;
+            Debug.DrawLine(start, goal, _gizmosColor);
+        }
     }
 
 
