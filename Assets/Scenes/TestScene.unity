@@ -139,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &633283056
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -224,6 +224,7 @@ GameObject:
   m_Component:
   - component: {fileID: 711351764}
   - component: {fileID: 711351762}
+  - component: {fileID: 711351763}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -361,6 +362,24 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &711351763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 711351761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38dbf22a097a881439ab45a50fb8fd72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _v0: {x: 0, y: 0, z: 0}
+  _v1: {x: 0, y: 0, z: 0}
+  _v2: {x: 0, y: 0, z: 0}
+  v0: {x: 0, y: 0, z: 0}
+  v1: {x: 0, y: 0, z: 0}
+  v2: {x: 0, y: 0, z: 0}
 --- !u!4 &711351764
 Transform:
   m_ObjectHideFlags: 0
@@ -369,7 +388,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 711351761}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.66051, y: 11.678145, z: 6.293477}
+  m_LocalPosition: {x: 5.21, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -736,7 +755,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-15240
+  m_Name: pb_Mesh-1192
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1096,12 +1115,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _radius: 5
   _mouseSpeed: {x: 1, y: 1}
-  _padSpeed: {x: 20, y: 20}
+  _padSpeed: {x: 2000000, y: 20}
   _limit0: 1
-  _limit1: -0.53
+  _limit1: -0.25
   _testMark: {fileID: 1439734349}
-  _x: 1
-  _y: 1
+  _x: 0
+  _y: 0
+  _en: 360
 --- !u!114 &2107746223
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1338,6 +1358,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Plane (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079950427327273245, guid: f4038eb4e2e504d4db473a1ec0cc25ba,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1079950427327273246, guid: f4038eb4e2e504d4db473a1ec0cc25ba,
         type: 3}

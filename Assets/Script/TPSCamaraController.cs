@@ -25,6 +25,7 @@ public class TPSCamaraController : MonoBehaviour
     [SerializeField] Transform _testMark;
     [SerializeField, Range(-1, 1)] float _x;
     [SerializeField, Range(-1, 1)] float _y;
+    [SerializeField] float _en; 
 
 
     /// <summary>カメラの座標のフォローオブジェクトのローカル版</summary>
@@ -107,7 +108,7 @@ public class TPSCamaraController : MonoBehaviour
 
     private void Update()
     {
-        //OnPadLook(_x, _y);
+        OnPadLook(_x, _y);
         Vector2 look;
         //マウスとパッドでそれぞれカメラ旋回
         if (_isMouseorPad)
@@ -119,27 +120,30 @@ public class TPSCamaraController : MonoBehaviour
             look = new Vector3(_look.y, _look.x) * _padSpeed * Time.deltaTime;
         }
 
-
-        float rX = transform.eulerAngles.x < 180 ? transform.eulerAngles.x : transform.eulerAngles.x - 360;
-        if (Mathf.Abs(look.x + rX) < 90)
+        //回転後のx
+        float cX = transform.eulerAngles.x < 180 ? transform.eulerAngles.x + look.x : transform.eulerAngles.x - 360 + look.x;
+        if (Mathf.Abs(cX) < 90)                //移動の結果頂点に到達しないとき
         {
-            Debug.Log(1);
             transform.eulerAngles += new Vector3(look.x, look.y, 0);
-            transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
         }
         else if (Mathf.Abs(look.y) >= float.Epsilon)
         {
-            transform.Rotate(0, 0, -look.y);
+            if (cX > 0)
+            {
+                transform.eulerAngles = new Vector3(90, transform.eulerAngles.y + look.y, transform.eulerAngles.z);
+            }
+            else
+            {
+                transform.eulerAngles = new Vector3(-90, transform.eulerAngles.y + look.y, transform.eulerAngles.z);
+            }
         }
-        else
-        {
-        }
-        Debug.Log($"{transform.eulerAngles} {transform.rotation} {transform.eulerAngles.z}");
+        else { }
+        //Debug.Log($"{transform.eulerAngles} {transform.rotation} {transform.eulerAngles.z}");
 
         //ロールを0に
 
         SetPosition();
-        Debug.Log($"{transform.eulerAngles} {transform.rotation} {transform.eulerAngles.z}");
+        //Debug.Log($"{transform.eulerAngles} {transform.rotation} {transform.eulerAngles.z}");
     }
 
 
@@ -161,31 +165,60 @@ public class TPSCamaraController : MonoBehaviour
 
         _mark.position = transform.position;
         _testMark.position = transform.position;
+        //線の本数
+        int segment = 72;
+        //線一本あたりの角度
+        float theta = Mathf.PI * 2 / segment;
+        //円の中心の座標
+        Vector3 pos = _followTr.position + _followTr.up * -1 * -_limit1 * _radius;
+        //円の半径
+        float radius = Mathf.Sqrt(_radius * _radius - _radius * _radius * _limit1 * _limit1);
+        Vector3 followD = _followTr.up;
+        Vector3 up = Vector3.up;
+        Vector3 forward = _followTr.forward;
+        Vector3 right = Vector3.zero;
+        Vector3.OrthoNormalize(ref up, ref forward, ref right);
+        followD = new Vector3(Vector3.Dot(right, followD), Vector3.Dot(up, followD), Vector3.Dot(forward, followD));
+        Debug.DrawRay(_followTr.position, new Vector3(followD.x, 0, 0), Color.blue);
+        Debug.DrawRay(_followTr.position, new Vector3(0, 0, followD.z), Color.blue);
+        float radiusX = radius * Mathf.Cos(Mathf.Atan(followD.y / followD.z) - Mathf.PI / 2);
+        float radiusZ = radius * Mathf.Cos(Mathf.Atan(followD.y / followD.x) - Mathf.PI / 2);
+        Debug.Log(followD);
+        for (float i = 0; i < _en / 360 * Mathf.PI * 2; i += theta)
+        {
+            Vector3 start = pos + radiusX * Mathf.Cos(i) * (Quaternion.Euler(0, _followTr.eulerAngles.y, 0) * Vector3.forward) + radiusZ * Mathf.Sin(i) * (Quaternion.Euler(0, _followTr.eulerAngles.y, 0) * Vector3.right);
+            Vector3 goal = pos + radiusX * Mathf.Cos(i + theta) * (Quaternion.Euler(0, _followTr.eulerAngles.y, 0) * Vector3.forward) + radiusZ * Mathf.Sin(i + theta) * (Quaternion.Euler(0, _followTr.eulerAngles.y, 0) * Vector3.right);
+            Debug.DrawLine(start, goal, _gizmosColor);
+        }
 
         float top = Mathf.Max(_limit0, _limit1);
         float bottom = Mathf.Min(_limit0, _limit1);
-        if (top * _radius < _mark.localPosition.y && Mathf.Abs(top) >= 1)            //カメラが範囲より上に出ていた時
+        if (top * _radius < _mark.localPosition.y && Mathf.Abs(top) < 1)            //カメラが範囲より上に出ていた時
         {
             PositionCorrection(direction, top);
         }
-        else if (bottom * _radius > _mark.localPosition.y && Mathf.Abs(bottom) >= 1)    //カメラが範囲より下に出ていた時
+        else if (bottom * _radius > _mark.localPosition.y && Mathf.Abs(bottom) < 1)    //カメラが範囲より下に出ていた時
         {
             PositionCorrection(direction, bottom);
         }
-        else
-        {
-        }
+        else { }
     }
 
     /// <summary>
-    /// カメラの位置が範囲内に収まっているかチェックする
+    /// カメラの位置を範囲内に修正する
     /// </summary>
     void PositionCorrection(Vector3 direction, float limit)
     {
 
         //Followを中心とし、カメラ上を通る円の回転軸の方向ベクトル
         Vector3 v0 = Quaternion.Euler(0, 90, 0) * direction;
+        //if (Mathf.Abs(v0.x) + Mathf.Abs(v0.z) >= float.Epsilon * 2)
+        //{
         v0 = new Vector3(v0.x, 0, v0.z).normalized;
+        //v0 = new Vector3(v0.x, 0, v0.z);
+        //v0 = (v0 / v0.magnitude).normalized;
+        Debug.Log(v0.normalized.magnitude);
+        //}
         Debug.DrawRay(_followTr.position, v0);
         float d0 = -(-v0.x * _followTr.position.x - v0.y * _followTr.position.y - v0.z * _followTr.position.z);
         //制限の円の回転軸の方向ベクトル
@@ -201,6 +234,7 @@ public class TPSCamaraController : MonoBehaviour
         float y = Mathf.Abs(0.5f - Mathf.Abs(e.y));
         float z = Mathf.Abs(0.5f - Mathf.Abs(e.z));
 
+
         if (z <= x && z <= y && e.z != 0)
         {
             a = new Vector3((d0 * v1.y - d1 * v0.y) / e.z, (d0 * v1.x - d1 * v0.x) / (-e.z), 0);
@@ -213,6 +247,8 @@ public class TPSCamaraController : MonoBehaviour
         {
             a = new Vector3(0, (d0 * v1.z - d1 * v0.z) / e.x, (d0 * v1.y - d1 * v0.y) / (-e.x));
         }
+        else { }
+
         e.Normalize();
 
         Debug.DrawLine(a + e * 100, a + e * -100);
@@ -257,11 +293,37 @@ public class TPSCamaraController : MonoBehaviour
 
 
 
+    /// <summary>
+    /// カメラの位置を範囲内に修正する
+    /// </summary>
+    void PositionCorrection2(Vector3 direction, float limit)
+    {
+
+        //線の本数
+        int segment = 72;
+        //線一本あたりの角度
+        float theta = Mathf.PI * 2 / segment;
+        //円の中心の座標
+        Vector3 pos = _followTr.position + _followTr.up * -1 * -_limit1 * _radius;
+        //円の半径
+        float radius = Mathf.Sqrt(_radius * _radius - _radius * _radius * _limit1 * _limit1);
+        float radiusX = radius * Mathf.Cos(_followTr.eulerAngles.x);
+        float radiusZ = radius * Mathf.Cos(_followTr.eulerAngles.z);
+        for (float i = 0; i < Mathf.PI * 2; i += theta)
+        {
+            Vector3 start = pos + radiusX * Mathf.Cos(i) * Vector3.right + radiusZ * Mathf.Sin(i) * Vector3.forward;
+            Vector3 goal = pos + radiusX * Mathf.Cos(i + theta) * Vector3.right + radiusZ * Mathf.Sin(i + theta) * Vector3.forward;
+            Debug.DrawLine(start, goal, _gizmosColor);
+        }
+    }
+
+
+
 
     /// <summary>
     /// カメラのリグの表示
     /// </summary>
-    private void OnDrawGizmos/*Selected*/()
+    private void OnDrawGizmosSelected()
     {
         Gizmos.color = _gizmosColor;
         if (!_vCam)
@@ -283,7 +345,7 @@ public class TPSCamaraController : MonoBehaviour
             Vector3 pos = _followTr.position + _followTr.up * -1 * -_limit1 * _radius;
             //円の半径
             float radius = Mathf.Sqrt(_radius * _radius - _radius * _radius * _limit1 * _limit1);
-            for (float i = 0; i < Mathf.PI * 2; i += theta)
+            for (float i = 0; i < 360 * Mathf.PI * 2; i += theta)
             {
                 Vector3 start = pos + radius * Mathf.Cos(i) * _followTr.forward + radius * Mathf.Sin(i) * _followTr.right;
                 Vector3 goal = pos + radius * Mathf.Cos(i + theta) * _followTr.forward + radius * Mathf.Sin(i + theta) * _followTr.right;
