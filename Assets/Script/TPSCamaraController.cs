@@ -172,8 +172,13 @@ public class TPSCamaraController : MonoBehaviour
         Vector3 pos = _followTr.position + _followTr.up * -1 * -_limit1 * _radius;
         //円の半径
         float radius = Mathf.Sqrt(_radius * _radius - _radius * _radius * _limit1 * _limit1);
-        float radiusX = radius * Mathf.Cos(_followTr.eulerAngles.x / 180 * Mathf.PI);
-        float radiusZ = radius * Mathf.Cos(_followTr.eulerAngles.z / 180 * Mathf.PI);
+        Vector3 followD = _followTr.up;
+        followD = new Vector3(Vector3.Dot(_followTr.right, followD), Vector3.Dot(_followTr.up, followD), Vector3.Dot(_followTr.forward, followD));
+        Debug.DrawRay(_followTr.position, new Vector3(followD.x, 0, 0), Color.blue);
+        Debug.DrawRay(_followTr.position, new Vector3(0, 0, followD.z), Color.blue);
+        float radiusX = radius * Mathf.Cos(Mathf.Atan(followD.y / followD.z) - Mathf.PI / 2);
+        float radiusZ = radius * Mathf.Cos(Mathf.Atan(followD.y / followD.x) - Mathf.PI / 2);
+        Debug.Log(followD);
         for (float i = 0; i < Mathf.PI * 2; i += theta)
         {
             Vector3 start = pos + radiusX * Mathf.Cos(i) * Vector3.forward + radiusZ * Mathf.Sin(i) * Vector3.right;
@@ -335,7 +340,7 @@ public class TPSCamaraController : MonoBehaviour
             Vector3 pos = _followTr.position + _followTr.up * -1 * -_limit1 * _radius;
             //円の半径
             float radius = Mathf.Sqrt(_radius * _radius - _radius * _radius * _limit1 * _limit1);
-            for (float i = 0; i < Mathf.PI * 2; i += theta)
+            for (float i = 0; i < 360 * Mathf.PI * 2; i += theta)
             {
                 Vector3 start = pos + radius * Mathf.Cos(i) * _followTr.forward + radius * Mathf.Sin(i) * _followTr.right;
                 Vector3 goal = pos + radius * Mathf.Cos(i + theta) * _followTr.forward + radius * Mathf.Sin(i + theta) * _followTr.right;
