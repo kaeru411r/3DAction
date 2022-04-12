@@ -179,6 +179,7 @@ public class TPSCamaraController : MonoBehaviour
         Vector3 right = Vector3.zero;
         Vector3.OrthoNormalize(ref up, ref forward, ref right);
         followD = new Vector3(Vector3.Dot(right, followD), Vector3.Dot(up, followD), Vector3.Dot(forward, followD));
+
         Debug.DrawRay(_followTr.position, new Vector3(followD.x, 0, 0), Color.blue);
         Debug.DrawRay(_followTr.position, new Vector3(0, 0, followD.z), Color.blue);
         float radiusX = radius * Mathf.Cos(Mathf.Atan(followD.y / followD.z) - Mathf.PI / 2);
