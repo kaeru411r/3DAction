@@ -25,6 +25,7 @@ public class TPSCamaraController : MonoBehaviour
     [SerializeField] Transform _testMark;
     [SerializeField, Range(-1, 1)] float _x;
     [SerializeField, Range(-1, 1)] float _y;
+    [SerializeField] float _en; 
 
 
     /// <summary>カメラの座標のフォローオブジェクトのローカル版</summary>
@@ -173,16 +174,20 @@ public class TPSCamaraController : MonoBehaviour
         //円の半径
         float radius = Mathf.Sqrt(_radius * _radius - _radius * _radius * _limit1 * _limit1);
         Vector3 followD = _followTr.up;
-        followD = new Vector3(Vector3.Dot(_followTr.right, followD), Vector3.Dot(_followTr.up, followD), Vector3.Dot(_followTr.forward, followD));
+        Vector3 up = Vector3.up;
+        Vector3 forward = _followTr.forward;
+        Vector3 right = Vector3.zero;
+        Vector3.OrthoNormalize(ref up, ref forward, ref right);
+        followD = new Vector3(Vector3.Dot(right, followD), Vector3.Dot(up, followD), Vector3.Dot(forward, followD));
         Debug.DrawRay(_followTr.position, new Vector3(followD.x, 0, 0), Color.blue);
         Debug.DrawRay(_followTr.position, new Vector3(0, 0, followD.z), Color.blue);
         float radiusX = radius * Mathf.Cos(Mathf.Atan(followD.y / followD.z) - Mathf.PI / 2);
         float radiusZ = radius * Mathf.Cos(Mathf.Atan(followD.y / followD.x) - Mathf.PI / 2);
         Debug.Log(followD);
-        for (float i = 0; i < Mathf.PI * 2; i += theta)
+        for (float i = 0; i < _en / 360 * Mathf.PI * 2; i += theta)
         {
-            Vector3 start = pos + radiusX * Mathf.Cos(i) * Vector3.forward + radiusZ * Mathf.Sin(i) * Vector3.right;
-            Vector3 goal = pos + radiusX * Mathf.Cos(i + theta) * Vector3.forward + radiusZ * Mathf.Sin(i + theta) * Vector3.right;
+            Vector3 start = pos + radiusX * Mathf.Cos(i) * (Quaternion.Euler(0, _followTr.eulerAngles.y, 0) * Vector3.forward) + radiusZ * Mathf.Sin(i) * (Quaternion.Euler(0, _followTr.eulerAngles.y, 0) * Vector3.right);
+            Vector3 goal = pos + radiusX * Mathf.Cos(i + theta) * (Quaternion.Euler(0, _followTr.eulerAngles.y, 0) * Vector3.forward) + radiusZ * Mathf.Sin(i + theta) * (Quaternion.Euler(0, _followTr.eulerAngles.y, 0) * Vector3.right);
             Debug.DrawLine(start, goal, _gizmosColor);
         }
 
@@ -318,7 +323,7 @@ public class TPSCamaraController : MonoBehaviour
     /// <summary>
     /// カメラのリグの表示
     /// </summary>
-    private void OnDrawGizmos/*Selected*/()
+    private void OnDrawGizmosSelected()
     {
         Gizmos.color = _gizmosColor;
         if (!_vCam)
