@@ -184,13 +184,18 @@ public class TPSCamaraController : MonoBehaviour
         Debug.DrawRay(_followTr.position, new Vector3(0, 0, followD.z), Color.blue);
         float radiusX = radius * Mathf.Cos(Mathf.Atan(followD.y / followD.z) - Mathf.PI / 2);
         float radiusZ = radius * Mathf.Cos(Mathf.Atan(followD.y / followD.x) - Mathf.PI / 2);
-        Debug.Log(followD);
+        Debug.DrawRay(_followTr.position, followD);
         for (float i = 0; i < _en / 360 * Mathf.PI * 2; i += theta)
         {
-            Vector3 start = pos + radiusX * Mathf.Cos(i) * (Quaternion.Euler(0, _followTr.eulerAngles.y, 0) * Vector3.forward) + radiusZ * Mathf.Sin(i) * (Quaternion.Euler(0, _followTr.eulerAngles.y, 0) * Vector3.right);
-            Vector3 goal = pos + radiusX * Mathf.Cos(i + theta) * (Quaternion.Euler(0, _followTr.eulerAngles.y, 0) * Vector3.forward) + radiusZ * Mathf.Sin(i + theta) * (Quaternion.Euler(0, _followTr.eulerAngles.y, 0) * Vector3.right);
+            Vector3 start = pos + radiusX * Mathf.Cos(i) * forward + radiusZ * Mathf.Sin(i) * right;
+            Vector3 goal = pos + radiusX * Mathf.Cos(i + theta) * forward  + radiusZ * Mathf.Sin(i + theta) * right;
             Debug.DrawLine(start, goal, _gizmosColor);
         }
+
+
+        Debug.DrawRay(_followTr.position, up, Color.green);
+        Debug.DrawRay(_followTr.position, forward, Color.blue);
+        Debug.DrawRay(_followTr.position, right, Color.red);
 
         float top = Mathf.Max(_limit0, _limit1);
         float bottom = Mathf.Min(_limit0, _limit1);
@@ -324,7 +329,7 @@ public class TPSCamaraController : MonoBehaviour
     /// <summary>
     /// カメラのリグの表示
     /// </summary>
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos/*Selected*/()
     {
         Gizmos.color = _gizmosColor;
         if (!_vCam)
