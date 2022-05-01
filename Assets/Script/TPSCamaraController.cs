@@ -220,7 +220,9 @@ public class TPSCamaraController : MonoBehaviour
         Vector3 v0 = Quaternion.Euler(0, 90, 0) * direction;
         //if (Mathf.Abs(v0.x) + Mathf.Abs(v0.z) >= float.Epsilon * 2)
         //{
+        Debug.Log(v0);
         v0 = new Vector3(v0.x, 0, v0.z).normalized;
+        Debug.Log(v0);
         //v0 = new Vector3(v0.x, 0, v0.z);
         //v0 = (v0 / v0.magnitude).normalized;
         Debug.Log(v0.normalized.magnitude);
@@ -244,16 +246,20 @@ public class TPSCamaraController : MonoBehaviour
         if (z <= x && z <= y && e.z != 0)
         {
             a = new Vector3((d0 * v1.y - d1 * v0.y) / e.z, (d0 * v1.x - d1 * v0.x) / (-e.z), 0);
+            Debug.Log("z");
         }
         else if (y <= x && y <= z && e.y != 0)
         {
             a = new Vector3((d0 * v1.z - d1 * v0.z) / (-e.y), 0, (d0 * v1.x - d1 * v0.x) / e.y);
+            Debug.Log("y");
         }
         else if (x <= y && x <= z && e.x != 0)
         {
             a = new Vector3(0, (d0 * v1.z - d1 * v0.z) / e.x, (d0 * v1.y - d1 * v0.y) / (-e.x));
+            Debug.Log("x");
         }
         else { }
+        Debug.Log($"{a} {e}");
 
         e.Normalize();
 
@@ -295,6 +301,7 @@ public class TPSCamaraController : MonoBehaviour
         _transposer.m_FollowOffset = pos - _followTr.position;
         transform.position = _followTr.position + _transposer.m_FollowOffset;
         transform.LookAt(_followTr);
+        UnityEditor.EditorApplication.isPaused = true;
     }
 
 
