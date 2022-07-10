@@ -7,8 +7,6 @@
 public class BulletController : MonoBehaviour
 {
     Rigidbody _rb;
-    /// <summary>弾が放たれたかどうか</summary>
-    bool _isFired;
     [Tooltip("初速")]
     [SerializeField] float _speed;
     [Tooltip("威力")]
@@ -35,6 +33,8 @@ public class BulletController : MonoBehaviour
     Vector3 _firstPosition;
     /// <summary>発射された時間</summary>
     float _firstTime;
+    /// <summary>弾が放たれたかどうか</summary>
+    bool _isFired;
 
     /// <summary>砲口初速</summary>
     public float Speed { get { return _speed; } }
