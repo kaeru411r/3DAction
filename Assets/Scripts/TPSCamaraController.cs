@@ -391,6 +391,19 @@ public class TPSCamaraController : MonoBehaviour
                 Gizmos.color = _gizmosColor;
                 Gizmos.DrawLine(start, goal);
             }
+            //円の中心の座標
+            pos = _followTr.position + _followTr.up * -1 * -_limit1 * _radius;
+            //円の半径
+            radius = Mathf.Sqrt(_radius * _radius - _radius * _radius * _limit1 * _limit1);
+            for (float i = 0; i < Mathf.PI * 2; i += theta)
+            {
+                Vector3 start = pos + radius * Mathf.Cos(i) * _followTr.forward + radius * Mathf.Sin(i) * _followTr.right;
+                Vector3 goal = pos + radius * Mathf.Cos(i + theta) * _followTr.forward + radius * Mathf.Sin(i + theta) * _followTr.right;
+                start.Set(start.x, pos.y, start.z);
+                goal.Set(goal.x, pos.y, goal.z);
+                Gizmos.color = _gizmosColor;
+                Gizmos.DrawLine(start, goal);
+            }
         }
     }
 }
