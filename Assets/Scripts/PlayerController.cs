@@ -11,7 +11,7 @@ using System;
 /// プレイヤー操作コンポーネント
 /// プレイヤーによる車両の操作を行う
 /// </summary>
-[RequireComponent(typeof(GunController), typeof(CaterpillarController))]
+[RequireComponent(typeof(GunController), typeof(CaterpillarController), typeof(CharacterBase))]
 public class PlayerController : SingletonMonoBehaviour<PlayerController>
 {
     GunController _gunController;
@@ -44,7 +44,7 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
     [Tooltip("TPSカメラの参照トランスフォーム")]
     [SerializeField] Transform _tpsCamBass;
     [SerializeField] Text _hpText;
-    /// <summary>現在の視点</summary>
+    [Tooltip("現在の視点")]
     [SerializeField] ViewMode _viewMode;
     /// <summary>移動用ベクトル</summary>
     Vector2 _move;
@@ -60,6 +60,8 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
     float _fpsFov;
     /// <summary>_target用オブジェクトの名前</summary>
     string _targetName = "TPSTarget";
+
+    public CharacterBase Charactor { get { return _characterBase; } }
 
 
     private void OnEnable()

@@ -4,14 +4,19 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 
 public class DemoManager : MonoBehaviour
 {
     static public DemoManager Instance;
 
     [SerializeField] Text _text;
+    [SerializeField] CharacterBase _player;
+    [SerializeField] UnityEvent _gameOver;
+    [SerializeField] UnityEvent _gameClear;
 
     List<EnemyFireController> _enemys = new List<EnemyFireController>();
+    bool _isPlay = false;
 
 
     public Action OnGameClear;
@@ -26,7 +31,12 @@ public class DemoManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        _isPlay = true;
+        EnemyFireController[] es = GameObject.FindObjectsOfType<EnemyFireController>();
+        foreach(EnemyFireController e in es)
+        {
+            Add(e);
+        }
     }
 
     // Update is called once per frame
@@ -34,9 +44,16 @@ public class DemoManager : MonoBehaviour
     {
         Check();
         _text.text = $"残りの敵 : {_enemys.Count}機";
-        if (_enemys.Count <= 0)
+        if (_isPlay)
         {
-            //Load();
+            if (_enemys.Count <= 0)
+            {
+                GameClear();
+            }
+            else if (_player.Hp <= 0)
+            {
+                GameOver();
+            }
         }
     }
 
@@ -66,12 +83,26 @@ public class DemoManager : MonoBehaviour
     {
         CallGameEnd();
         CallGameOver();
+        StartCoroutine(GameOverSceneChange());
+    }
+
+    IEnumerator GameOverSceneChange()
+    {
+        yield return new WaitForSeconds(1);
+        Load();
     }
 
     public void GameClear()
     {
         CallGameEnd();
         CallGameClear();
+        StartCoroutine(GameClearSceneChange());
+    }
+
+    IEnumerator GameClearSceneChange()
+    {
+        yield return new WaitForSeconds(1);
+        Load();
     }
 
     void CallGameOver()
@@ -80,12 +111,20 @@ public class DemoManager : MonoBehaviour
         {
             OnGameOver.Invoke();
         }
+        if(_gameOver != null)
+        {
+            _gameOver.Invoke();
+        }
     }
     void CallGameClear()
     {
         if (OnGameClear != null)
         {
             OnGameClear.Invoke();
+        }
+        if(_gameClear != null)
+        {
+            _gameClear.Invoke();
         }
     }
     void CallGameEnd()
