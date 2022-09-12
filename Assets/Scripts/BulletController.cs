@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 /// <summary>
 /// 砲弾の発射以降の操作を行うコンポーネント
@@ -52,22 +53,18 @@ public class BulletController : MonoBehaviour
 
     private void Update()
     {
-        if (_isFired)
-        {
-            _rb.velocity = new Vector3(_rb.velocity.x, _rb.velocity.y - _gravity * Time.deltaTime, _rb.velocity.z);
-            transform.forward = _rb.velocity;
-            if (HitCheck())   //ここにレイで着弾を観測する部分を書く
-            {
-                Hit(_hit.transform);
-            }
-        }
+        transform.forward = _rb.velocity;
     }
 
     private void FixedUpdate()
     {
         if (_isFired)
         {
-            //_rb.AddForce(0, -_gravity, 0, ForceMode.Acceleration);
+            _rb.AddForce(Vector3.down * _gravity, ForceMode.Acceleration);
+            if (HitCheck())   //ここにレイで着弾を観測する部分を書く
+            {
+                Hit(_hit.transform);
+            }
         }
     }
 
