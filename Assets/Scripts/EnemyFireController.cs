@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 /// <summary>
 /// 敵の火器管制コンポーネント
@@ -61,7 +62,12 @@ public class EnemyFireController : MonoBehaviour
                 if (!Physics.Raycast(_sight.position, pTarget - _sight.position, Vector3.Distance(pTarget, _sight.position), _layerMask))
                 {
                     _sight.eulerAngles = Aim(pTarget);
-                    _gunController.Fire();
+
+                    //Debug.Log(misalignment);
+                    if (Misalignment() <= _accuracy)
+                    {
+                        _gunController.Fire();
+                    }
                 }
 
                 //if (Aim(pTarget).Item1)
@@ -120,21 +126,15 @@ public class EnemyFireController : MonoBehaviour
             return new Vector3(-t, angle.y, angle.z);
         }
 
-        Vector2 barrel = new Vector2(_gunController.Barrel.eulerAngles.x, _gunController.Barrel.eulerAngles.y);
-        Vector2 s = new Vector2(angle.x, angle.y);
-        float misalignment = (barrel - s).magnitude;
-        misalignment = misalignment < 180 ? misalignment : Mathf.Abs(misalignment - 360);
-        //Debug.Log(misalignment);
-        if (misalignment <= _accuracy)
-        {
-            float buf0 = _gunController.Bullet.Speed * Mathf.Sin(t);
-            float h1 = h + (buf0 * buf0) / 2 * g;
-            float t0 = (Mathf.Sqrt(2 * g * (h1 - h)) + (Mathf.Sqrt(2 * g * h1))) / g;
-            Debug.Log(t0);
-            //return (true, t);
-            return new Vector3(-t, angle.y, angle.z);
-        }
         return new Vector3(-t, angle.y, angle.z);
+    }
+
+    float Misalignment()
+    {
+        Vector2 barrel = new Vector2(_gunController.Barrel.eulerAngles.x, _gunController.Barrel.eulerAngles.y);
+        Vector2 s = new Vector2(_sight.eulerAngles.x, _sight.eulerAngles.y);
+        float misalignment = (barrel - s).magnitude;
+        return misalignment < 180 ? misalignment : Mathf.Abs(misalignment - 360);
     }
 
 
