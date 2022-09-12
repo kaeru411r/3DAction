@@ -15,7 +15,7 @@ public class EnemyFireController : MonoBehaviour
     /// <summary>このオブジェクトのGunController</summary>
     GunController _gunController;
 
-    [Tooltip("射撃時の精度")]
+    [Tooltip("射撃時の許容誤差(角度)")]
     [SerializeField] float _accuracy;
     //[Tooltip("射撃時の弾着予想時間の誤差許容量(秒)")]
     //[SerializeField, Range(1, 3)] float _allowanceTime;
@@ -78,6 +78,27 @@ public class EnemyFireController : MonoBehaviour
         }
     }
 
+#if UNITY_EDITOR
+
+    private void OnValidate()
+    {
+        if(_accuracy < 0)
+        {
+            _accuracy = 0;
+        }
+        else if(_accuracy > 180)
+        {
+            _accuracy = 180;
+        }
+
+        if(_range < 0)
+        {
+            _range = 0;
+        }
+    }
+
+
+#endif
     /// <summary>
     /// 照準関数
     /// </summary>
@@ -131,11 +152,11 @@ public class EnemyFireController : MonoBehaviour
 
     float Misalignment()
     {
-        Vector2 barrel = new Vector2(_gunController.Barrel.eulerAngles.x, _gunController.Barrel.eulerAngles.y);
-        Vector2 s = new Vector2(_sight.eulerAngles.x, _sight.eulerAngles.y);
-        float misalignment = (barrel - s).magnitude;
-        return misalignment < 180 ? misalignment : Mathf.Abs(misalignment - 360);
-    }
+        Vector3 barrel = _gunController.Barrel.forward;
+        Vector3 sight = _sight.forward;
+        float misalignment = Mathf.Acos((Vector3.Dot(barrel, sight) / (barrel.magnitude * sight.magnitude))) * radToDig;
+        return misalignment <= 180 ? misalignment : Mathf.Abs(misalignment - 360);
+   }
 
 
     Vector3 Prognosis()
