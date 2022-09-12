@@ -21,7 +21,7 @@ public class GunController : MonoBehaviour
     [SerializeField] Transform _muzzle;
     [Tooltip("直接照準を合わせる基準")]
     [SerializeField] Transform _sight;
-    [Tooltip("砲の動作スピード")]
+    [Tooltip("砲の動作スピード[rad/s]")]
     [SerializeField] Vector2 _gunMoveSpeed;
     [Tooltip("仰角")]
     [SerializeField, Range(0, 90)] float _elevationAngle = 0;
@@ -142,8 +142,8 @@ public class GunController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Yaw(_sight.localEulerAngles.y);
-        Pitch(_sight.localEulerAngles.x);
+        Yaw(_sight.localEulerAngles.y, Time.fixedDeltaTime);
+        Pitch(_sight.localEulerAngles.x, Time.fixedDeltaTime);
     }
 
     /// <summary>砲弾の実体化から発射関数の呼び出しまでを行う</summary>
@@ -168,7 +168,7 @@ public class GunController : MonoBehaviour
 
     /// <summary>砲身の上下の動き</summary>
     /// <param name="x"></param>
-    void Pitch(float x)
+    void Pitch(float x, float deltaTime)
     {
         var dif = x - _barrel.localEulerAngles.x;
         if (dif < -AllAround / 2)
@@ -179,23 +179,23 @@ public class GunController : MonoBehaviour
         {
             dif = dif - AllAround;
         }
-        if (dif <= _gunMoveSpeed.y && dif >= -_gunMoveSpeed.y)
+        if (dif <= _gunMoveSpeed.y && dif >= -_gunMoveSpeed.y * deltaTime / Mathf.PI * 180)
         {
             _barrel.localEulerAngles = new Vector3(x, 0, 0);
         }
         else if (dif > _gunMoveSpeed.y)
         {
-            _barrel.Rotate(_gunMoveSpeed.y, 0, 0);
+            _barrel.Rotate(_gunMoveSpeed.y * deltaTime / Mathf.PI * 180, 0, 0);
         }
         else
         {
-            _barrel.Rotate(-_gunMoveSpeed.y, 0, 0);
+            _barrel.Rotate(-_gunMoveSpeed.y * deltaTime / Mathf.PI * 180, 0, 0);
         }
     }
 
     /// <summary>砲塔の旋回</summary>
     /// <param name="y"></param>
-    void Yaw(float y)
+    void Yaw(float y, float deltaTime)
     {
         var dif = y - _turret.transform.localEulerAngles.y;
         if (dif < -AllAround / 2)
@@ -206,17 +206,17 @@ public class GunController : MonoBehaviour
         {
             dif = dif - AllAround;
         }
-        if (dif <= _gunMoveSpeed.x && dif >= -_gunMoveSpeed.x)
+        if (dif <= _gunMoveSpeed.x && dif >= -_gunMoveSpeed.x * deltaTime / Mathf.PI * 180)
         {
             _turret.transform.localEulerAngles = new Vector3(0, y, 0);
         }
         else if (dif > _gunMoveSpeed.x)
         {
-            _turret.transform.Rotate(0, _gunMoveSpeed.x, 0);
+            _turret.transform.Rotate(0, _gunMoveSpeed.x * deltaTime / Mathf.PI * 180, 0);
         }
         else
         {
-            _turret.transform.Rotate(0, -_gunMoveSpeed.x, 0);
+            _turret.transform.Rotate(0, -_gunMoveSpeed.x * deltaTime / Mathf.PI * 180, 0);
         }
     }
 
