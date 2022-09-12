@@ -368,11 +368,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _radius: 0.0001
-  _mass: 0.0001
   _power: 1.77
   _length: 0
   _point: {x: 0, y: 0, z: 0}
   _targetPosition: 0.53
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!4 &1134172091
 Transform:
   m_ObjectHideFlags: 0
@@ -596,7 +598,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh21830
+  m_Name: pb_Mesh21836
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -836,7 +838,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.001
+  near clip plane: 0.01
   far clip plane: 1500
   field of view: 95
   orthographic: 0

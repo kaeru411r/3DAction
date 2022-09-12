@@ -9,6 +9,8 @@ using UnityEngine;
 [RequireComponent(typeof(GunController))]
 public class EnemyFireController : MonoBehaviour
 {
+    const float radToDig = 1 / Mathf.PI * 180;
+
     /// <summary>このオブジェクトのGunController</summary>
     GunController _gunController;
 
@@ -56,10 +58,16 @@ public class EnemyFireController : MonoBehaviour
                 //     pTarget = Prognosis();
                 //}
 
-                if (Aim(pTarget).Item1)
+                if (!Physics.Raycast(_sight.position, pTarget - _sight.position, Vector3.Distance(pTarget, _sight.position), _layerMask))
                 {
+                    _sight.eulerAngles = Aim(pTarget);
                     _gunController.Fire();
                 }
+
+                //if (Aim(pTarget).Item1)
+                //{
+                //    _gunController.Fire();
+                //}
             }
         }
     }
@@ -68,100 +76,74 @@ public class EnemyFireController : MonoBehaviour
     /// 照準関数
     /// </summary>
     /// <returns>照準と砲の角度の差  true 規定値以内 : false 規定値外 , </returns>
-    (bool, float angle) Aim(Vector3 target)
+    Vector3 Aim(Vector3 target)
     {
-        if (!Physics.Raycast(_sight.position, target - _sight.position, Vector3.Distance(target, _sight.position), _layerMask)){
-            _sight.LookAt(target);
-            //Debug.Log(1);
+        //_sight.LookAt(target);
+        //Debug.Log(1);
 
-            float g = _gunController.Bullet.Gravity;
-            float v = _gunController.Bullet.Speed;
-            Vector3 sight = _sight.transform.position;
-            float h = target.y - sight.y;
-            float l = Vector2.Distance(new Vector2(target.x, target.z), new Vector2(sight.x, sight.z));
+        float g = _gunController.Bullet.Gravity;
+        float v = _gunController.Bullet.Speed;
+        Vector3 sight = _sight.transform.position;
+        float h = target.y - sight.y;
+        float l = Vector2.Distance(new Vector2(target.x, target.z), new Vector2(sight.x, sight.z));
+        Vector3 dir = target - sight;
+        Vector3 angle = new Vector3(Mathf.Atan2(dir.z, dir.y) * radToDig, Mathf.Atan2(dir.x, dir.z) * radToDig, Mathf.Atan2(dir.y, -dir.x) * radToDig);
 
-            //tan(theta)の二次関数 a * tan(theta) ^ 2 + b * tan(theta) + cの係数 (aは1なので省略)
-            float b = -1 * (2 * v * v * l) / (g * l * l);
-            float c = 1 + (2 * v * v * h) / (g * l * l);
+        //tan(theta)の二次関数 a * tan(theta) ^ 2 + b * tan(theta) + cの係数 (aは1なので省略)
+        float b = -1 * (2 * v * v * l) / (g * l * l);
+        float c = 1 + (2 * v * v * h) / (g * l * l);
 
-            //二次関数の解が存在するかを確かめる判別式
-            float d = b * b - 4 * c;
+        //二次関数の解が存在するかを確かめる判別式
+        float d = b * b - 4 * c;
 
-            float t = 0;
+        float t = 0;
 
-            if (d >= 0)
+        if (d >= 0)
+        {
+            float t0 = Mathf.Atan((-b - Mathf.Sqrt(d)) / 2);
+            float t1 = Mathf.Atan((-b + Mathf.Sqrt(d)) / 2);
+
+            if (_aimMode == AimMode.PointBlank)
             {
-                float t0 = Mathf.Atan((-b - Mathf.Sqrt(d)) / 2);
-                float t1 = Mathf.Atan((-b + Mathf.Sqrt(d)) / 2);
-
-                if (_aimMode == AimMode.PointBlank)
-                {
-                    t = Mathf.Min(t0, t1) * 180 / Mathf.PI;
-                }
-                else
-                {
-                    t = Mathf.Max(t0, t1) * 180 / Mathf.PI;
-                }
-                //Debug.Log($"{t0 * 180 / Mathf.PI}, {t1 * 180 / Mathf.PI}, {t}");
-
-                _sight.Rotate(new Vector3(-(t + _sight.eulerAngles.x), 0, 0));
+                t = Mathf.Min(t0, t1) * 180 / Mathf.PI;
             }
             else
             {
-                return (false, 0);
+                t = Mathf.Max(t0, t1) * 180 / Mathf.PI;
             }
+            //Debug.Log($"{t0 * 180 / Mathf.PI}, {t1 * 180 / Mathf.PI}, {t}");
 
-            Vector2 barrel = new Vector2(_gunController.Barrel.eulerAngles.x, _gunController.Barrel.eulerAngles.y);
-            Vector2 s = new Vector2(_sight.eulerAngles.x, _sight.eulerAngles.y);
-            float misalignment = (barrel - s).magnitude;
-            misalignment = misalignment < 180 ? misalignment : Mathf.Abs(misalignment - 360);
-            //Debug.Log(misalignment);
-            if (misalignment <= _accuracy)
-            {
-                return (true, t);
-            }
+            //_sight.Rotate(new Vector3(-(t + _sight.eulerAngles.x), 0, 0));
         }
-        return (false, 0);
+        else
+        {
+            return new Vector3(-t, angle.y, angle.z);
+        }
+
+        Vector2 barrel = new Vector2(_gunController.Barrel.eulerAngles.x, _gunController.Barrel.eulerAngles.y);
+        Vector2 s = new Vector2(angle.x, angle.y);
+        float misalignment = (barrel - s).magnitude;
+        misalignment = misalignment < 180 ? misalignment : Mathf.Abs(misalignment - 360);
+        //Debug.Log(misalignment);
+        if (misalignment <= _accuracy)
+        {
+            float buf0 = _gunController.Bullet.Speed * Mathf.Sin(t);
+            float h1 = h + (buf0 * buf0) / 2 * g;
+            float t0 = (Mathf.Sqrt(2 * g * (h1 - h)) + (Mathf.Sqrt(2 * g * h1))) / g;
+            Debug.Log(t0);
+            //return (true, t);
+            return new Vector3(-t, angle.y, angle.z);
+        }
+        return new Vector3(-t, angle.y, angle.z);
     }
 
 
-    //Vector3 Prognosis()
-    //{
-    //    Vector3 target = _target.position;
-    //    float angle = Aim(target).angle;
-    //    float h0 = _sight.position.y - target.y;
-    //    float g = _gunController.Bullet.Gravity;
-    //    float buf0 = _gunController.Bullet.Speed * Mathf.Sin(angle);
-    //    float h = h0 + (buf0 * buf0) / 2 * g;
-    //    float t0 = (Mathf.Sqrt(2 * g * (h - h0)) + (Mathf.Sqrt(2 * g * h))) / g;
+    Vector3 Prognosis()
+    {
+        Vector3 target = _target.position;
 
-
-    //    target = _target.position + _targetRb.velocity * t0;
-    //    angle = Aim(target).angle;
-    //    h0 = _sight.position.y - target.y;
-    //    buf0 = _gunController.Bullet.Speed * Mathf.Sin(angle);
-    //    h = h0 + (buf0 * buf0) / 2 * g;
-    //    float t1 = (Mathf.Sqrt(2 * g * (h - h0)) + (Mathf.Sqrt(2 * g * h))) / g;
-
-
-    //    for (int i = 0; Mathf.Abs(t1 - t0) > _allowanceTime && i <= 100;i++)
-    //    {
-    //        t0 = t1;
-    //        target = _target.position + _targetRb.velocity * t0;
-    //        angle = Aim(target).angle;
-    //        h0 = _sight.position.y - target.y;
-    //        buf0 = _gunController.Bullet.Speed * Mathf.Sin(angle);
-    //        h = h0 + (buf0 * buf0) / 2 * g;
-    //        t1 = (Mathf.Sqrt(2 * g * (h - h0)) + (Mathf.Sqrt(2 * g * h))) / g;
-    //    }
-
-    //    if(Mathf.Abs(t1 - t0) > _allowanceTime)
-    //    {
-    //        Debug.LogError($"{name}で所定回数以上のループを検知 t0 = {t0} t1 = {t1}");
-    //    }
-
-    //    return _target.position + _targetRb.velocity * t1;
-    //}
+        return Vector3.zero;
+    }
 
     /// <summary>
     /// 弾道
@@ -174,3 +156,9 @@ public class EnemyFireController : MonoBehaviour
         HighAngle,
     }
 }
+
+
+
+
+//参考資料
+//https://bibunsekibun.wordpress.com/2015/04/16/%E6%94%BE%E7%89%A9%E7%B7%9A%E3%81%A7%E7%9B%AE%E6%A8%99%E3%81%AB%E5%BD%93%E3%81%A6%E3%82%8B%E8%A7%92%E5%BA%A6%E3%82%92%E6%B1%82%E3%82%81%E3%82%8B/
