@@ -51,19 +51,17 @@ public class EnemyFireController : MonoBehaviour
             if (Vector3.Distance(transform.position, _target.position) <= _range)
             {
                 Vector3 pTarget = _target.position;
-                //if (_targetRb)
-                //{
-                //     pTarget = Prognosis();
-                //}
 
                 if (!Physics.Raycast(_sight.position, pTarget - _sight.position, Vector3.Distance(pTarget, _sight.position), _layerMask))
                 {
-                    _sight.eulerAngles = Aim(pTarget);
-
-                    //Debug.Log(misalignment);
-                    if (Misalignment() <= _accuracy)
+                    Vector3? angle = Aim(pTarget);
+                    if (angle != null)
                     {
-                        _gunController.Fire();
+                        _sight.eulerAngles = angle.Value;
+                        if (Misalignment() <= _accuracy)
+                        {
+                            _gunController.Fire();
+                        }
                     }
                 }
 
@@ -79,16 +77,16 @@ public class EnemyFireController : MonoBehaviour
 
     private void OnValidate()
     {
-        if(_accuracy < 0)
+        if (_accuracy < 0)
         {
             _accuracy = 0;
         }
-        else if(_accuracy > 180)
+        else if (_accuracy > 180)
         {
             _accuracy = 180;
         }
 
-        if(_range < 0)
+        if (_range < 0)
         {
             _range = 0;
         }
@@ -104,32 +102,38 @@ public class EnemyFireController : MonoBehaviour
     /// <summary>
     /// 照準関数
     /// </summary>
-    /// <returns>照準と砲の角度の差  true 規定値以内 : false 規定値外 , </returns>
-    Vector3 Aim(Vector3 target)
+    /// <returns>照準の角度 nullなら射程外</returns>
+    Vector3? Aim(Vector3 target)
     {
         //_sight.LookAt(target);
         //Debug.Log(1);
 
         Vector3 dir = target - _sight.position;
         Vector3 angle = new Vector3(Mathf.Atan2(dir.z, dir.y) * radToDig, Mathf.Atan2(dir.x, dir.z) * radToDig, Mathf.Atan2(dir.y, -dir.x) * radToDig);
-        float? t = FiringElevation();
+        float? t = FiringElevation(target);
         if (t != null)
         {
             return new Vector3(-t.Value, angle.y, angle.z);
         }
         else
         {
-            return angle;
+            return null;
         }
     }
 
-    float? FiringElevation()
+
+    /// <summary>
+    /// 射角算出
+    /// </summary>
+    /// <param name="target"></param>
+    /// <returns>射角 nullなら射程外</returns>
+    float? FiringElevation(Vector3 target)
     {
         float g = _gunController.Bullet.Gravity;
         float v = _gunController.Bullet.Speed;
         Vector3 sight = _sight.transform.position;
-        float h = _target.position.y - sight.y;
-        float l = Vector2.Distance(new Vector2(_target.position.x, _target.position.z), new Vector2(sight.x, sight.z));
+        float h = target.y - sight.y;
+        float l = Vector2.Distance(new Vector2(target.x, target.z), new Vector2(sight.x, sight.z));
 
         //tan(theta)の二次関数 a * tan(theta) ^ 2 + b * tan(theta) + cの係数 (aは1なので省略)
         float b = -1 * (2 * v * v * l) / (g * l * l);
@@ -164,13 +168,17 @@ public class EnemyFireController : MonoBehaviour
         return t;
     }
 
+    /// <summary>
+    /// 照準と砲の角度の誤差を求める
+    /// </summary>
+    /// <returns>照準と法の角度の誤差[度]</returns>
     float Misalignment()
     {
         Vector3 barrel = _gunController.Barrel.forward;
         Vector3 sight = _sight.forward;
         float misalignment = Mathf.Acos((Vector3.Dot(barrel, sight) / (barrel.magnitude * sight.magnitude))) * radToDig;
         return misalignment <= 180 ? misalignment : Mathf.Abs(misalignment - 360);
-   }
+    }
 
 
     float Prognosis()
