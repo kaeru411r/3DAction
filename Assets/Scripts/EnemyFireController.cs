@@ -25,9 +25,10 @@ public class EnemyFireController : MonoBehaviour
     [SerializeField] float _range = 100;
     [Tooltip("Defaltレイヤーを選択")]
     [SerializeField] LayerMask _layerMask;
+    [SerializeField] Transform _target;
 
     /// <summary>標的のTransform</summary>
-    Transform _target;
+    //Transform _target;
     /// <summary>標的のRigidbody</summary>
     Rigidbody _targetRb;
     /// <summary>サイトオブジェクトのトランスフォーム</summary>
@@ -37,13 +38,9 @@ public class EnemyFireController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _target = PlayerController.Instance.transform;
+        //_target = new Target(PlayerController.Instance.transform);
         _gunController = GetComponent<GunController>();
         _sight = _gunController.Sight;
-        if (_target)
-        {
-            _targetRb = _target.GetComponent<Rigidbody>();
-        }
     }
 
     // Update is called once per frame
@@ -95,10 +92,15 @@ public class EnemyFireController : MonoBehaviour
         {
             _range = 0;
         }
+        if (_target)
+        {
+            _targetRb = _target.gameObject.GetComponent<Rigidbody>();
+        }
     }
 
-
 #endif
+
+
     /// <summary>
     /// 照準関数
     /// </summary>
@@ -108,13 +110,26 @@ public class EnemyFireController : MonoBehaviour
         //_sight.LookAt(target);
         //Debug.Log(1);
 
+        Vector3 dir = target - _sight.position;
+        Vector3 angle = new Vector3(Mathf.Atan2(dir.z, dir.y) * radToDig, Mathf.Atan2(dir.x, dir.z) * radToDig, Mathf.Atan2(dir.y, -dir.x) * radToDig);
+        float? t = FiringElevation();
+        if (t != null)
+        {
+            return new Vector3(-t.Value, angle.y, angle.z);
+        }
+        else
+        {
+            return angle;
+        }
+    }
+
+    float? FiringElevation()
+    {
         float g = _gunController.Bullet.Gravity;
         float v = _gunController.Bullet.Speed;
         Vector3 sight = _sight.transform.position;
-        float h = target.y - sight.y;
-        float l = Vector2.Distance(new Vector2(target.x, target.z), new Vector2(sight.x, sight.z));
-        Vector3 dir = target - sight;
-        Vector3 angle = new Vector3(Mathf.Atan2(dir.z, dir.y) * radToDig, Mathf.Atan2(dir.x, dir.z) * radToDig, Mathf.Atan2(dir.y, -dir.x) * radToDig);
+        float h = _target.position.y - sight.y;
+        float l = Vector2.Distance(new Vector2(_target.position.x, _target.position.z), new Vector2(sight.x, sight.z));
 
         //tan(theta)の二次関数 a * tan(theta) ^ 2 + b * tan(theta) + cの係数 (aは1なので省略)
         float b = -1 * (2 * v * v * l) / (g * l * l);
@@ -123,7 +138,7 @@ public class EnemyFireController : MonoBehaviour
         //二次関数の解が存在するかを確かめる判別式
         float d = b * b - 4 * c;
 
-        float t = 0;
+        float t;
 
         if (d >= 0)
         {
@@ -144,10 +159,9 @@ public class EnemyFireController : MonoBehaviour
         }
         else
         {
-            return new Vector3(-t, angle.y, angle.z);
+            return null;
         }
-
-        return new Vector3(-t, angle.y, angle.z);
+        return t;
     }
 
     float Misalignment()
@@ -159,11 +173,15 @@ public class EnemyFireController : MonoBehaviour
    }
 
 
-    Vector3 Prognosis()
+    float Prognosis()
     {
+        if (!_targetRb)
+        {
+            return 0;
+        }
         Vector3 target = _target.position;
 
-        return Vector3.zero;
+        return 0;
     }
 
     /// <summary>
