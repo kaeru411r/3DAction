@@ -60,7 +60,10 @@ public class EnemyFireController : MonoBehaviour
                         _sight.eulerAngles = angle.Value;
                         if (Misalignment() <= _accuracy)
                         {
-                            _gunController.Fire();
+                            if (_gunController.Fire())
+                            {
+                                Debug.Log(FringTime(pTarget));
+                            }
                         }
                     }
                 }
@@ -126,7 +129,7 @@ public class EnemyFireController : MonoBehaviour
     /// 射角算出
     /// </summary>
     /// <param name="target"></param>
-    /// <returns>射角 nullなら射程外</returns>
+    /// <returns>射角[度] nullなら射程外</returns>
     float? FiringElevation(Vector3 target)
     {
         float g = _gunController.Bullet.Gravity;
@@ -142,7 +145,7 @@ public class EnemyFireController : MonoBehaviour
         //二次関数の解が存在するかを確かめる判別式
         float d = b * b - 4 * c;
 
-        float t;
+        float theta;
 
         if (d >= 0)
         {
@@ -151,11 +154,11 @@ public class EnemyFireController : MonoBehaviour
 
             if (_aimMode == AimMode.PointBlank)
             {
-                t = Mathf.Min(t0, t1) * 180 / Mathf.PI;
+                theta = Mathf.Min(t0, t1) * 180 / Mathf.PI;
             }
             else
             {
-                t = Mathf.Max(t0, t1) * 180 / Mathf.PI;
+                theta = Mathf.Max(t0, t1) * 180 / Mathf.PI;
             }
             //Debug.Log($"{t0 * 180 / Mathf.PI}, {t1 * 180 / Mathf.PI}, {t}");
 
@@ -165,7 +168,21 @@ public class EnemyFireController : MonoBehaviour
         {
             return null;
         }
-        return t;
+        return theta;
+    }
+
+    float? FringTime(Vector3 target)
+    {
+        float? theta = FiringElevation(target);
+        if(theta == null)
+        {
+            return null;
+        }
+        float v = _gunController.Bullet.Speed;
+        Vector2 sight = new Vector2(_sight.transform.position.x, _sight.transform.position.z);
+        Vector2 targetXZ = new Vector2(target.x, target.z);
+        float x = Vector2.Distance(sight, targetXZ);
+        return x / (v * Mathf.Cos(theta.Value / 180 * Mathf.PI));
     }
 
     /// <summary>
@@ -180,12 +197,15 @@ public class EnemyFireController : MonoBehaviour
         return misalignment <= 180 ? misalignment : Mathf.Abs(misalignment - 360);
     }
 
-
-    float Prognosis()
+    /// <summary>
+    /// 標的の移動に合わせ理想の着弾までの時間を算出する
+    /// </summary>
+    /// <returns>着弾までの時間</returns>
+    float? Prognosis()
     {
         if (!_targetRb)
         {
-            return 0;
+            return null;
         }
         Vector3 target = _target.position;
 

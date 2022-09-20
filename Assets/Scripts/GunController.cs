@@ -148,7 +148,8 @@ public class GunController : MonoBehaviour
 
     /// <summary>砲弾の実体化から発射関数の呼び出しまでを行う</summary>
     /// <param name="root"></param>
-    public void Fire()
+    /// <returns>発砲したか否か</returns>
+    public bool Fire()
     {
         if (_isLoad)
         {
@@ -163,7 +164,9 @@ public class GunController : MonoBehaviour
             }
 
             StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
+            return true;
         }
+        return false;
     }
 
     /// <summary>砲身の上下の動き</summary>
