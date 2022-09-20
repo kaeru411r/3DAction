@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: -2007573792234951113}
   - component: {fileID: 3182073594981566556}
   m_Layer: 0
-  m_Name: TestBullet Mk3 No.5 16cm 1
+  m_Name: TestBullet Mk3 No
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28,7 +28,6 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 452484773941988000}
   m_Father: {fileID: 0}
@@ -62,13 +61,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 498c93d13b997064cb6eb1aee8e4740e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 36.5
+  _speed: 100
   _damage: 100
   _explosionDamage: 50
   _explosionRasius: 5
-  _destroyTime: 120
-  _reloadTime: 75
-  _gravity: 0.98
+  _destroyTime: 30
+  _reloadTime: 4
+  _gravity: 9.8
 --- !u!1 &5816681135565388561
 GameObject:
   m_ObjectHideFlags: 0
@@ -98,7 +97,6 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8576794066137213006}
   m_RootOrder: 0
@@ -1815,7 +1813,6 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 0
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -1831,12 +1828,10 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1861,7 +1856,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &3833155163607045514
 MeshFilter:
   m_ObjectHideFlags: 0

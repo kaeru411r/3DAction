@@ -49,6 +49,8 @@ public class GunController : MonoBehaviour
 
     public Transform Turret { get { return _turret; } }
 
+    public Transform Muzzle { get { return _muzzle; } }
+
     public Vector2 GunMoveSpeed { get { return _gunMoveSpeed; } }
 
     public BulletController Bullet

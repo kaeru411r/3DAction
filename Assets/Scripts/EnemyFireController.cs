@@ -54,7 +54,22 @@ public class EnemyFireController : MonoBehaviour
 
                 if (!Physics.Raycast(_sight.position, pTarget - _sight.position, Vector3.Distance(pTarget, _sight.position), _layerMask))
                 {
-                    Vector3? angle = Aim(pTarget);
+                    var sw = new System.Diagnostics.Stopwatch();
+                    sw.Start();
+                    float? time = FringTime(pTarget);
+
+                    Vector3 target2 = pTarget + _targetRb.velocity * time.Value;
+                    for (int i = 0; i < 50; i++)
+                    {
+                        time = FringTime(target2);
+                        if(time == null)
+                        {
+                            return;
+                        }
+                        target2 = pTarget + _targetRb.velocity * time.Value;
+                    }
+                    Vector3? angle = Aim(target2);
+                    sw.Stop();
                     if (angle != null)
                     {
                         _sight.eulerAngles = angle.Value;
@@ -62,7 +77,8 @@ public class EnemyFireController : MonoBehaviour
                         {
                             if (_gunController.Fire())
                             {
-                                Debug.Log(FringTime(pTarget));
+                                Debug.Log(sw.Elapsed);
+                                Debug.Log(FringTime(target2));
                             }
                         }
                     }
@@ -134,7 +150,7 @@ public class EnemyFireController : MonoBehaviour
     {
         float g = _gunController.Bullet.Gravity;
         float v = _gunController.Bullet.Speed;
-        Vector3 sight = _sight.transform.position;
+        Vector3 sight = _gunController.Muzzle.transform.position;
         float h = target.y - sight.y;
         float l = Vector2.Distance(new Vector2(target.x, target.z), new Vector2(sight.x, sight.z));
 
@@ -179,7 +195,7 @@ public class EnemyFireController : MonoBehaviour
             return null;
         }
         float v = _gunController.Bullet.Speed;
-        Vector2 sight = new Vector2(_sight.transform.position.x, _sight.transform.position.z);
+        Vector2 sight = new Vector2(_gunController.Muzzle.transform.position.x, _gunController.Muzzle.transform.position.z);
         Vector2 targetXZ = new Vector2(target.x, target.z);
         float x = Vector2.Distance(sight, targetXZ);
         return x / (v * Mathf.Cos(theta.Value / 180 * Mathf.PI));
@@ -201,13 +217,18 @@ public class EnemyFireController : MonoBehaviour
     /// 標的の移動に合わせ理想の着弾までの時間を算出する
     /// </summary>
     /// <returns>着弾までの時間</returns>
-    float? Prognosis()
+    float? Prognosis(Vector3 target)
     {
         if (!_targetRb)
         {
             return null;
         }
-        Vector3 target = _target.position;
+
+        float? time = FringTime(target);
+
+        Vector3 target2 = target + _targetRb.velocity * time.Value;
+
+        float? time2 = FringTime(target2);
 
         return 0;
     }

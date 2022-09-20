@@ -113,7 +113,8 @@ public class BulletController : MonoBehaviour
         Debug.Log($"{t.name}に着弾　高低差{_hit.point.y - _firstPosition.y}" +
             $"　水平距離{Vector2.Distance(new Vector2(_firstPosition.x, _firstPosition.y), new Vector2(_hit.point.x, _hit.point.z))}" +
             $"　相対距離{Vector3.Distance(_firstPosition, _hit.point)} " +
-            $"  飛翔時間{Time.time - _firstTime}");
+            $"  飛翔時間{Time.time - _firstTime}" +
+            $"　着弾位置{t.position}");
         t.GetComponent<CharacterBase>()?.Shot(_damage);
         ExplosionManager.Instance.Explosion(0, _hit.point, _explosionRasius, _explosionDamage);
         Destroy(gameObject);
