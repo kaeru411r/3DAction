@@ -61,6 +61,6 @@ crashlytics-build.properties
 Assets/Main Camera Blends.asset.meta
 Assets/TestCameraChange.cs.meta
 [Pp]rivate*
-[Tt]est*
-[Tt]ests*
+# [Tt]est*
+# [Tt]ests*
 [Uu]ser[Ss]ettings
