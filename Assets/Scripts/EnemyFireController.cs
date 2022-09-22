@@ -13,7 +13,7 @@ public class EnemyFireController : MonoBehaviour
     const float radToDig = 1 / Mathf.PI * 180;
 
     /// <summary>照準の時間差計算の回数</summary>
-    static float calculationNumber = 50;
+    static float calculationNumber = 15;
 
     /// <summary>照準の時間差計算の回数</summary>
     public static float CalculationNumber { get => calculationNumber; set => calculationNumber = value; }
@@ -234,21 +234,34 @@ public class EnemyFireController : MonoBehaviour
     /// <returns>座標</returns>
     Vector3? Prognosis(Vector3 target)
     {
-        if (!_targetRb)
+        if (!_targetRb) { return target; }
+        if (_targetRb.velocity.magnitude == 0) { return target; }
+        Vector3 target2 = target;
+        for (int i = 0; i < calculationNumber; i++)
         {
-            return target;
+            float? time = FringTime(target2);
+            if (time != null)
+            {
+                float? time2 = FringTime(target + _targetRb.velocity * time.Value);
+                if (time2 != null)
+                {
+                    float? time3 = time + (time2 - time2) * 2;
+                    float? time4 = FringTime(target + _targetRb.velocity * time3.Value);
+                    if (time4 != null)
+                    {
+                        float hi = (time3.Value - time4.Value) / (time2.Value - time.Value);
+                        target2 = target + _targetRb.velocity * (time2.Value + (time4.Value - time2.Value) * hi);
+                    }
+                    else { return target; }
+                }
+                else { return target; }
+            }
+            else { return target; }
         }
-        if(_targetRb.velocity.magnitude == 0)
-        {
-            return target;
-        }
-        float? time = FringTime(target);
-        float? time2 = FringTime(target + _targetRb.velocity * time.Value);
-        float? time3 = time + (time2 - time2) * 2;
-        float? time4 = FringTime(target + _targetRb.velocity * time3.Value);
-        float? hi = (time3 - time4) / (time2 - time);
-        Vector3 target2 = target + _targetRb.velocity * (time2.Value + (time4.Value - time2.Value) * hi.Value);
-        //for (int i = 0; i < 50; i++)
+        return target2;
+        //float? time = FringTime(target);
+        //Vector3 target2 = target + _targetRb.velocity * time.Value;
+        //for (int i = 0; i < calculationNumber; i++)
         //{
         //    time = FringTime(target2);
         //    if (time == null)
@@ -257,8 +270,7 @@ public class EnemyFireController : MonoBehaviour
         //    }
         //    target2 = target + _targetRb.velocity * time.Value;
         //}
-
-        return target2;
+        //return target2;
     }
 
     /// <summary>
