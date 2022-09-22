@@ -87,7 +87,12 @@ public class EnemyFireController : MonoBehaviour
                     {
                         if (_gunController.Fire())
                         {
-                            Debug.Log($"着弾まで後{((float)FringTime(target2.Value)).ToString("F3")}秒 着弾予想座標{target2}");
+                            float ft = FringTime(target2.Value).Value;
+                            System.DateTime now = System.DateTime.Now;
+                            float time = (now.Hour * 3600) + (now.Minute * 60) + now.Second + now.Millisecond / 1000f + ft;
+                            Debug.Log($"着弾まで後{ft.ToString("F3")}秒 " +
+                                $"着弾予想時刻{((int)((time % 86400) / 3600f)).ToString("D2")}:{((int)((time % 3600) / 60)).ToString("D2")}:{((int)(time % 60)).ToString("D2")} " +
+                                $"着弾予想座標{target2}");
                         }
                     }
                 }
@@ -171,10 +176,10 @@ public class EnemyFireController : MonoBehaviour
         //二次関数の解が存在するかを確かめる判別式
         float d = b * b - 4 * c;
 
-        float theta;
 
         if (d >= 0)
         {
+            float theta;
             float t0 = Mathf.Atan((-b - Mathf.Sqrt(d)) / 2);
             float t1 = Mathf.Atan((-b + Mathf.Sqrt(d)) / 2);
 
@@ -189,12 +194,12 @@ public class EnemyFireController : MonoBehaviour
             //Debug.Log($"{t0 * 180 / Mathf.PI}, {t1 * 180 / Mathf.PI}, {t}");
 
             //_sight.Rotate(new Vector3(-(t + _sight.eulerAngles.x), 0, 0));
+            return theta;
         }
         else
         {
             return null;
         }
-        return theta;
     }
 
     float? FringTime(Vector3 target)
@@ -231,20 +236,27 @@ public class EnemyFireController : MonoBehaviour
     {
         if (!_targetRb)
         {
-            return null;
+            return target;
+        }
+        if(_targetRb.velocity.magnitude == 0)
+        {
+            return target;
         }
         float? time = FringTime(target);
-
-        Vector3 target2 = target + _targetRb.velocity * time.Value;
-        for (int i = 0; i < 50; i++)
-        {
-            time = FringTime(target2);
-            if (time == null)
-            {
-                return null;
-            }
-            target2 = target + _targetRb.velocity * time.Value;
-        }
+        float? time2 = FringTime(target + _targetRb.velocity * time.Value);
+        float? time3 = time + (time2 - time2) * 2;
+        float? time4 = FringTime(target + _targetRb.velocity * time3.Value);
+        float? hi = (time3 - time4) / (time2 - time);
+        Vector3 target2 = target + _targetRb.velocity * (time2.Value + (time4.Value - time2.Value) * hi.Value);
+        //for (int i = 0; i < 50; i++)
+        //{
+        //    time = FringTime(target2);
+        //    if (time == null)
+        //    {
+        //        return null;
+        //    }
+        //    target2 = target + _targetRb.velocity * time.Value;
+        //}
 
         return target2;
     }
