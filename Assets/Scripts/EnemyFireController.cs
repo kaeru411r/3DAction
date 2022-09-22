@@ -13,7 +13,7 @@ public class EnemyFireController : MonoBehaviour
     const float radToDig = 1 / Mathf.PI * 180;
 
     /// <summary>照準の時間差計算の回数</summary>
-    static float calculationNumber = 15;
+    static float calculationNumber = 5;
 
     /// <summary>照準の時間差計算の回数</summary>
     public static float CalculationNumber { get => calculationNumber; set => calculationNumber = value; }
@@ -74,12 +74,13 @@ public class EnemyFireController : MonoBehaviour
 
             if (!Physics.Raycast(_sight.position, pTarget - _sight.position, Vector3.Distance(pTarget, _sight.position), _layerMask))
             {
-                Vector3? target2 = Prognosis(pTarget);
-                if (target2 == null)
-                {
-                    return;
-                }
-                Vector3? angle = Aim(target2.Value);
+                //Vector3? target2 = Prognosis(pTarget);
+                //if (target2 == null)
+                //{
+                //    return;
+                //}
+                //Vector3? angle = Aim(target2.Value);
+                Vector3? angle = Aim(pTarget);
                 if (angle != null)
                 {
                     _sight.eulerAngles = angle.Value;
@@ -87,12 +88,12 @@ public class EnemyFireController : MonoBehaviour
                     {
                         if (_gunController.Fire())
                         {
-                            float ft = FringTime(target2.Value).Value;
+                            float ft = FringTime(pTarget).Value;
                             System.DateTime now = System.DateTime.Now;
                             float time = (now.Hour * 3600) + (now.Minute * 60) + now.Second + now.Millisecond / 1000f + ft;
-                            Debug.Log($"着弾まで後{ft.ToString("F3")}秒 " +
+                            Debug.Log($"発射 着弾まで後{ft.ToString("F3")}秒 " +
                                 $"着弾予想時刻{((int)((time % 86400) / 3600f)).ToString("D2")}:{((int)((time % 3600) / 60)).ToString("D2")}:{((int)(time % 60)).ToString("D2")} " +
-                                $"着弾予想座標{target2}");
+                                $"着弾予想座標{pTarget}");
                         }
                     }
                 }
@@ -236,41 +237,41 @@ public class EnemyFireController : MonoBehaviour
     {
         if (!_targetRb) { return target; }
         if (_targetRb.velocity.magnitude == 0) { return target; }
-        Vector3 target2 = target;
-        for (int i = 0; i < calculationNumber; i++)
-        {
-            float? time = FringTime(target2);
-            if (time != null)
-            {
-                float? time2 = FringTime(target + _targetRb.velocity * time.Value);
-                if (time2 != null)
-                {
-                    float? time3 = time + (time2 - time2) * 2;
-                    float? time4 = FringTime(target + _targetRb.velocity * time3.Value);
-                    if (time4 != null)
-                    {
-                        float hi = (time3.Value - time4.Value) / (time2.Value - time.Value);
-                        target2 = target + _targetRb.velocity * (time2.Value + (time4.Value - time2.Value) * hi);
-                    }
-                    else { return target; }
-                }
-                else { return target; }
-            }
-            else { return target; }
-        }
-        return target2;
-        //float? time = FringTime(target);
-        //Vector3 target2 = target + _targetRb.velocity * time.Value;
+        //Vector3 target2 = target;
         //for (int i = 0; i < calculationNumber; i++)
         //{
-        //    time = FringTime(target2);
-        //    if (time == null)
+        //    float? time = FringTime(target2);
+        //    if (time != null)
         //    {
-        //        return null;
+        //        float? time2 = FringTime(target + _targetRb.velocity * time.Value);
+        //        if (time2 != null)
+        //        {
+        //            float? time3 = time + (time2 - time2) * 2;
+        //            float? time4 = FringTime(target + _targetRb.velocity * time3.Value);
+        //            if (time4 != null)
+        //            {
+        //                float hi = (time3.Value - time4.Value) / (time2.Value - time.Value);
+        //                target2 = target + _targetRb.velocity * (time2.Value + (time4.Value - time2.Value) * hi);
+        //            }
+        //            else { return target; }
+        //        }
+        //        else { return target; }
         //    }
-        //    target2 = target + _targetRb.velocity * time.Value;
+        //    else { return target; }
         //}
         //return target2;
+        float? time = FringTime(target);
+        Vector3 target2 = target + _targetRb.velocity * time.Value;
+        for (int i = 0; i < calculationNumber; i++)
+        {
+            time = FringTime(target2);
+            if (time == null)
+            {
+                return null;
+            }
+            target2 = target + _targetRb.velocity * time.Value;
+        }
+        return target2;
     }
 
     /// <summary>

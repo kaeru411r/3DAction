@@ -67,8 +67,8 @@ MonoBehaviour:
   _explosionDamage: 50
   _explosionRasius: 5
   _destroyTime: 120
-  _reloadTime: 75
-  _gravity: 0.98
+  _reloadTime: 1
+  _gravity: 30
 --- !u!1 &5816681135565388561
 GameObject:
   m_ObjectHideFlags: 0
