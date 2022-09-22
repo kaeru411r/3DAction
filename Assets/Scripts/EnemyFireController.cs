@@ -12,6 +12,12 @@ public class EnemyFireController : MonoBehaviour
 {
     const float radToDig = 1 / Mathf.PI * 180;
 
+    /// <summary>照準の時間差計算の回数</summary>
+    static float calculationNumber = 50;
+
+    /// <summary>照準の時間差計算の回数</summary>
+    public static float CalculationNumber { get => calculationNumber; set => calculationNumber = value; }
+
     /// <summary>このオブジェクトのGunController</summary>
     GunController _gunController;
 
@@ -37,6 +43,7 @@ public class EnemyFireController : MonoBehaviour
     Transform _muzzle;
 
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -57,49 +64,39 @@ public class EnemyFireController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (_target && _sight)
+        if (!(_target && _sight))
         {
-            if (Vector3.Distance(transform.position, _target.position) <= _range)
+            return;
+        }
+        if (Vector3.Distance(transform.position, _target.position) <= _range)
+        {
+            Vector3 pTarget = _target.position;
+
+            if (!Physics.Raycast(_sight.position, pTarget - _sight.position, Vector3.Distance(pTarget, _sight.position), _layerMask))
             {
-                Vector3 pTarget = _target.position;
-
-                if (!Physics.Raycast(_sight.position, pTarget - _sight.position, Vector3.Distance(pTarget, _sight.position), _layerMask))
+                Vector3? target2 = Prognosis(pTarget);
+                if (target2 == null)
                 {
-                    var sw = new System.Diagnostics.Stopwatch();
-                    sw.Start();
-                    float? time = FringTime(pTarget);
-
-                    Vector3 target2 = pTarget + _targetRb.velocity * time.Value;
-                    for (int i = 0; i < 50; i++)
+                    return;
+                }
+                Vector3? angle = Aim(target2.Value);
+                if (angle != null)
+                {
+                    _sight.eulerAngles = angle.Value;
+                    if (Misalignment() <= _accuracy)
                     {
-                        time = FringTime(target2);
-                        if(time == null)
+                        if (_gunController.Fire())
                         {
-                            return;
-                        }
-                        target2 = pTarget + _targetRb.velocity * time.Value;
-                    }
-                    Vector3? angle = Aim(target2);
-                    sw.Stop();
-                    if (angle != null)
-                    {
-                        _sight.eulerAngles = angle.Value;
-                        if (Misalignment() <= _accuracy)
-                        {
-                            if (_gunController.Fire())
-                            {
-                                Debug.Log(sw.Elapsed);
-                                Debug.Log(FringTime(target2));
-                            }
+                            Debug.Log($"着弾まで後{((float)FringTime(target2.Value)).ToString("F3")}秒 着弾予想座標{target2}");
                         }
                     }
                 }
-
-                //if (Aim(pTarget).Item1)
-                //{
-                //    _gunController.Fire();
-                //}
             }
+
+            //if (Aim(pTarget).Item1)
+            //{
+            //    _gunController.Fire();
+            //}
         }
     }
 
@@ -203,7 +200,7 @@ public class EnemyFireController : MonoBehaviour
     float? FringTime(Vector3 target)
     {
         float? theta = FiringElevation(target);
-        if(theta == null)
+        if (theta == null)
         {
             return null;
         }
@@ -227,23 +224,29 @@ public class EnemyFireController : MonoBehaviour
     }
 
     /// <summary>
-    /// 標的の移動に合わせ理想の着弾までの時間を算出する
+    /// 標的の移動に合わせ理想の着弾位置を算出する
     /// </summary>
-    /// <returns>着弾までの時間</returns>
-    float? Prognosis(Vector3 target)
+    /// <returns>座標</returns>
+    Vector3? Prognosis(Vector3 target)
     {
         if (!_targetRb)
         {
             return null;
         }
-
         float? time = FringTime(target);
 
         Vector3 target2 = target + _targetRb.velocity * time.Value;
+        for (int i = 0; i < 50; i++)
+        {
+            time = FringTime(target2);
+            if (time == null)
+            {
+                return null;
+            }
+            target2 = target + _targetRb.velocity * time.Value;
+        }
 
-        float? time2 = FringTime(target2);
-
-        return 0;
+        return target2;
     }
 
     /// <summary>
