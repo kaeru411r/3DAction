@@ -33,6 +33,8 @@ public class EnemyFireController : MonoBehaviour
     Rigidbody _targetRb;
     /// <summary>サイトオブジェクトのトランスフォーム</summary>
     Transform _sight;
+    /// <summary>サイトオブジェクトのトランスフォーム</summary>
+    Transform _muzzle;
 
 
     // Start is called before the first frame update
@@ -41,12 +43,21 @@ public class EnemyFireController : MonoBehaviour
         //_target = new Target(PlayerController.Instance.transform);
         _gunController = GetComponent<GunController>();
         _sight = _gunController.Sight;
+        _muzzle = _gunController.Muzzle;
+        if (!_muzzle)
+        {
+            _sight = _gunController.Barrel;
+            if (!_muzzle)
+            {
+                _sight = _gunController.Sight;
+            }
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (_target)
+        if (_target && _sight)
         {
             if (Vector3.Distance(transform.position, _target.position) <= _range)
             {
@@ -126,8 +137,11 @@ public class EnemyFireController : MonoBehaviour
     {
         //_sight.LookAt(target);
         //Debug.Log(1);
-
-        Vector3 dir = target - _sight.position;
+        if (!_muzzle)
+        {
+            return null;
+        }
+        Vector3 dir = target - _muzzle.position;
         Vector3 angle = new Vector3(Mathf.Atan2(dir.z, dir.y) * radToDig, Mathf.Atan2(dir.x, dir.z) * radToDig, Mathf.Atan2(dir.y, -dir.x) * radToDig);
         float? t = FiringElevation(target);
         if (t != null)
@@ -150,9 +164,8 @@ public class EnemyFireController : MonoBehaviour
     {
         float g = _gunController.Bullet.Gravity;
         float v = _gunController.Bullet.Speed;
-        Vector3 sight = _gunController.Muzzle.transform.position;
-        float h = target.y - sight.y;
-        float l = Vector2.Distance(new Vector2(target.x, target.z), new Vector2(sight.x, sight.z));
+        float h = target.y - _muzzle.position.y;
+        float l = Vector2.Distance(new Vector2(target.x, target.z), new Vector2(_muzzle.position.x, _muzzle.position.z));
 
         //tan(theta)の二次関数 a * tan(theta) ^ 2 + b * tan(theta) + cの係数 (aは1なので省略)
         float b = -1 * (2 * v * v * l) / (g * l * l);
@@ -195,7 +208,7 @@ public class EnemyFireController : MonoBehaviour
             return null;
         }
         float v = _gunController.Bullet.Speed;
-        Vector2 sight = new Vector2(_gunController.Muzzle.transform.position.x, _gunController.Muzzle.transform.position.z);
+        Vector2 sight = new Vector2(_muzzle.position.x, _muzzle.position.z);
         Vector2 targetXZ = new Vector2(target.x, target.z);
         float x = Vector2.Distance(sight, targetXZ);
         return x / (v * Mathf.Cos(theta.Value / 180 * Mathf.PI));
