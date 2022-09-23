@@ -74,13 +74,13 @@ public class EnemyFireController : MonoBehaviour
 
             if (!Physics.Raycast(_sight.position, pTarget - _sight.position, Vector3.Distance(pTarget, _sight.position), _layerMask))
             {
-                //Vector3? target2 = Prognosis(pTarget);
-                //if (target2 == null)
-                //{
-                //    return;
-                //}
-                //Vector3? angle = Aim(target2.Value);
-                Vector3? angle = Aim(pTarget);
+                Vector3? target2 = Prognosis(pTarget);
+                if (target2 == null)
+                {
+                    return;
+                }
+                Vector3? angle = Aim(target2.Value);
+                //Vector3? angle = Aim(pTarget);
                 if (angle != null)
                 {
                     _sight.eulerAngles = angle.Value;
@@ -88,12 +88,12 @@ public class EnemyFireController : MonoBehaviour
                     {
                         if (_gunController.Fire())
                         {
-                            float ft = FringTime(pTarget).Value;
+                            float ft = FringTime(target2.Value).Value;
                             System.DateTime now = System.DateTime.Now;
                             float time = (now.Hour * 3600) + (now.Minute * 60) + now.Second + now.Millisecond / 1000f + ft;
                             Debug.Log($"発射 着弾まで後{ft.ToString("F3")}秒 " +
                                 $"着弾予想時刻{((int)((time % 86400) / 3600f)).ToString("D2")}:{((int)((time % 3600) / 60)).ToString("D2")}:{((int)(time % 60)).ToString("D2")} " +
-                                $"着弾予想座標{pTarget}");
+                                $"着弾予想座標{target2}");
                         }
                     }
                 }
@@ -261,6 +261,7 @@ public class EnemyFireController : MonoBehaviour
         //}
         //return target2;
         float? time = FringTime(target);
+        if (time == null) { return null; }
         Vector3 target2 = target + _targetRb.velocity * time.Value;
         for (int i = 0; i < calculationNumber; i++)
         {

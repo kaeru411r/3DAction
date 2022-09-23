@@ -12,13 +12,30 @@ public class TestTarget : MonoBehaviour
 
     Rigidbody _rb;
 
+    Rigidbody Rb
+    {
+        get
+        {
+            if (!_rb)
+            {
+                _rb = GetComponent<Rigidbody>();
+            }
+            return _rb;
+        }
+    }
+
     private void Start()
     {
-        _rb = GetComponent<Rigidbody>();
-        _rb.velocity = _velocity;
-        _rb.useGravity = false;
-        _rb.drag = 0;
-        _rb.angularDrag = 0;
+        Rb.velocity = _velocity;
+        Rb.useGravity = false;
+        Rb.drag = 0;
+        Rb.angularDrag = 0;
+        Debug.Log($"{name} ˆÚ“®‘¬“x{_velocity.normalized}•ûŒü‚É{_velocity.magnitude}");
+    }
+
+    private void OnValidate()
+    {
+        Rb.velocity = _velocity;
         Debug.Log($"{name} ˆÚ“®‘¬“x{_velocity.normalized}•ûŒü‚É{_velocity.magnitude}");
     }
 }
