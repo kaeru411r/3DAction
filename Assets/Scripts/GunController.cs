@@ -148,6 +148,18 @@ public class GunController : MonoBehaviour
         Pitch(_sight.localEulerAngles.x, Time.fixedDeltaTime);
     }
 
+    private void OnValidate()
+    {
+        if(_gunMoveSpeed.x < 0)
+        {
+            _gunMoveSpeed = new Vector2(0, _gunMoveSpeed.y);
+        }
+        if (_gunMoveSpeed.y < 0)
+        {
+            _gunMoveSpeed = new Vector2(_gunMoveSpeed.y, 0);
+        }
+    }
+
     /// <summary>砲弾の実体化から発射関数の呼び出しまでを行う</summary>
     /// <param name="root"></param>
     /// <returns>発砲したか否か</returns>
