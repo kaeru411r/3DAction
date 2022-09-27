@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 /// 敵の火器管制コンポーネント
 /// </summary>
 
-[RequireComponent(typeof(GunController))]
+[RequireComponent(typeof(Gun))]
 public class EnemyFireController : MonoBehaviour
 {
     const float radToDig = 1 / Mathf.PI * 180;
@@ -19,7 +19,7 @@ public class EnemyFireController : MonoBehaviour
     public static float CalculationNumber { get => calculationNumber; set => calculationNumber = value; }
 
     /// <summary>このオブジェクトのGunController</summary>
-    GunController _gunController;
+    Gun _gunController;
 
     [Tooltip("射撃時の許容誤差(角度)")]
     [SerializeField] float _accuracy;
@@ -48,7 +48,7 @@ public class EnemyFireController : MonoBehaviour
     void Start()
     {
         //_target = new Target(PlayerController.Instance.transform);
-        _gunController = GetComponent<GunController>();
+        _gunController = GetComponent<Gun>();
         _sight = _gunController.Sight;
         _muzzle = _gunController.Muzzle;
         if (!_muzzle)
@@ -58,6 +58,24 @@ public class EnemyFireController : MonoBehaviour
             {
                 _sight = _gunController.Sight;
             }
+        }
+        Time();
+    }
+
+    void Time()
+    {
+        if (_targetRb && _targetRb.velocity.magnitude != 0 && _target)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                for (int i = -500; i < 500; i++)
+                {
+                    float? time1 = FringTime(_target.position + _targetRb.velocity * i);
+                    if(time1 != null)
+                    {
+                        sb.AppendLine(time1.Value.ToString());
+                    }
+                }
+            Debug.Log(sb.ToString());
         }
     }
 

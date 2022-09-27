@@ -33,9 +33,15 @@ public class TestTarget : MonoBehaviour
         Debug.Log($"{name} ˆÚ“®‘¬“x{_velocity.normalized}•ûŒü‚É{_velocity.magnitude}");
     }
 
+#if UNITY_EDITOR
     private void OnValidate()
     {
-        Rb.velocity = _velocity;
-        Debug.Log($"{name} ˆÚ“®‘¬“x{_velocity.normalized}•ûŒü‚É{_velocity.magnitude}");
+        if (Application.isPlaying)
+        {
+            Rb.velocity = _velocity;
+            Debug.Log($"{name} ˆÚ“®‘¬“x{_velocity.normalized}•ûŒü‚É{_velocity.magnitude}");
+        }
     }
+
+#endif
 }

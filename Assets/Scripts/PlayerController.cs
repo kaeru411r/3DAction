@@ -11,10 +11,10 @@ using System;
 /// プレイヤー操作コンポーネント
 /// プレイヤーによる車両の操作を行う
 /// </summary>
-[RequireComponent(typeof(GunController), typeof(CaterpillarController), typeof(CharacterBase))]
+[RequireComponent(typeof(Gun), typeof(CaterpillarController), typeof(CharacterBase))]
 public class PlayerController : SingletonMonoBehaviour<PlayerController>
 {
-    GunController _gunController;
+    Gun _gunController;
     CaterpillarController _caterpillarController;
     CharacterBase _characterBase;
     /// <summary>照準先</summary>
@@ -81,7 +81,7 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
 
     private void Start()
     {
-        _gunController = GetComponent<GunController>();
+        _gunController = GetComponent<Gun>();
         _caterpillarController = GetComponent<CaterpillarController>();
         _characterBase = GetComponent<CharacterBase>();
         _fpsFov = _fpsVCam.m_Lens.FieldOfView;
