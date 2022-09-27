@@ -176,7 +176,7 @@ public class Gun : MonoBehaviour
 
             if (_rb)
             {
-                float mass = go.GetComponent<Rigidbody>().mass;
+                float mass = go.Mass;
                 _rb.AddForceAtPosition(-_muzzle.forward * mass * _ammos[_ammoNunber].Speed, _muzzle.position, ForceMode.Impulse);
             }
 

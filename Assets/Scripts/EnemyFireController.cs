@@ -90,7 +90,7 @@ public class EnemyFireController : MonoBehaviour
         {
             Vector3 pTarget = _target.position;
 
-            if (!Physics.Raycast(_sight.position, pTarget - _sight.position, Vector3.Distance(pTarget, _sight.position), _layerMask))
+            if (!Physics.Raycast(_sight.position, pTarget - _sight.position,out RaycastHit hit, Vector3.Distance(pTarget, _sight.position), _layerMask))
             {
                 Vector3? target2 = Prognosis(pTarget);
                 if (target2 == null)
@@ -115,6 +115,10 @@ public class EnemyFireController : MonoBehaviour
                         }
                     }
                 }
+            }
+            else
+            {
+                Debug.Log(hit.collider.gameObject);
             }
 
             //if (Aim(pTarget).Item1)

@@ -1,15 +1,17 @@
-﻿using UnityEngine;
+﻿using Unity.Collections;
+using UnityEngine;
 using UnityEngine.PlayerLoop;
 
 /// <summary>
 /// 砲弾の発射以降の操作を行うコンポーネント
+/// 原則RigidBodyは利用しない
 /// </summary>
-[RequireComponent(typeof(Rigidbody))]
+//[RequireComponent(typeof(Rigidbody))]
 public class Bullet : MonoBehaviour
 {
-    Rigidbody _rb;
+    //Rigidbody _rb;
     [Tooltip("初速")]
-    [SerializeField] float _speed;
+    [SerializeField] float _firstSpeed;
     [Tooltip("威力")]
     [SerializeField] float _damage;
     [Tooltip("爆発のダメージ")]
@@ -20,8 +22,12 @@ public class Bullet : MonoBehaviour
     [SerializeField] float _destroyTime;
     [Tooltip("リロードにかかる時間")]
     [SerializeField] float _reloadTime;
+    [Tooltip("砲弾の質量")]
+    [SerializeField] float _mass = 1;
     [Tooltip("弾にかかる重力")]
     [SerializeField] float _gravity;
+    [ReadOnly, Tooltip("弾体の速度")]
+    [SerializeField] Vector3 _velocity;
     /// <summary>前物理フレームでの座標</summary>
     Vector3 _lastPosition;
     /// <summary>着弾した相手</summary>
@@ -38,29 +44,33 @@ public class Bullet : MonoBehaviour
     bool _isFired;
 
     /// <summary>砲口初速</summary>
-    public float Speed { get { return _speed; } }
+    public float Speed { get { return _firstSpeed; } }
+    /// <summary>砲弾の質量</summary>
+    public float Mass { get => _mass; set => _mass = value; }
     /// <summary>重力加速度</summary>
     public float Gravity { get { return _gravity; } }
-
-
+    /// <summary>弾体の速度</summary>
+    public Vector3 Velocity { get => _velocity; set => _velocity = value; }
 
     private void Start()
     {
-        _rb = GetComponent<Rigidbody>();
+        //_rb = GetComponent<Rigidbody>();
         Destroy(gameObject, _destroyTime);
     }
 
 
     private void Update()
     {
-        transform.forward = _rb.velocity;
+        transform.forward = Velocity;
     }
 
     private void FixedUpdate()
     {
+        Velocity += Vector3.down * _gravity * Time.fixedDeltaTime;
+        FixedMove(Time.fixedDeltaTime);
         if (_isFired)
         {
-            _rb.AddForce(Vector3.down * _gravity, ForceMode.Acceleration);
+            //_rb.AddForce(Vector3.down * _gravity, ForceMode.Acceleration);
             if (HitCheck())   //ここにレイで着弾を観測する部分を書く
             {
                 Hit(_hit.transform);
@@ -92,16 +102,16 @@ public class Bullet : MonoBehaviour
     /// <summary>発砲時に呼ぶ</summary>
     public void Fire(Transform root)
     {
-        if (!_rb)
-        {
-            _rb = GetComponent<Rigidbody>();
-        }
+        //if (!_rb)
+        //{
+        //    _rb = GetComponent<Rigidbody>();
+        //}
         _isFired = true;
-        _rb.velocity = (_speed * transform.forward);
+        _velocity = (_firstSpeed * transform.forward);
         _root = root;
         _lastPosition = transform.position;
         _firstPosition = transform.position;
-        _rb.useGravity = false;
+        //_rb.useGravity = false;
         _firstTime = Time.time;
     }
 
@@ -119,6 +129,13 @@ public class Bullet : MonoBehaviour
         ExplosionManager.Instance.Explosion(0, _hit.point, _explosionRasius, _explosionDamage);
         Destroy(gameObject);
     }
+
+
+    void FixedMove(float deltaTime)
+    {
+        transform.position += _velocity * deltaTime;
+    }
+
 
     public override string ToString()
     {
