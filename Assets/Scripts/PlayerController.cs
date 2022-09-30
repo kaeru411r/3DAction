@@ -14,7 +14,7 @@ using System;
 [RequireComponent(typeof(Gun), typeof(CaterpillarController), typeof(CharacterBase))]
 public class PlayerController : SingletonMonoBehaviour<PlayerController>
 {
-    Gun _gunController;
+    GunSystem _gunSystem;
     CaterpillarController _caterpillarController;
     CharacterBase _characterBase;
     /// <summary>照準先</summary>
@@ -81,13 +81,13 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
 
     private void Start()
     {
-        _gunController = GetComponent<Gun>();
+        _gunSystem = GetComponent<GunSystem>();
         _caterpillarController = GetComponent<CaterpillarController>();
         _characterBase = GetComponent<CharacterBase>();
         _fpsFov = _fpsVCam.m_Lens.FieldOfView;
         _tpsVCam.m_Lens.FieldOfView = _tpsFov;
         _defaltLayerMask = Camera.main.cullingMask;
-        _sight = _gunController.Sight;
+        _sight = _gunSystem.Sight;
         SetTarget();
         if (_viewMode == ViewMode.FPS)
         {
@@ -143,7 +143,7 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
     {
         if (context.performed)
         {
-            _gunController?.Change(context.ReadValue<Vector2>().y);
+            _gunSystem?.Change(context.ReadValue<Vector2>().y);
         }
     }
     /// <summary>右側上ボタン</summary>
@@ -151,7 +151,7 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
     {
         if (context.performed)
         {
-            _gunController?.Change(1f);
+            _gunSystem?.Change(1f);
         }
     }
     /// <summary>左クリック及び右トリガー</summary>
@@ -159,7 +159,7 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
     {
         if (context.performed)
         {
-            _gunController?.Fire();
+            _gunSystem?.Fire();
         }
     }
     /// <summary>数字キー</summary>
@@ -167,7 +167,7 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
     {
         if (context.performed)
         {
-            _gunController?.Choice(int.Parse(Regex.Replace(context.control.ToString(), @"[^0-9]", "")));
+            _gunSystem?.Choice(int.Parse(Regex.Replace(context.control.ToString(), @"[^0-9]", "")));
         }
     }
     /// <summary>cキー及び右側右ボタン</summary>
@@ -203,7 +203,7 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
             _hpText.text = $"HP {_characterBase.Hp}";
         }
 
-        if (_gunController)
+        if (_gunSystem)
         {
             if (_viewMode == ViewMode.TPS)
             {
@@ -246,8 +246,8 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
     /// <summary>マウスでのFPS操作</summary>
     void MouseFPSAim()
     {
-        Vector3 barrel = _gunController.Barrel.localEulerAngles;
-        Vector3 turret = _gunController.Turret.localEulerAngles;
+        Vector3 barrel = _gunSystem.Barrel.localEulerAngles;
+        Vector3 turret = _gunSystem.Turret.localEulerAngles;
         Vector2 dif = _sight.localEulerAngles - new Vector3(barrel.x, turret.y);
         _sight.Rotate(_look.y * _mouseSensitivity.y, _look.x * _mouseSensitivity.x, 0);
 
@@ -291,9 +291,9 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
     /// <summary>ゲームパッドでのFPS操作</summary>
     void PadFPSAim()
     {
-        Vector2 gunSpeed = _gunController.GunMoveSpeed * Time.deltaTime;
-        Vector3 barrel = _gunController.Barrel.localEulerAngles;
-        Vector3 turret = _gunController.Turret.localEulerAngles;
+        Vector2 gunSpeed = _gunSystem.GunMoveSpeed * Time.deltaTime;
+        Vector3 barrel = _gunSystem.Barrel.localEulerAngles;
+        Vector3 turret = _gunSystem.Turret.localEulerAngles;
         _sight.localEulerAngles = new Vector3(barrel.x + gunSpeed.y * _look.y, turret.y + gunSpeed.x * _look.x);
     }
 

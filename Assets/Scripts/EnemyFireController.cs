@@ -19,7 +19,7 @@ public class EnemyFireController : MonoBehaviour
     public static float CalculationNumber { get => calculationNumber; set => calculationNumber = value; }
 
     /// <summary>このオブジェクトのGunController</summary>
-    Gun _gunController;
+    GunSystem _gunSystem;
 
     [Tooltip("射撃時の許容誤差(角度)")]
     [SerializeField] float _accuracy;
@@ -48,15 +48,15 @@ public class EnemyFireController : MonoBehaviour
     void Start()
     {
         //_target = new Target(PlayerController.Instance.transform);
-        _gunController = GetComponent<Gun>();
-        _sight = _gunController.Sight;
-        _muzzle = _gunController.Muzzle;
+        _gunSystem = GetComponent<GunSystem>();
+        _sight = _gunSystem.Sight;
+        _muzzle = _gunSystem.Muzzle;
         if (!_muzzle)
         {
-            _sight = _gunController.Barrel;
+            _sight = _gunSystem.Barrel;
             if (!_muzzle)
             {
-                _sight = _gunController.Sight;
+                _sight = _gunSystem.Sight;
             }
         }
         Time();
@@ -104,7 +104,7 @@ public class EnemyFireController : MonoBehaviour
                     _sight.eulerAngles = angle.Value;
                     if (Misalignment() <= _accuracy)
                     {
-                        if (_gunController.Fire())
+                        if (_gunSystem.Fire())
                         {
                             float ft = FringTime(target2.Value).Value;
                             System.DateTime now = System.DateTime.Now;
@@ -187,8 +187,8 @@ public class EnemyFireController : MonoBehaviour
     /// <returns>射角[度] nullなら射程外</returns>
     float? FiringElevation(Vector3 target)
     {
-        float g = _gunController.Bullet.Gravity;
-        float v = _gunController.Bullet.Speed;
+        float g = _gunSystem.Bullet.Gravity;
+        float v = _gunSystem.Bullet.Speed;
         float h = target.y - _muzzle.position.y;
         float l = Vector2.Distance(new Vector2(target.x, target.z), new Vector2(_muzzle.position.x, _muzzle.position.z));
 
@@ -232,7 +232,7 @@ public class EnemyFireController : MonoBehaviour
         {
             return null;
         }
-        float v = _gunController.Bullet.Speed;
+        float v = _gunSystem.Bullet.Speed;
         Vector2 sight = new Vector2(_muzzle.position.x, _muzzle.position.z);
         Vector2 targetXZ = new Vector2(target.x, target.z);
         float x = Vector2.Distance(sight, targetXZ);
@@ -245,7 +245,7 @@ public class EnemyFireController : MonoBehaviour
     /// <returns>照準と法の角度の誤差[度]</returns>
     float Misalignment()
     {
-        Vector3 barrel = _gunController.Barrel.forward;
+        Vector3 barrel = _gunSystem.Barrel.forward;
         Vector3 sight = _sight.forward;
         float misalignment = Mathf.Acos((Vector3.Dot(barrel, sight) / (barrel.magnitude * sight.magnitude))) * radToDig;
         return misalignment <= 180 ? misalignment : Mathf.Abs(misalignment - 360);
