@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 /// 敵の火器管制コンポーネント
 /// </summary>
 
-[RequireComponent(typeof(Gun))]
+[RequireComponent(typeof(GunSystem))]
 public class EnemyFireController : MonoBehaviour
 {
     const float radToDig = 1 / Mathf.PI * 180;

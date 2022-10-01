@@ -5,14 +5,13 @@ using UnityEngine;
 
 public class GunSystem : MonoBehaviour
 {
-    [Tooltip("弾薬配列")]
-    [SerializeField] List<Bullet> _ammos;
+    /// <summary>360度</summary>
+    const int AllAround = 360;
+
+    [Tooltip("砲配列")]
+    [SerializeField] List<Gun> _guns;
     [Tooltip("砲塔")]
-    [SerializeField] Transform _turret;
-    [Tooltip("砲身")]
-    [SerializeField] Transform _barrel;
-    [Tooltip("砲口")]
-    [SerializeField] Transform _muzzle;
+    [SerializeField] Turret _turret;
     [Tooltip("直接照準を合わせる基準")]
     [SerializeField] Transform _sight;
     [Tooltip("砲の動作スピード[rad/s]")]
@@ -21,99 +20,28 @@ public class GunSystem : MonoBehaviour
     [SerializeField, Range(0, 90)] float _elevationAngle = 0;
     [Tooltip("俯角")]
     [SerializeField, Range(-90, 0)] float _depressionAngle = 0;
-    /// <summary>使う弾薬の種類</summary>
-    int _ammoNunber;
-    /// <summary>現在装填されてるか</summary>
-    bool _isLoad = true;
-    /// <summary>装填完了までの時間</summary>
-    float _time;
-    /// <summary>360度</summary>
-    const int AllAround = 360;
-    /// <summary>必要なTransformがアサインされてなかったときのダミー</summary>
-    Transform _dummy;
-    /// <summary>戦車のリジッドボディ</summary>
-    Rigidbody _rb;
 
+    public Gun Gun { get => _guns[0]; }
 
-
+    public Bullet Bullet { get => Gun.Bullet; }
 
     public Transform Sight { get { return _sight; } }
 
-    public Transform Turret { get { return _turret; } }
+    public Transform Turret { get { return _turret.transform; } }
 
-    public Transform Barrel { get { return _barrel; } }
+    public Transform Barrel { get { return Gun.Barrel; } }
 
-    public Transform Muzzle { get { return _muzzle; } }
+    public Transform Muzzle { get { return Gun.Muzzle; } }
 
     public Vector2 GunMoveSpeed { get { return _gunMoveSpeed; } }
 
-    public Bullet Bullet
-    {
-        get
-        {
-            if (_ammos[_ammoNunber] != null)
-            {
-                return _ammos[_ammoNunber];
-            }
-            else
-            {
-                Debug.LogError($"{name}の{nameof(_ammos)}には{_ammoNunber}はありません");
-                return null;
-            }
-        }
-    }
-
     private void Start()
     {
-        if (_ammos.Count == 0)
-        {
-            Debug.LogError($"{name}はAmmosが選択されていません");
-            _isLoad = false;
-        }
-        else if (_ammos.Contains(null))
-        {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0, n = 0; i < _ammos.Count; i++, n++)
-            {
-                if (!_ammos[i])
-                {
-                    sb.Append($"\nElement{n}");
-                    _ammos.RemoveAt(i);
-                    i--;
-                }
-            }
-            if (_ammos.Count == 0)
-            {
-                Debug.LogError($"{name}はAmmosが選択されていません");
-                _isLoad = false;
-            }
-            else
-            {
-                sb.Insert(0, $"{name}の{this}は{nameof(_ammos)}の以下の項目にアサインがされていません");
-                Debug.LogWarning(sb);
-            }
-        }
-        if (!_turret)
-        {
-            Debug.LogError($"{name}は{nameof(_turret)}がアサインされていません");
-            _turret = PreDummy();
-        }
-        if (!_barrel)
-        {
-            Debug.LogError($"{name}は{nameof(_barrel)}がアサインされていません");
-            _barrel = PreDummy();
-        }
-        if (!_muzzle)
-        {
-            Debug.LogError($"{name}は{nameof(_muzzle)}がアサインされていません");
-            _muzzle = PreDummy();
-        }
         if (!_sight)
         {
             Debug.LogError($"{name}は{nameof(_sight)}がアサインされていません");
-            _sight = PreDummy();
+            _sight = Turret;
         }
-        _rb = GetComponent<Rigidbody>();
     }
 
     private void Update()
@@ -162,29 +90,28 @@ public class GunSystem : MonoBehaviour
     /// <returns>発砲したか否か</returns>
     public bool Fire()
     {
-        if (_isLoad)
-        {
-            Vector3 dir = new Vector3(_muzzle.eulerAngles.x + 90, _muzzle.eulerAngles.y, _muzzle.eulerAngles.z);
-            var go = Instantiate(_ammos[_ammoNunber], _muzzle.position, _muzzle.rotation);
-            go.GetComponent<Bullet>()?.Fire(transform);
+        return Gun.Fire();
+    }
 
-            if (_rb)
-            {
-                float mass = go.Mass;
-                _rb.AddForceAtPosition(-_muzzle.forward * mass * _ammos[_ammoNunber].Speed, _muzzle.position, ForceMode.Impulse);
-            }
+    /// <summary>砲弾の切り替えを行う</summary>
+    /// <param name="f"></param>
+    public bool Change(float f)
+    {
+        return Gun.Change(f);
+    }
 
-            StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
-            return true;
-        }
-        return false;
+    /// <summary>砲弾の選択を行う</summary>
+    /// <param name="n"></param>
+    public bool Choice(int n)
+    {
+        return Gun.Choice(n);
     }
 
     /// <summary>砲身の上下の動き</summary>
     /// <param name="x"></param>
     void Pitch(float x, float deltaTime)
     {
-        var dif = x - _barrel.localEulerAngles.x;
+        var dif = x - Barrel.localEulerAngles.x;
         if (dif < -AllAround / 2)
         {
             dif = dif + AllAround;
@@ -195,15 +122,15 @@ public class GunSystem : MonoBehaviour
         }
         if (dif <= _gunMoveSpeed.y && dif >= -_gunMoveSpeed.y * deltaTime / Mathf.PI * 180)
         {
-            _barrel.localEulerAngles = new Vector3(x, 0, 0);
+            Barrel.localEulerAngles = new Vector3(x, 0, 0);
         }
         else if (dif > _gunMoveSpeed.y)
         {
-            _barrel.Rotate(_gunMoveSpeed.y * deltaTime / Mathf.PI * 180, 0, 0);
+            Barrel.Rotate(_gunMoveSpeed.y * deltaTime / Mathf.PI * 180, 0, 0);
         }
         else
         {
-            _barrel.Rotate(-_gunMoveSpeed.y * deltaTime / Mathf.PI * 180, 0, 0);
+            Barrel.Rotate(-_gunMoveSpeed.y * deltaTime / Mathf.PI * 180, 0, 0);
         }
     }
 
@@ -234,71 +161,4 @@ public class GunSystem : MonoBehaviour
         }
     }
 
-    /// <summary>砲弾の切り替えを行う</summary>
-    /// <param name="f"></param>
-    public void Change(float f)
-    {
-        if (_ammos.Count != 0)
-        {
-            if (f < 0)
-            {
-                _ammoNunber = _ammoNunber - 1;
-                if (_ammoNunber < 0)
-                    _ammoNunber = _ammos.Count - 1;
-            }
-            else
-            {
-                _ammoNunber = (_ammoNunber + 1) % _ammos.Count;
-            }
-            StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
-        }
-    }
-
-    public void Choice(int n)
-    {
-        if (_ammos.Count != 0)
-        {
-            if (n <= _ammos.Count && n - 1 != _ammoNunber)
-            {
-                _ammoNunber = n - 1;
-                StartCoroutine(Reload(_ammos[_ammoNunber].ReloadTime));
-            }
-        }
-    }
-
-
-    /// <summary>砲弾の装填を行う
-    /// 最後に呼び出されてからtime秒後に装填完了する</summary>
-    IEnumerator Reload(float time)
-    {
-        if (_isLoad)
-        {
-            Debug.Log($"{transform.root.name}が{_ammos[_ammoNunber].name}装填完了まで{time}");
-            _isLoad = false;
-            for (_time = time; _time >= 0; _time -= Time.deltaTime)
-            {
-                yield return null;
-            }
-            Debug.Log($"{transform.root.name}がリロード完了");
-            _isLoad = true;
-        }
-        else
-        {
-            _time = time;
-            Debug.Log($"{transform.root.name}が{_ammos[_ammoNunber].name}装填完了まで{_time}");
-        }
-    }
-
-    Transform PreDummy()
-    {
-        if (_dummy)
-        {
-            return _dummy;
-        }
-        else
-        {
-            _dummy = new GameObject().transform;
-            return _dummy;
-        }
-    }
 }
