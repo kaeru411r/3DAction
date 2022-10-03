@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 /// 敵の火器管制コンポーネント
 /// </summary>
 
-public class EnemyFireController : BulletCollector
+public class EnemyFireController : GameObjectCollector
 {
     const float radToDig = 1 / Mathf.PI * 180;
 
@@ -106,7 +106,7 @@ public class EnemyFireController : BulletCollector
                         List<Bullet> bullets = _turret.Fire();
                         foreach (Bullet bullet in bullets)
                         {
-                            bullet.transform.SetParent(_stockTransform);
+                            Collection(bullet.transform);
                         }
                         if (bullets != null)
                         {

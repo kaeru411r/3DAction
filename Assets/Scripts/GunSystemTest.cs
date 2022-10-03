@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GunSystemTest : BulletCollector
+public class GunSystemTest : GameObjectCollector
 {
     [SerializeField] GunSystem _gunSystem;
 
@@ -20,7 +20,7 @@ public class GunSystemTest : BulletCollector
         {
             foreach (Bullet b in bullets)
             {
-                b.transform.SetParent(_stockTransform);
+                Collection(b.transform);
             }
         }
     }
