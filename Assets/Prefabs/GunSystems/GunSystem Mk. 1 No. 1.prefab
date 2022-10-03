@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: 7290195084538882243}
   - component: {fileID: 313552647430220106}
   - component: {fileID: 8697868651805576843}
-  m_Layer: 11
-  m_Name: GunSystem Mk. 1 No
+  m_Layer: 0
+  m_Name: GunSystem Mk. 1 No. 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

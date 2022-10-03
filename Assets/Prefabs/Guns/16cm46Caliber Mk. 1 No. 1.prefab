@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4936458463953478491}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: Muzzle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45,8 +45,8 @@ GameObject:
   - component: {fileID: 8202926652034394071}
   - component: {fileID: 8399092292003782653}
   - component: {fileID: 142015055876739713}
-  m_Layer: 11
-  m_Name: 16cm46Caliber Mk. 1 No
+  m_Layer: 0
+  m_Name: 16cm46Caliber Mk. 1 No. 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

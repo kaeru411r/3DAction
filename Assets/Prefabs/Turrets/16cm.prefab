@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 814393890120611319}
   - component: {fileID: 4669014100305328733}
   - component: {fileID: 5919454946749381591}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: Cylinder (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1807,7 +1807,7 @@ GameObject:
   - component: {fileID: 115745102803211026}
   - component: {fileID: 1985904967770163750}
   - component: {fileID: 5026451369294684539}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: 16cm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1870,7 +1870,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4991454945022242883}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: Sight (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1912,7 +1912,7 @@ PrefabInstance:
     - target: {fileID: 1220182859863225520, guid: 86f780396f7faae49a913f75d5b615f4,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 6
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 2683934471568683196, guid: 86f780396f7faae49a913f75d5b615f4,
         type: 3}
@@ -1992,7 +1992,7 @@ PrefabInstance:
     - target: {fileID: 7552064099721639319, guid: 86f780396f7faae49a913f75d5b615f4,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 12
+      value: 18
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 86f780396f7faae49a913f75d5b615f4, type: 3}

@@ -2,18 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GunSystemTest : MonoBehaviour
+public class GunSystemTest : FireController
 {
     [SerializeField] GunSystem _gunSystem;
-
-    Transform _stockTransform;
 
     // Start is called before the first frame update
     void Start()
     {
         _gunSystem.FireTimingMode = FireTimingMode.Coinstantaneous;
-        _stockTransform = new GameObject().transform;
-        _stockTransform.name = $"{name}Bullets";
+        base.Start();
     }
 
     private void Update()

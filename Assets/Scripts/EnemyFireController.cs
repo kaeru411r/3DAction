@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 /// 敵の火器管制コンポーネント
 /// </summary>
 
-public class EnemyFireController : MonoBehaviour
+public class EnemyFireController : FireController
 {
     const float radToDig = 1 / Mathf.PI * 180;
 
@@ -57,6 +57,7 @@ public class EnemyFireController : MonoBehaviour
                 _sight = _turret.Sight;
             }
         }
+        base.Start();
         Time();
     }
 
@@ -102,7 +103,12 @@ public class EnemyFireController : MonoBehaviour
                     _sight.eulerAngles = angle.Value;
                     if (Misalignment() <= _accuracy)
                     {
-                        if (_turret.Fire() != null)
+                        List<Bullet> bullets = _turret.Fire();
+                        foreach (Bullet bullet in bullets)
+                        {
+                            bullet.transform.SetParent(_stockTransform);
+                        }
+                        if (bullets != null)
                         {
                             float ft = FringTime(target2.Value).Value;
                             System.DateTime now = System.DateTime.Now;
