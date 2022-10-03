@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 /// 敵の火器管制コンポーネント
 /// </summary>
 
-public class EnemyFireController : FireController
+public class EnemyFireController : BulletCollector
 {
     const float radToDig = 1 / Mathf.PI * 180;
 

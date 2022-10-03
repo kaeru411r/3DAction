@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GunSystemTest : FireController
+public class GunSystemTest : BulletCollector
 {
     [SerializeField] GunSystem _gunSystem;
 

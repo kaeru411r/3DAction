@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FireController : MonoBehaviour
+abstract public class BulletCollector : MonoBehaviour
 {
     protected Transform _stockTransform;
     // Start is called before the first frame update
