@@ -25,8 +25,6 @@ public class Gun : MonoBehaviour
     float _time;
     /// <summary>戦車のリジッドボディ</summary>
     Rigidbody _rb;
-    /// <summary>必要なTransformがアサインされてなかったときのダミー</summary>
-    Transform _dummy;
 
     /// <summary>装填が済んでいるか</summary>
     public bool IsLoad { get => _isLoad; }
@@ -87,12 +85,11 @@ public class Gun : MonoBehaviour
         if (!_barrel)
         {
             Debug.LogError($"{name}は{nameof(_barrel)}がアサインされていません");
-            _barrel = PreDummy();
+            _barrel = new GameObject().transform;
         }
         if (!_muzzle)
         {
-            Debug.LogError($"{name}は{nameof(_muzzle)}がアサインされていません");
-            _muzzle = PreDummy();
+            _muzzle = _barrel;
         }
         _rb = GetComponent<Rigidbody>();
     }
@@ -182,19 +179,6 @@ public class Gun : MonoBehaviour
         {
             _time = time;
             Debug.Log($"{transform.root.name}が{_ammos[_ammoNunber].name}装填完了まで{_time}");
-        }
-    }
-
-    Transform PreDummy()
-    {
-        if (_dummy)
-        {
-            return _dummy;
-        }
-        else
-        {
-            _dummy = new GameObject().transform;
-            return _dummy;
         }
     }
 }
