@@ -28,12 +28,9 @@ public class Gun : MonoBehaviour
     /// <summary>装填が済んでいるか</summary>
     public bool IsLoad { get => _isLoad; }
     /// <summary>バレル</summary>
-    public Transform Barrel { get { return _barrel; } }
+    public Transform Barrel { get => _barrel; }
     /// <summary>マズル</summary>
-    public Transform Muzzle { get { return _muzzle; } }
-
-
-
+    public Transform Muzzle { get => _muzzle; }
     /// <summary>現在選択中の弾薬</summary>
     public Bullet Bullet
     {
