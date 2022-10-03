@@ -102,7 +102,7 @@ public class EnemyFireController : MonoBehaviour
                     _sight.eulerAngles = angle.Value;
                     if (Misalignment() <= _accuracy)
                     {
-                        if (_turret.Fire())
+                        if (_turret.Fire() != null)
                         {
                             float ft = FringTime(target2.Value).Value;
                             System.DateTime now = System.DateTime.Now;

@@ -15,23 +15,34 @@ public class GunSystem : MonoBehaviour
     [SerializeField] List<Gun> _guns;
     [Tooltip("–C‚ÌËŒ‚ƒpƒ^[ƒ“")]
     [SerializeField] FireTimingMode _fireTimingMode;
-
+    
+    /// <summary>–C</summary>
     public Gun Gun { get => _guns.FirstOrDefault(); }
-
+    /// <summary>–C’e</summary>
     public Bullet Bullet { get => Gun.Bullet; }
-
+    /// <summary>–Cg</summary>
     public Transform Barrel { get => Gun.Barrel; }
-
+    /// <summary>–CŒû</summary>
     public Transform Muzzle { get => Gun.Muzzle; }
+    /// <summary>–C‚ÌËŒ‚ƒpƒ^[ƒ“</summary>
+    public FireTimingMode FireTimingMode { get => _fireTimingMode; set => _fireTimingMode = value; }
 
 
 
     /// <summary>–C’e‚ÌÀ‘Ì‰»‚©‚ç”­ËŠÖ”‚ÌŒÄ‚Ño‚µ‚Ü‚Å‚ğs‚¤</summary>
-    /// <param name="root"></param>
-    /// <returns>”­–C‚µ‚½‚©”Û‚©</returns>
-    public bool Fire()
+    /// <returns>”­–C‚µ‚½–C’eŒQ ¸”s‚µ‚Ä‚¢‚½‚çnull</returns>
+    public Bullet[] Fire()
     {
-        return Gun.Fire();
+        if(_fireTimingMode == FireTimingMode.Coinstantaneous)
+        {
+            Bullet[] bullets = new Bullet[_guns.Count];
+            for(int i = 0; i < _guns.Count; i++)
+            {
+                bullets[i] = _guns[i].Fire();
+            }
+            return bullets;
+        }
+        return null;
     }
 
     /// <summary>–C’e‚ÌØ‚è‘Ö‚¦‚ğs‚¤</summary>
@@ -47,8 +58,6 @@ public class GunSystem : MonoBehaviour
     {
         return Gun.Choice(n);
     }
-
-
 }
 
 public enum FireTimingMode

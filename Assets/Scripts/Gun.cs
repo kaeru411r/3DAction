@@ -93,7 +93,7 @@ public class Gun : MonoBehaviour
     /// <summary>砲弾の実体化から発射関数の呼び出しまでを行う</summary>
     /// <param name="root"></param>
     /// <returns>発砲したか否か</returns>
-    public bool Fire()
+    public Bullet Fire()
     {
         if (_isLoad)
         {
@@ -108,9 +108,9 @@ public class Gun : MonoBehaviour
             }
 
             StartCoroutine(Reload(Bullet.ReloadTime));
-            return true;
+            return go;
         }
-        return false;
+        return null;
     }
 
     /// <summary>砲弾の切り替えを行う</summary>
