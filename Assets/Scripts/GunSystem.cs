@@ -31,14 +31,18 @@ public class GunSystem : MonoBehaviour
 
     /// <summary>–C’e‚ÌÀ‘Ì‰»‚©‚ç”­ËŠÖ”‚ÌŒÄ‚Ño‚µ‚Ü‚Å‚ğs‚¤</summary>
     /// <returns>”­–C‚µ‚½–C’eŒQ ¸”s‚µ‚Ä‚¢‚½‚çnull</returns>
-    public Bullet[] Fire()
+    public List<Bullet> Fire()
     {
         if(_fireTimingMode == FireTimingMode.Coinstantaneous)
         {
-            Bullet[] bullets = new Bullet[_guns.Count];
+            List<Bullet> bullets = new List<Bullet>();
             for(int i = 0; i < _guns.Count; i++)
             {
-                bullets[i] = _guns[i].Fire();
+                Bullet b = _guns[i].Fire();
+                if (b)
+                {
+                    bullets.Add(b);
+                }
             }
             return bullets;
         }

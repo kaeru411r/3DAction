@@ -139,7 +139,7 @@ public class Turret : MonoBehaviour
 
     /// <summary>–C’e‚ÌÀ‘Ì‰»‚©‚ç”­ËŠÖ”‚ÌŒÄ‚Ño‚µ‚Ü‚Å‚ğs‚¤</summary>
     /// <returns>”­Ë‚µ‚½–C’eŒQ ”­–C‚É¸”s‚µ‚Ä‚¢‚½‚çnull</returns>
-    public Bullet[] Fire()
+    public List<Bullet> Fire()
     {
         return GunSystem.Fire();
     }
