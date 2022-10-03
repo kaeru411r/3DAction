@@ -2,13 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
+/// <summary>
+/// 複数のGunをひとつのインスタンスかのように制御するためのコンポーネント
+/// </summary>
 public class GunSystem : MonoBehaviour
 {
 
     [Tooltip("砲配列")]
     [SerializeField] List<Gun> _guns;
+    [Tooltip("砲の射撃パターン")]
+    [SerializeField] FireTimingMode _fireTimingMode;
 
     public Gun Gun { get => _guns.FirstOrDefault(); }
 
@@ -43,4 +49,12 @@ public class GunSystem : MonoBehaviour
     }
 
 
+}
+
+public enum FireTimingMode
+{
+    /// <summary>同時</summary>
+    Coinstantaneous,
+    /// <summary>連続</summary>
+    Concatenation,
 }

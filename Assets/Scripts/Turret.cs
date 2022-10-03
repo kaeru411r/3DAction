@@ -4,6 +4,11 @@ using System.Linq;
 using System.Threading;
 using UnityEngine;
 
+
+/// <summary>
+/// 複数のGunSystemを砲塔とともに運用するためのコンポーネント
+/// 砲の上下左右の動きとGunSystemの制御をおこなう
+/// </summary>
 public class Turret : MonoBehaviour
 {
     /// <summary>360度</summary>
@@ -17,6 +22,7 @@ public class Turret : MonoBehaviour
     [SerializeField, Range(0, 90)] float _elevationAngle = 0;
     [Tooltip("俯角")]
     [SerializeField, Range(-90, 0)] float _depressionAngle = 0;
+    [Tooltip("このターレットが使用するGunSystem")]
     [SerializeField] GunSystem[] _gunSystems;
 
     public GunSystem GunSystem { get => _gunSystems.FirstOrDefault(); }

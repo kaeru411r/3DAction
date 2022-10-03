@@ -7,7 +7,6 @@ using UnityEngine.UIElements;
 /// 敵の火器管制コンポーネント
 /// </summary>
 
-[RequireComponent(typeof(GunSystem))]
 public class EnemyFireController : MonoBehaviour
 {
     const float radToDig = 1 / Mathf.PI * 180;
@@ -18,9 +17,9 @@ public class EnemyFireController : MonoBehaviour
     /// <summary>照準の時間差計算の回数</summary>
     public static float CalculationNumber { get => calculationNumber; set => calculationNumber = value; }
 
-    /// <summary>このオブジェクトのGunController</summary>
-    Turret _turret;
 
+    [Tooltip("このオブジェクトのGunController")]
+    [SerializeField] Turret _turret;
     [Tooltip("射撃時の許容誤差(角度)")]
     [SerializeField] float _accuracy;
     //[Tooltip("射撃時の弾着予想時間の誤差許容量(秒)")]
@@ -48,7 +47,6 @@ public class EnemyFireController : MonoBehaviour
     void Start()
     {
         //_target = new Target(PlayerController.Instance.transform);
-        _turret = GetComponent<Turret>();
         _sight = _turret.Sight;
         _muzzle = _turret.Muzzle;
         if (!_muzzle)
