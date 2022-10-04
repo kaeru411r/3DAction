@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
@@ -60,6 +61,8 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
     float _fpsFov;
     /// <summary>_target用オブジェクトの名前</summary>
     string _targetName = "TPSTarget";
+    /// <summary>砲弾の集約</summary>
+    GameObjectCollector _collector;
 
     public CharacterBase Charactor { get { return _characterBase; } }
 
@@ -81,6 +84,7 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
 
     private void Start()
     {
+        _collector = new GameObjectCollector(name);
         _turret = GetComponent<Turret>();
         _caterpillarController = GetComponent<CaterpillarController>();
         _characterBase = GetComponent<CharacterBase>();
@@ -159,7 +163,11 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
     {
         if (context.performed)
         {
-            _turret?.Fire();
+            List<Bullet> bullets = _turret?.Fire();
+            foreach(Bullet bullet in bullets)
+            {
+                _collector.Collection(bullet);
+            }
         }
     }
     /// <summary>数字キー</summary>

@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 /// 敵の火器管制コンポーネント
 /// </summary>
 
-public class EnemyFireController : GameObjectCollector
+public class EnemyFireController : MonoBehaviour
 {
     const float radToDig = 1 / Mathf.PI * 180;
 
@@ -40,6 +40,7 @@ public class EnemyFireController : GameObjectCollector
     Transform _sight;
     /// <summary>サイトオブジェクトのトランスフォーム</summary>
     Transform _muzzle;
+    GameObjectCollector _collector;
 
 
 
@@ -57,7 +58,7 @@ public class EnemyFireController : GameObjectCollector
                 _sight = _turret.Sight;
             }
         }
-        base.Start();
+        _collector = new GameObjectCollector(name);
         Time();
     }
 
@@ -106,7 +107,7 @@ public class EnemyFireController : GameObjectCollector
                         List<Bullet> bullets = _turret.Fire();
                         foreach (Bullet bullet in bullets)
                         {
-                            Collection(bullet.transform);
+                            _collector.Collection(bullet);
                         }
                         if (bullets != null)
                         {

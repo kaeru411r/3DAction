@@ -5,10 +5,16 @@ using UnityEngine;
 /// <summary>
 /// オブジェクトをまとめる
 /// </summary>
-abstract public class GameObjectCollector : MonoBehaviour
+public class GameObjectCollector
 {
+    public GameObjectCollector(string name)
+    {
+        _name = name;
+    }
 
+    string _name;
     Transform _stockTransform;
+
     Transform StockTransform
     {
         get
@@ -16,7 +22,7 @@ abstract public class GameObjectCollector : MonoBehaviour
             if (!_stockTransform)
             {
                 _stockTransform = new GameObject().transform;
-                _stockTransform.name = $"{name}Objects";
+                _stockTransform.name = $"{_name}Objects";
             }
             return _stockTransform;
         }
@@ -25,9 +31,27 @@ abstract public class GameObjectCollector : MonoBehaviour
     /// <summary>
     /// 渡したTransformの親をこのオブジェクト専用の収集オブジェクトにする
     /// </summary>
+    /// <param name="transform"></param>
+    public void Collection(Transform transform)
+    {
+        transform.SetParent(StockTransform);
+    }
+
+    /// <summary>
+    /// 渡したTransformの親をこのオブジェクト専用の収集オブジェクトにする
+    /// </summary>
     /// <param name="go"></param>
-    protected void Collection(Transform go)
+    public void Collection(GameObject go)
     {
         go.transform.SetParent(StockTransform);
+    }
+
+    /// <summary>
+    /// 渡したTransformの親をこのオブジェクト専用の収集オブジェクトにする
+    /// </summary>
+    /// <param name="component"></param>
+    public void Collection(Component component)
+    {
+        component.transform.SetParent(StockTransform);
     }
 }
