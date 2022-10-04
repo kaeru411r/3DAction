@@ -13,6 +13,7 @@ public class GunSystemTest : MonoBehaviour
     void Start()
     {
         _collector = new GameObjectCollector(name);
+        var b = _gunSystem.Barrel;
     }
 
     private void Update()

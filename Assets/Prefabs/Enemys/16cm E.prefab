@@ -117,6 +117,16 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 3941365753907208725, guid: e0a32c7a0b09075448b65141a73479d2,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4233090048726086118, guid: e0a32c7a0b09075448b65141a73479d2,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 4669014100305328733, guid: e0a32c7a0b09075448b65141a73479d2,
         type: 3}
       propertyPath: m_Mesh
@@ -156,6 +166,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 6614938264820527215, guid: e0a32c7a0b09075448b65141a73479d2,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 7121054069635324422, guid: e0a32c7a0b09075448b65141a73479d2,
         type: 3}
@@ -218,7 +233,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85f77cb0cc55cd6488c6c1471ea6aa8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _turret: {fileID: 1998429024777858930}
+  _turret: {fileID: 4635437472532433246}
   _accuracy: 0
   _aimMode: 0
   _range: 100000
@@ -226,9 +241,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   _target: {fileID: 0}
---- !u!114 &1998429024777858930 stripped
+--- !u!114 &4635437472532433246 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6504998929630837382, guid: e0a32c7a0b09075448b65141a73479d2,
+  m_CorrespondingSourceObject: {fileID: 119872338498116778, guid: e0a32c7a0b09075448b65141a73479d2,
     type: 3}
   m_PrefabInstance: {fileID: 4755166323938940404}
   m_PrefabAsset: {fileID: 0}

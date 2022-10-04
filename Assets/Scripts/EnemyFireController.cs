@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -192,8 +193,8 @@ public class EnemyFireController : MonoBehaviour
     /// <returns>射角[度] nullなら射程外</returns>
     float? FiringElevation(Vector3 target)
     {
-        float g = _turret.Bullet.Gravity;
-        float v = _turret.Bullet.Speed;
+        float g = _turret.Gravity;
+        float v = _turret.Speed;
         float h = target.y - _muzzle.position.y;
         float l = Vector2.Distance(new Vector2(target.x, target.z), new Vector2(_muzzle.position.x, _muzzle.position.z));
 
@@ -237,7 +238,7 @@ public class EnemyFireController : MonoBehaviour
         {
             return null;
         }
-        float v = _turret.Bullet.Speed;
+        float v = _turret.Speed;
         Vector2 sight = new Vector2(_muzzle.position.x, _muzzle.position.z);
         Vector2 targetXZ = new Vector2(target.x, target.z);
         float x = Vector2.Distance(sight, targetXZ);

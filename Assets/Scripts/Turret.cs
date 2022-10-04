@@ -29,14 +29,16 @@ public class Turret : MonoBehaviour
 
     public Transform Sight { get => _sight; }
 
-    public Transform Barrel { get => GunSystem.Barrel; }
+    public Transform Barrel { get => GunSystem.transform; }
 
     public Transform Muzzle { get => GunSystem.Muzzle; }
 
     public Vector2 GunMoveSpeed { get => _gunMoveSpeed; }
-    public Gun Gun { get => GunSystem.Gun; }
-
-    public Bullet Bullet { get => GunSystem.Bullet; }
+    public List<Gun> Guns { get => GunSystem.Guns; }
+    /// <summary>–C’e‚Ìd—Í‰Á‘¬“x</summary>
+    public float Gravity { get => GunSystem.Gravity; }
+    /// <summary>’e‘¬</summary>
+    public float Speed { get => GunSystem.Speed; }
     // Start is called before the first frame update
     void Start()
     {
@@ -143,19 +145,4 @@ public class Turret : MonoBehaviour
     {
         return GunSystem.Fire();
     }
-
-    /// <summary>–C’e‚ÌØ‚è‘Ö‚¦‚ğs‚¤</summary>
-    /// <param name="f"></param>
-    public bool Change(float f)
-    {
-        return GunSystem.Change(f);
-    }
-
-    /// <summary>–C’e‚Ì‘I‘ğ‚ğs‚¤</summary>
-    /// <param name="n"></param>
-    public bool Choice(int n)
-    {
-        return GunSystem.Choice(n);
-    }
-
 }

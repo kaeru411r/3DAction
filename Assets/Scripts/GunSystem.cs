@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TMPro;
 using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
@@ -15,19 +16,114 @@ public class GunSystem : MonoBehaviour
     [SerializeField] List<Gun> _guns;
     [Tooltip("–C‚ÌËŒ‚ƒpƒ^[ƒ“")]
     [SerializeField] FireTimingMode _fireTimingMode;
-
+    [Header("‚±‚ê‚æ‚è‰º‚Í–³‚­‚Ä‚à—Ç‚¢")]
+    [Tooltip("‰½‚Æ‚È‚­‚Ìƒ}ƒYƒ‹‚Ì•Ó‚è‚ÌTransform")]
+    [SerializeField] Transform _muzzle;
+    [Tooltip("‰½‚Æ‚È‚­‚ÌƒoƒŒƒ‹‚Ì“–‚½‚è‚ÌTransform")]
+    [SerializeField] Transform _barrel;
     /// <summary>Œ‚‚Â–C‚Ì”Ô†</summary>
     int _gunNumber;
+    /// <summary>Ÿ‚Ì–CŒ‚‚Ü‚Å‚ÌƒN[ƒ‹ƒ^ƒCƒ€</summary>
     float _coolTime;
 
     /// <summary>–C</summary>
-    public Gun Gun { get => _guns.FirstOrDefault(); }
-    /// <summary>–C’e</summary>
-    public Bullet Bullet { get => Gun.Bullet; }
+    public List<Gun> Guns { get => _guns; }
+    /// <summary>–C’e‚Ìd—Í‰Á‘¬“x</summary>
+    public float Gravity
+    {
+        get
+        {
+            if(_guns == null || _guns.Count == 0)
+            {
+                return 0;
+            }
+            if(_guns.Distinct().Count() == 1)
+            {
+                return _guns[0].Bullet.Gravity;
+            }
+            else
+            {
+                return _guns.Sum(g => g.Bullet.Gravity) / _guns.Count;
+            }
+        }
+    }
+    /// <summary>’e‘¬</summary>
+    public float Speed
+    {
+        get
+        {
+            if (_guns == null || _guns.Count == 0)
+            {
+                return 0;
+            }
+            if (_guns.Distinct().Count() == 1)
+            {
+                return _guns[0].Bullet.Speed;
+            }
+            else
+            {
+                return _guns.Sum(g => g.Bullet.Speed) / _guns.Count;
+            }
+        }
+    }
     /// <summary>–Cg</summary>
-    public Transform Barrel { get => Gun.Barrel; }
+    public Transform Barrel {
+        get
+        {
+            if (!_barrel)
+            {
+                if (_guns.Count > 1)
+                {
+                    _barrel = new GameObject().transform;
+                    _barrel.name = nameof(_barrel);
+                    _barrel.SetParent(transform);
+                    float x = _guns.Sum(g => g.Barrel.localPosition.x) / _guns.Count;
+                    float y = _guns.Sum(g => g.Barrel.localPosition.y) / _guns.Count;
+                    float z = _guns.Sum(g => g.Barrel.localPosition.z) / _guns.Count;
+                    _barrel.localPosition = new Vector3(x, y, z);
+                }
+                else if (_guns.Count == 1)
+                {
+                    _barrel = _guns[0].Barrel;
+                }
+                else
+                {
+                    _barrel = transform;
+                }
+            }
+            return _barrel;
+        } 
+        set => _barrel = value;
+    }
     /// <summary>–CŒû</summary>
-    public Transform Muzzle { get => Gun.Muzzle; }
+    public Transform Muzzle { 
+        get
+        {
+            if (!_muzzle)
+            {
+                if (_guns.Count > 1)
+                {
+                    _muzzle = new GameObject().transform;
+                    _muzzle.name = nameof(_muzzle);
+                    _muzzle.SetParent(transform);
+                    float x = _guns.Sum(g => g.Muzzle.localPosition.x) / _guns.Count;
+                    float y = _guns.Sum(g => g.Muzzle.localPosition.y) / _guns.Count;
+                    float z = _guns.Sum(g => g.Muzzle.localPosition.z) / _guns.Count;
+                    _muzzle.localPosition = new Vector3(x, y, z);
+                }
+                else if(_guns.Count == 1)
+                {
+                    _muzzle = _guns[0].Muzzle;
+                }
+                else
+                {
+                    _muzzle = transform;
+                }
+            }
+            return _muzzle;
+        }
+        set => _muzzle = value;
+    }
     /// <summary>–C‚ÌËŒ‚ƒpƒ^[ƒ“</summary>
     public FireTimingMode FireTimingMode { get => _fireTimingMode; set => _fireTimingMode = value; }
 
@@ -124,19 +220,6 @@ public class GunSystem : MonoBehaviour
     }
 
 
-    /// <summary>–C’e‚ÌØ‚è‘Ö‚¦‚ğs‚¤</summary>
-    /// <param name="f"></param>
-    public bool Change(float f)
-    {
-        return Gun.Change(f);
-    }
-
-    /// <summary>–C’e‚Ì‘I‘ğ‚ğs‚¤</summary>
-    /// <param name="n"></param>
-    public bool Choice(int n)
-    {
-        return Gun.Choice(n);
-    }
 }
 
 public enum FireTimingMode

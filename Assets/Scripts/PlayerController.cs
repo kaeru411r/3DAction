@@ -147,7 +147,7 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
     {
         if (context.performed)
         {
-            _turret?.Change(context.ReadValue<Vector2>().y);
+            //_turret?.Change(context.ReadValue<Vector2>().y);
         }
     }
     /// <summary>右側上ボタン</summary>
@@ -155,7 +155,7 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
     {
         if (context.performed)
         {
-            _turret?.Change(1f);
+            //_turret?.Change(1f);
         }
     }
     /// <summary>左クリック及び右トリガー</summary>
@@ -175,7 +175,7 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
     {
         if (context.performed)
         {
-            _turret?.Choice(int.Parse(Regex.Replace(context.control.ToString(), @"[^0-9]", "")));
+            //_turret?.Choice(int.Parse(Regex.Replace(context.control.ToString(), @"[^0-9]", "")));
         }
     }
     /// <summary>cキー及び右側右ボタン</summary>
