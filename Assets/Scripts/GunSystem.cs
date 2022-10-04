@@ -19,7 +19,7 @@ public class GunSystem : MonoBehaviour
     /// <summary>Œ‚‚Â–C‚Ì”Ô†</summary>
     int _gunNumber;
     float _coolTime;
-    
+
     /// <summary>–C</summary>
     public Gun Gun { get => _guns.FirstOrDefault(); }
     /// <summary>–C’e</summary>
@@ -32,14 +32,15 @@ public class GunSystem : MonoBehaviour
     public FireTimingMode FireTimingMode { get => _fireTimingMode; set => _fireTimingMode = value; }
 
     /// <summary>Œ‚‚Â–C‚Ì”Ô†</summary>
-    int GunNumber { 
+    int GunNumber
+    {
         get
         {
             return _gunNumber;
         }
         set
         {
-            if(value >= _guns.Count)
+            if (value >= _guns.Count)
             {
                 value = 0;
             }
@@ -77,24 +78,20 @@ public class GunSystem : MonoBehaviour
         }
         else if (FireTimingMode == FireTimingMode.Concatenation)
         {
-            if (_coolTime - (_guns.Max(g => g.Bullet.ReloadTime) / _guns.Count) * GunNumber <= 0)
+            if (_coolTime <= 0)
             {
                 Bullet b = _guns[GunNumber].Fire();
                 if (b)
                 {
                     List<Bullet> bullets = new List<Bullet>();
                     bullets.Add(b);
-                    if (GunNumber == 0)
-                    {
-                        _coolTime += _guns.Max(g => g.Bullet.ReloadTime);
-                    }
-
+                    _coolTime += _guns.Max(g => g.Bullet.ReloadTime) / _guns.Count;
                     GunNumber++;
                     return bullets;
                 }
             }
         }
-        else if(_fireTimingMode == FireTimingMode.FullOpen)
+        else if (_fireTimingMode == FireTimingMode.FullOpen)
         {
             List<Bullet> bullets = new List<Bullet>();
             for (int i = 0; i < _guns.Count; i++)
@@ -109,13 +106,13 @@ public class GunSystem : MonoBehaviour
             return bullets;
         }
         else { }
-            return null;
+        return null;
     }
 
     bool IsAllReload()
     {
         bool isLoad = true;
-        foreach(Gun gun in _guns)
+        foreach (Gun gun in _guns)
         {
             if (!gun.IsLoad)
             {
