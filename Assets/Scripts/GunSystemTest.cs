@@ -5,6 +5,7 @@ using UnityEngine;
 public class GunSystemTest : MonoBehaviour
 {
     [SerializeField] GunSystem _gunSystem;
+    [SerializeField] FireTimingMode _fireTimingMode = FireTimingMode.Coinstantaneous;
 
     GameObjectCollector _collector;
 
@@ -12,11 +13,11 @@ public class GunSystemTest : MonoBehaviour
     void Start()
     {
         _collector = new GameObjectCollector(name);
-        _gunSystem.FireTimingMode = FireTimingMode.Coinstantaneous;
     }
 
     private void Update()
     {
+        _gunSystem.FireTimingMode = _fireTimingMode;
         List<Bullet> bullets = _gunSystem.Fire();
         if (bullets != null)
         {

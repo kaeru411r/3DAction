@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4669014100305328733}
   - component: {fileID: 5919454946749381591}
   m_Layer: 0
-  m_Name: Cylinder (2)
+  m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1871,7 +1871,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4991454945022242883}
   m_Layer: 0
-  m_Name: Sight (2)
+  m_Name: Sight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1996,6 +1996,42 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 86f780396f7faae49a913f75d5b615f4, type: 3}
+--- !u!1 &956815117498649374 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6344204698315440977, guid: 86f780396f7faae49a913f75d5b615f4,
+    type: 3}
+  m_PrefabInstance: {fileID: 6146409400137402447}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6504998929630837382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 956815117498649374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1808aff5c70572e439d6cf1faadbba73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _sight: {fileID: 4991454945022242883}
+  _gunMoveSpeed: {x: 1, y: 1}
+  _elevationAngle: 80
+  _depressionAngle: -15
+  _gunSystems:
+  - {fileID: 3312793059513550532}
+--- !u!114 &3312793059513550532 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8697868651805576843, guid: 86f780396f7faae49a913f75d5b615f4,
+    type: 3}
+  m_PrefabInstance: {fileID: 6146409400137402447}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 956815117498649374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecdab20629f108949b1a8cdca02480df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &8963456914072837048 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2965891222668530679, guid: 86f780396f7faae49a913f75d5b615f4,

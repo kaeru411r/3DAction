@@ -15,6 +15,10 @@ public class GunSystem : MonoBehaviour
     [SerializeField] List<Gun> _guns;
     [Tooltip("–C‚ÌËŒ‚ƒpƒ^[ƒ“")]
     [SerializeField] FireTimingMode _fireTimingMode;
+
+    /// <summary>Œ‚‚Â–C‚Ì”Ô†</summary>
+    int _gunNumber;
+    float _coolTime;
     
     /// <summary>–C</summary>
     public Gun Gun { get => _guns.FirstOrDefault(); }
@@ -27,6 +31,27 @@ public class GunSystem : MonoBehaviour
     /// <summary>–C‚ÌËŒ‚ƒpƒ^[ƒ“</summary>
     public FireTimingMode FireTimingMode { get => _fireTimingMode; set => _fireTimingMode = value; }
 
+    /// <summary>Œ‚‚Â–C‚Ì”Ô†</summary>
+    int GunNumber { 
+        get
+        {
+            return _gunNumber;
+        }
+        set
+        {
+            if(value >= _guns.Count)
+            {
+                value = 0;
+            }
+            _gunNumber = value;
+        }
+    }
+
+    private void Update()
+    {
+        _coolTime = _coolTime - Time.deltaTime < 0 ? 0 : _coolTime - Time.deltaTime;
+    }
+
 
 
     /// <summary>–C’e‚ÌÀ‘Ì‰»‚©‚ç”­ËŠÖ”‚ÌŒÄ‚Ño‚µ‚Ü‚Å‚ğs‚¤</summary>
@@ -35,18 +60,51 @@ public class GunSystem : MonoBehaviour
     {
         if(_fireTimingMode == FireTimingMode.Coinstantaneous)
         {
-            List<Bullet> bullets = new List<Bullet>();
-            for(int i = 0; i < _guns.Count; i++)
+            if (IsAllReload())
             {
-                Bullet b = _guns[i].Fire();
+                List<Bullet> bullets = new List<Bullet>();
+                for (int i = 0; i < _guns.Count; i++)
+                {
+                    Bullet b = _guns[i].Fire();
+                    if (b)
+                    {
+                        bullets.Add(b);
+                    }
+                }
+                GunNumber = 0;
+                return bullets;
+            }
+        }
+        else if(FireTimingMode == FireTimingMode.Concatenation)
+        {
+            if (_coolTime <= 0)
+            {
+                Bullet b = _guns[GunNumber].Fire();
                 if (b)
                 {
+                    List<Bullet> bullets = new List<Bullet>();
                     bullets.Add(b);
+                    GunNumber++;
+                    _coolTime = _guns[GunNumber].Bullet.ReloadTime / _guns.Count;
+                    return bullets;
                 }
             }
-            return bullets;
         }
         return null;
+    }
+
+    bool IsAllReload()
+    {
+        bool isLoad = true;
+        foreach(Gun gun in _guns)
+        {
+            if (!gun.IsLoad)
+            {
+                isLoad = false;
+                break;
+            }
+        }
+        return isLoad;
     }
 
     /// <summary>–C’e‚ÌØ‚è‘Ö‚¦‚ğs‚¤</summary>

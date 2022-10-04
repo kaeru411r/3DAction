@@ -92,7 +92,7 @@ public class Gun : MonoBehaviour
 
     /// <summary>砲弾の実体化から発射関数の呼び出しまでを行う</summary>
     /// <param name="root"></param>
-    /// <returns>発砲したか否か</returns>
+    /// <returns>撃った砲弾</returns>
     public Bullet Fire()
     {
         if (_isLoad)
