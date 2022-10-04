@@ -47,9 +47,9 @@ public class GunSystem : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        _coolTime = _coolTime - Time.deltaTime < 0 ? 0 : _coolTime - Time.deltaTime;
+        _coolTime -= Time.fixedDeltaTime;
     }
 
 
@@ -58,7 +58,7 @@ public class GunSystem : MonoBehaviour
     /// <returns>”­–C‚µ‚½–C’eŒQ Ž¸”s‚µ‚Ä‚¢‚½‚çnull</returns>
     public List<Bullet> Fire()
     {
-        if(_fireTimingMode == FireTimingMode.Coinstantaneous)
+        if (_fireTimingMode == FireTimingMode.Coinstantaneous)
         {
             if (IsAllReload())
             {
@@ -75,22 +75,41 @@ public class GunSystem : MonoBehaviour
                 return bullets;
             }
         }
-        else if(FireTimingMode == FireTimingMode.Concatenation)
+        else if (FireTimingMode == FireTimingMode.Concatenation)
         {
-            if (_coolTime <= 0)
+            if (_coolTime - (_guns.Max(g => g.Bullet.ReloadTime) / _guns.Count) * GunNumber <= 0)
             {
                 Bullet b = _guns[GunNumber].Fire();
                 if (b)
                 {
                     List<Bullet> bullets = new List<Bullet>();
                     bullets.Add(b);
-                    _coolTime = _guns.Max(g => g.Bullet.ReloadTime) / _guns.Count;
+                    if (GunNumber == 0)
+                    {
+                        _coolTime += _guns.Max(g => g.Bullet.ReloadTime);
+                    }
+
                     GunNumber++;
                     return bullets;
                 }
             }
         }
-        return null;
+        else if(_fireTimingMode == FireTimingMode.FullOpen)
+        {
+            List<Bullet> bullets = new List<Bullet>();
+            for (int i = 0; i < _guns.Count; i++)
+            {
+                Bullet b = _guns[i].Fire();
+                if (b)
+                {
+                    bullets.Add(b);
+                }
+            }
+            GunNumber = 0;
+            return bullets;
+        }
+        else { }
+            return null;
     }
 
     bool IsAllReload()
@@ -129,4 +148,6 @@ public enum FireTimingMode
     Coinstantaneous,
     /// <summary>˜A‘±</summary>
     Concatenation,
+    /// <summary>‘S‚Ä‚Ì–C‚ð‘S—Í‚ÅŒ‚‚Â</summary>
+    FullOpen,
 }
