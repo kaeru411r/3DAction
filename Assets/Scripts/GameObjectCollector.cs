@@ -9,13 +9,11 @@ public class GameObjectCollector
 {
     public GameObjectCollector(string name)
     {
-        _stockTransform = new GameObject().transform;
-        _stockTransform.name = $"{name}Objects";
+        _stockTransform = new GameObject($"{name}Objects").transform;
     }
     public GameObjectCollector(string name, Transform parent)
     {
-        _stockTransform = new GameObject().transform;
-        _stockTransform.name = $"{name}Objects";
+        _stockTransform = new GameObject($"{name}Objects").transform;
         _stockTransform.SetParent(parent);
     }
 
@@ -27,7 +25,7 @@ public class GameObjectCollector
     Transform _stockTransform;
 
     /// <summary>ストックしておくTransform</summary>
-    public Transform StockTransform { get => _stockTransform; set => _stockTransform = value; }
+    public Transform StockTransform { get => _stockTransform;}
 
 
     /// <summary>
@@ -55,6 +53,14 @@ public class GameObjectCollector
     public void Collection(Component component)
     {
         component.transform.SetParent(StockTransform);
+    }
+
+    public void Clear()
+    {
+        while(_stockTransform.childCount > 0)
+        {
+            GameObject.Destroy(_stockTransform.GetChild(0).gameObject);
+        }
     }
 
     public static explicit operator Transform(GameObjectCollector data)
