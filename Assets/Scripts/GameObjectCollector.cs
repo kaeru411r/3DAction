@@ -19,6 +19,11 @@ public class GameObjectCollector
         _stockTransform.SetParent(parent);
     }
 
+    ~GameObjectCollector()
+    {
+        GameObject.Destroy(_stockTransform.gameObject);
+    }
+
     Transform _stockTransform;
 
     /// <summary>ストックしておくTransform</summary>
