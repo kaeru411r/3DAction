@@ -59,4 +59,9 @@ public class GameObjectCollector
     {
         return data.StockTransform;
     } 
+
+    public static implicit operator bool(GameObjectCollector data)
+    {
+        return data != null;
+    }
 }
