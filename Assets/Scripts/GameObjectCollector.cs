@@ -54,4 +54,9 @@ public class GameObjectCollector
     {
         component.transform.SetParent(StockTransform);
     }
+
+    public static explicit operator Transform(GameObjectCollector data)
+    {
+        return data.StockTransform;
+    } 
 }
