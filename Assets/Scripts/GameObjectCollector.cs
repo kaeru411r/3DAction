@@ -12,6 +12,12 @@ public class GameObjectCollector
         _stockTransform = new GameObject().transform;
         _stockTransform.name = $"{name}Objects";
     }
+    public GameObjectCollector(string name, Transform parent)
+    {
+        _stockTransform = new GameObject().transform;
+        _stockTransform.name = $"{name}Objects";
+        _stockTransform.SetParent(parent);
+    }
 
     Transform _stockTransform;
 
