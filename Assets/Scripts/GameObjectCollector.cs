@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -7,13 +8,22 @@ using UnityEngine;
 /// </summary>
 public class GameObjectCollector
 {
+    public GameObjectCollector()
+    {
+        _stockTransform = new GameObject(nameof(GameObjectCollector)).transform;
+    }
     public GameObjectCollector(string name)
     {
-        _stockTransform = new GameObject($"{name}Objects").transform;
+        _stockTransform = new GameObject(name).transform;
+    }
+    public GameObjectCollector(Transform parent)
+    {
+        _stockTransform = new GameObject(nameof(GameObjectCollector)).transform;
+        _stockTransform.SetParent(parent);
     }
     public GameObjectCollector(string name, Transform parent)
     {
-        _stockTransform = new GameObject($"{name}Objects").transform;
+        _stockTransform = new GameObject(name).transform;
         _stockTransform.SetParent(parent);
     }
 
