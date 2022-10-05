@@ -9,24 +9,15 @@ public class GameObjectCollector
 {
     public GameObjectCollector(string name)
     {
-        _name = name;
+        _stockTransform = new GameObject().transform;
+        _stockTransform.name = $"{name}Objects";
     }
 
-    string _name;
     Transform _stockTransform;
 
-    Transform StockTransform
-    {
-        get
-        {
-            if (!_stockTransform)
-            {
-                _stockTransform = new GameObject().transform;
-                _stockTransform.name = $"{_name}Objects";
-            }
-            return _stockTransform;
-        }
-    }
+    /// <summary>ストックしておくTransform</summary>
+    public Transform StockTransform { get => _stockTransform; set => _stockTransform = value; }
+
 
     /// <summary>
     /// 渡したTransformの親をこのオブジェクト専用の収集オブジェクトにする
