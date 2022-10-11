@@ -66,6 +66,9 @@ public class GameObjectCollector
     }
 
 
+    /// <summary>
+    /// 子オブジェクトを開放する
+    /// </summary>
     public void Release()
     {
         while (_stockTransform.childCount > 0)
@@ -75,6 +78,9 @@ public class GameObjectCollector
     }
 
 
+    /// <summary>
+    /// ゲームオブジェクトをDestroyする
+    /// </summary>
     public void Clear()
     {
         while(_stockTransform.childCount > 0)
