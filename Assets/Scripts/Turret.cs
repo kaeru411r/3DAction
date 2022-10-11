@@ -24,8 +24,10 @@ public class Turret : MonoBehaviour
     [SerializeField, Range(-90, 0)] float _depressionAngle = 0;
     [Tooltip("このターレットが使用するGunSystem")]
     [SerializeField] GunSystem[] _gunSystems;
+    [Tooltip("使うGunSystemの番号")]
+    [SerializeField] int _gunNumber = 0;
 
-    public GunSystem GunSystem { get => _gunSystems.FirstOrDefault(); }
+    public GunSystem GunSystem { get => _gunSystems[GunNumber]; }
 
     public Transform Sight { get => _sight; }
 
@@ -39,6 +41,19 @@ public class Turret : MonoBehaviour
     public float Gravity { get => GunSystem.Gravity; }
     /// <summary>弾速</summary>
     public float Speed { get => GunSystem.Speed; }
+    /// <summary>使うGunSystemの番号</summary>
+    public int GunNumber { get => _gunNumber;
+        set
+        {
+            if(value < 0 || value >= _gunSystems.Length)
+            {
+                Debug.LogWarning($"存在しないindexです");
+                return;
+            }
+            _gunNumber = value;
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -80,6 +95,14 @@ public class Turret : MonoBehaviour
         if (_gunMoveSpeed.y < 0)
         {
             _gunMoveSpeed = new Vector2(_gunMoveSpeed.y, 0);
+        }
+        if (GunNumber < 0)
+        {
+            GunNumber = 0;
+        }
+        if (GunNumber >= _gunSystems.Length)
+        {
+            GunNumber = _gunSystems.Length - 1;
         }
     }
 
