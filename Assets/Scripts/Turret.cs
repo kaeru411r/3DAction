@@ -27,7 +27,7 @@ public class Turret : MonoBehaviour
     [Tooltip("égÇ§GunSystemÇÃî‘çÜ")]
     [SerializeField] int _gunNumber = 0;
 
-    public GunSystem GunSystem { get => _gunSystems[GunNumber]; }
+    public GunSystem GunSystem { get => _gunSystems[GunSystemsNumber]; }
 
     public Transform Sight { get => _sight; }
 
@@ -42,7 +42,7 @@ public class Turret : MonoBehaviour
     /// <summary>íeë¨</summary>
     public float Speed { get => GunSystem.Speed; }
     /// <summary>égÇ§GunSystemÇÃî‘çÜ</summary>
-    public int GunNumber { get => _gunNumber;
+    public int GunSystemsNumber { get => _gunNumber;
         set
         {
             if(value < 0 || value >= _gunSystems.Length)
@@ -96,13 +96,13 @@ public class Turret : MonoBehaviour
         {
             _gunMoveSpeed = new Vector2(_gunMoveSpeed.y, 0);
         }
-        if (GunNumber < 0)
+        if (GunSystemsNumber < 0)
         {
-            GunNumber = 0;
+            GunSystemsNumber = 0;
         }
-        if (GunNumber >= _gunSystems.Length)
+        if (GunSystemsNumber >= _gunSystems.Length)
         {
-            GunNumber = _gunSystems.Length - 1;
+            GunSystemsNumber = _gunSystems.Length - 1;
         }
     }
 

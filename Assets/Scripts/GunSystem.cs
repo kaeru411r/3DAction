@@ -21,8 +21,8 @@ public class GunSystem : MonoBehaviour
     [SerializeField] Transform _muzzle;
     [Tooltip("何となくのバレルの当たりのTransform")]
     [SerializeField] Transform _barrel;
-    /// <summary>撃つ砲の番号</summary>
-    int _gunNumber;
+    [Tooltip("撃つ砲の番号")]
+    [SerializeField] int _gunNumber;
     /// <summary>次の砲撃までのクールタイム</summary>
     float _coolTime;
 
@@ -136,19 +136,38 @@ public class GunSystem : MonoBehaviour
         }
         set
         {
-            if (value >= _guns.Count)
+            if (value >= _guns.Count || value < 0)
             {
-                value = 0;
+                Debug.LogWarning($"存在しないindexです。");
+                return;
             }
             _gunNumber = value;
         }
     }
+
+    public int GunNumber1 { get => _gunNumber; set => _gunNumber = value; }
 
     private void FixedUpdate()
     {
         _coolTime -= Time.fixedDeltaTime;
     }
 
+
+#if UNITY_EDITOR
+
+    private void OnValidate()
+    {
+        if (GunNumber < 0)
+        {
+            GunNumber = 0;
+        }
+        if (GunNumber >= _guns.Count)
+        {
+            GunNumber = _guns.Count - 1;
+        }
+    }
+
+#endif
 
 
     /// <summary>砲弾の実体化から発射関数の呼び出しまでを行う</summary>
