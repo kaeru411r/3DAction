@@ -12,7 +12,7 @@ public class GunSystemTest : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _collector = new GameObjectCollector(name);
+        _collector = new GameObjectCollector($"{name}Collector");
         var b = _gunSystem.Barrel;
     }
 
@@ -27,5 +27,6 @@ public class GunSystemTest : MonoBehaviour
                 _collector.Collection(b);
             }
         }
+        _collector.Release();
     }
 }

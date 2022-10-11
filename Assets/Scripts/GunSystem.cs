@@ -181,7 +181,7 @@ public class GunSystem : MonoBehaviour
                 {
                     List<Bullet> bullets = new List<Bullet>();
                     bullets.Add(b);
-                    _coolTime += _guns.Max(g => g.Bullet.ReloadTime) / _guns.Count;
+                    _coolTime = _guns.Max(g => g.Bullet.ReloadTime) / _guns.Count;
                     GunNumber++;
                     return bullets;
                 }

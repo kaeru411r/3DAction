@@ -65,6 +65,16 @@ public class GameObjectCollector
         component.transform.SetParent(StockTransform);
     }
 
+
+    public void Release()
+    {
+        while (_stockTransform.childCount > 0)
+        {
+            _stockTransform.DetachChildren();
+        }
+    }
+
+
     public void Clear()
     {
         while(_stockTransform.childCount > 0)
