@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ExplosionManager
 {
-    static ExplosionManager _instance;
+    static ExplosionManager _instance = new ExplosionManager();
     public static ExplosionManager Instance => _instance;
     private ExplosionManager() { }
 
