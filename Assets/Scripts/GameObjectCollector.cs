@@ -62,7 +62,7 @@ public class GameObjectCollector
     /// <param name="component"></param>
     public void Collection(Component component)
     {
-        component.transform.SetParent(StockTransform);
+        component.transform.SetParent(_stockTransform);
     }
 
 

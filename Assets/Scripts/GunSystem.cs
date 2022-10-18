@@ -16,13 +16,13 @@ public class GunSystem : MonoBehaviour
     [SerializeField] List<Gun> _guns;
     [Tooltip("砲の射撃パターン")]
     [SerializeField] FireTimingMode _fireTimingMode;
+    [Tooltip("撃つ砲の番号")]
+    [SerializeField] int _gunNumber;
     [Header("これより下は無くても良い")]
     [Tooltip("何となくのマズルの辺りのTransform")]
     [SerializeField] Transform _muzzle;
     [Tooltip("何となくのバレルの当たりのTransform")]
     [SerializeField] Transform _barrel;
-    [Tooltip("撃つ砲の番号")]
-    [SerializeField] int _gunNumber;
     /// <summary>次の砲撃までのクールタイム</summary>
     float _coolTime;
 
@@ -145,8 +145,6 @@ public class GunSystem : MonoBehaviour
         }
     }
 
-    public int GunNumber1 { get => _gunNumber; set => _gunNumber = value; }
-
     private void FixedUpdate()
     {
         _coolTime -= Time.fixedDeltaTime;
@@ -157,13 +155,13 @@ public class GunSystem : MonoBehaviour
 
     private void OnValidate()
     {
-        if (GunNumber < 0)
+        if (_gunNumber < 0)
         {
-            GunNumber = 0;
+            _gunNumber = 0;
         }
-        if (GunNumber >= _guns.Count)
+        else if (_gunNumber >= _guns.Count)
         {
-            GunNumber = _guns.Count - 1;
+            _gunNumber = _guns.Count - 1;
         }
     }
 
@@ -201,7 +199,14 @@ public class GunSystem : MonoBehaviour
                     List<Bullet> bullets = new List<Bullet>();
                     bullets.Add(b);
                     _coolTime = _guns.Max(g => g.Bullet.ReloadTime) / _guns.Count;
-                    GunNumber++;
+                    if (GunNumber < _guns.Count - 1)
+                    {
+                        GunNumber++;
+                    }
+                    else
+                    {
+                        GunNumber = 0;
+                    }
                     return bullets;
                 }
             }

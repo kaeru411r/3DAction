@@ -27,6 +27,5 @@ public class GunSystemTest : MonoBehaviour
                 _collector.Collection(b);
             }
         }
-        _collector.Release();
     }
 }
