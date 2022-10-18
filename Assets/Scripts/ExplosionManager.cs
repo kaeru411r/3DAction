@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExplosionManager : SingletonMonoBehaviour<ExplosionManager>
+public class ExplosionManager
 {
-    const int _segmentBottomLimit = 1;
-    const int _segmentUppperLimit = 31;
-    [Tooltip("爆発のシミュレーションの精度")]
-    [SerializeField, Range(_segmentBottomLimit, _segmentUppperLimit)] int _segment = 15;
-    [Tooltip("爆発の対象とするレイヤー")]
-    [SerializeField] LayerMask _layerMask = 1;
+    static ExplosionManager _instance;
+    public static ExplosionManager Instance => _instance;
+    private ExplosionManager() { }
+
+
+    /// <summary>爆発のシミュレーションの精度</summary>
+    int _segment = 15;
+    /// <summary>爆発の対象とするレイヤー</summary>
+    LayerMask _layerMask = 1;
 
     /// <summary>爆発の影響を与えるRigidbody</summary>
     List<Rigidbody> _simulationRbs = new List<Rigidbody>();
@@ -17,21 +20,17 @@ public class ExplosionManager : SingletonMonoBehaviour<ExplosionManager>
     List<CharacterBase> _simulationCBs = new List<CharacterBase>();
 
 
+    /// <summary>爆発のシミュレーションの精度</summary>
     public int Segment
     {
         get { return _segment; }
 
         set
         {
-            if(value < _segmentBottomLimit)
+            if(value < 1)
             {
-                Debug.LogWarning($"{nameof(_segment)}を{_segmentBottomLimit}未満にすることは出来ません");
-                _segment = _segmentBottomLimit;
-            }
-            else if(value > _segmentUppperLimit)
-            {
-                Debug.LogWarning($"{nameof(_segment)}は{_segmentUppperLimit}を超過することは出来ません");
-                _segment = _segmentUppperLimit;
+                Debug.LogWarning($"{nameof(_segment)}を{1}未満にすることは出来ません");
+                _segment = 1;
             }
             else
             {
@@ -39,6 +38,9 @@ public class ExplosionManager : SingletonMonoBehaviour<ExplosionManager>
             }
         }
     }
+
+    /// <summary>爆発の対象とするレイヤー</summary>
+    public LayerMask LayerMask { get => _layerMask; set => _layerMask = value; }
 
 
     /// <summary>爆発の影響を受けるオブジェクトのリストに登録する</summary>
