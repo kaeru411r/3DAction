@@ -1,18 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+
 
 public class PlayerCaterpillar : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] CaterpillarController _caterpillarController;
+    /// <summary>WASD及び左スティック</summary>
+    public void OnMove(InputAction.CallbackContext context)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        if (_caterpillarController)
+        {
+            Vector2 move = context.ReadValue<Vector2>();
+            //Call(move, _caterpillarController.Move);
+            _caterpillarController.Move(move);
+        }
+        //Debug.LogError(_move);
     }
 }

@@ -208,7 +208,7 @@ public class CaterpillarController : MonoBehaviour
 
     /// <summary>移動関数</summary>
     /// <param name="dir"></param>
-    public void Move(Vector2 dir)
+    public bool Move(Vector2 dir)
     {
         Debug.Log(dir);
         float magnitude = dir.magnitude;
@@ -270,6 +270,7 @@ public class CaterpillarController : MonoBehaviour
             sb.AppendLine($"{w.RightWheel.rpm} {w.LeftWheel.rpm}");
         }
         //Debug.Log(sb);
+        return true;
     }
 }
 
