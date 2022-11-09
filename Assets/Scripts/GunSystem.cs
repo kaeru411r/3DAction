@@ -26,13 +26,13 @@ public class GunSystem : MonoBehaviour
     /// <summary>–C</summary>
     public List<Gun> Guns { get => _guns; }
     /// <summary>–C’e‚Ìd—Í‰Á‘¬“x</summary>
-    public float Gravity
+    public Vector3 Gravity
     {
         get
         {
             if(_guns == null || _guns.Count == 0)
             {
-                return 0;
+                return Vector3.zero;
             }
             if(_guns.Distinct().Count() == 1)
             {
@@ -40,7 +40,13 @@ public class GunSystem : MonoBehaviour
             }
             else
             {
-                return _guns.Sum(g => g.Bullet.Gravity) / _guns.Count;
+                Vector3 result = new Vector3();
+                foreach(Gun gun in _guns)
+                {
+                    result += gun.Bullet.Gravity;
+                }
+
+                return result / _guns.Count;
             }
         }
     }

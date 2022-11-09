@@ -25,7 +25,7 @@ public class Bullet : BaseBullet
     [Tooltip("砲弾の質量")]
     [SerializeField] float _mass = 1;
     [Tooltip("弾にかかる重力")]
-    [SerializeField] float _gravity;
+    [SerializeField] Vector3 _gravity;
     [ReadOnly, Tooltip("弾体の速度")]
     [SerializeField] Vector3 _velocity;
     /// <summary>前物理フレームでの座標</summary>
@@ -48,7 +48,7 @@ public class Bullet : BaseBullet
     /// <summary>砲弾の質量</summary>
     public override float Mass { get => _mass;}
     /// <summary>重力加速度</summary>
-    public override float Gravity { get { return _gravity; } }
+    public override Vector3 Gravity { get { return _gravity; } }
     /// <summary>弾体の速度</summary>
     public Vector3 Velocity { get => _velocity; set => _velocity = value; }
 
@@ -66,7 +66,7 @@ public class Bullet : BaseBullet
 
     private void FixedUpdate()
     {
-        Velocity += Vector3.down * _gravity * Time.fixedDeltaTime;
+        Velocity += _gravity * Time.fixedDeltaTime;
         FixedMove(Time.fixedDeltaTime);
         if (_isFired)
         {

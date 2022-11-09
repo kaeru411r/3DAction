@@ -6,7 +6,7 @@ public abstract class BaseBullet : MonoBehaviour
 {
     public virtual float Speed { get { return float.PositiveInfinity; } }
 
-    public virtual float Gravity { get { return 0; } }
+    public virtual Vector3 Gravity { get { return Vector3.zero; } }
 
     public virtual float Mass { get { return 0; } }
 

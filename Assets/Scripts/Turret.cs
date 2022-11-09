@@ -38,7 +38,7 @@ public class Turret : MonoBehaviour
     public Vector2 GunMoveSpeed { get => _gunMoveSpeed; }
     public List<Gun> Guns { get => GunSystem.Guns; }
     /// <summary>–C’e‚Ìd—Í‰Á‘¬“x</summary>
-    public float Gravity { get => GunSystem.Gravity; }
+    public Vector3 Gravity { get => GunSystem.Gravity; }
     /// <summary>’e‘¬</summary>
     public float Speed { get => GunSystem.Speed; }
     /// <summary>g‚¤GunSystem‚Ì”Ô†</summary>

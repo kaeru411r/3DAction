@@ -193,7 +193,7 @@ public class EnemyFireController : MonoBehaviour
     /// <returns>射角[度] nullなら射程外</returns>
     float? FiringElevation(Vector3 target)
     {
-        float g = _turret.Gravity;
+        float g = _turret.Gravity.y;
         float v = _turret.Speed;
         float h = target.y - _muzzle.position.y;
         float l = Vector2.Distance(new Vector2(target.x, target.z), new Vector2(_muzzle.position.x, _muzzle.position.z));
