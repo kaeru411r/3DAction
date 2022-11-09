@@ -10,7 +10,7 @@ using System.Text;
 public class Gun : MonoBehaviour
 {
     [Tooltip("弾薬配列")]
-    [SerializeField] List<Bullet> _ammos;
+    [SerializeField] List<BaseBullet> _ammos;
     [Tooltip("砲身")]
     [SerializeField] Transform _barrel;
     [Tooltip("砲口")]
@@ -32,7 +32,7 @@ public class Gun : MonoBehaviour
     /// <summary>マズル</summary>
     public Transform Muzzle { get => _muzzle; }
     /// <summary>現在選択中の弾薬</summary>
-    public Bullet Bullet
+    public BaseBullet Bullet
     {
         get
         {
@@ -93,13 +93,13 @@ public class Gun : MonoBehaviour
     /// <summary>砲弾の実体化から発射関数の呼び出しまでを行う</summary>
     /// <param name="root"></param>
     /// <returns>撃った砲弾</returns>
-    public Bullet Fire()
+    public BaseBullet Fire()
     {
         if (_isLoad)
         {
             Vector3 dir = new Vector3(_muzzle.eulerAngles.x + 90, _muzzle.eulerAngles.y, _muzzle.eulerAngles.z);
             var go = Instantiate(Bullet, _muzzle.position, _muzzle.rotation);
-            go.GetComponent<Bullet>()?.Fire(transform);
+            go.GetComponent<BaseBullet>()?.Fire(transform);
 
             if (_rb)
             {

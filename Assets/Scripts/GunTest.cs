@@ -18,7 +18,7 @@ public class GunTest : MonoBehaviour
         while (true)
         {
             _gun.Fire();
-            yield return new WaitForSeconds(_gun.Bullet.ReloadTime);
+            yield return new WaitForSeconds(/*_gun.Bullet.ReloadTime*/0);
         }
     }
 }

@@ -7,7 +7,7 @@ using UnityEngine.PlayerLoop;
 /// 原則RigidBodyは利用しない
 /// </summary>
 //[RequireComponent(typeof(Rigidbody))]
-public class Bullet : MonoBehaviour
+public class Bullet : BaseBullet
 {
     //Rigidbody _rb;
     [Tooltip("初速")]
@@ -32,8 +32,6 @@ public class Bullet : MonoBehaviour
     Vector3 _lastPosition;
     /// <summary>着弾した相手</summary>
     RaycastHit _hit;
-    /// <summary>リロードにかかる時間</summary>
-    public float ReloadTime { get { return _reloadTime; } }
     /// <summary>発射した戦車</summary>
     Transform _root;
     /// <summary>発射された位置</summary>
@@ -43,12 +41,14 @@ public class Bullet : MonoBehaviour
     /// <summary>弾が放たれたかどうか</summary>
     bool _isFired;
 
+    /// <summary>リロードにかかる時間</summary>
+    public override float ReloadTime { get { return _reloadTime; } }
     /// <summary>砲口初速</summary>
-    public float Speed { get { return _firstSpeed; } }
+    public override float Speed { get { return _firstSpeed; } }
     /// <summary>砲弾の質量</summary>
-    public float Mass { get => _mass; set => _mass = value; }
+    public override float Mass { get => _mass;}
     /// <summary>重力加速度</summary>
-    public float Gravity { get { return _gravity; } }
+    public override float Gravity { get { return _gravity; } }
     /// <summary>弾体の速度</summary>
     public Vector3 Velocity { get => _velocity; set => _velocity = value; }
 
@@ -100,7 +100,7 @@ public class Bullet : MonoBehaviour
 
 
     /// <summary>発砲時に呼ぶ</summary>
-    public void Fire(Transform root)
+    override public GameObject Fire(Transform root)
     {
         //if (!_rb)
         //{
@@ -113,6 +113,7 @@ public class Bullet : MonoBehaviour
         _firstPosition = transform.position;
         //_rb.useGravity = false;
         _firstTime = Time.time;
+        return gameObject;
     }
 
 

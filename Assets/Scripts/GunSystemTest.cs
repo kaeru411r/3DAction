@@ -19,7 +19,7 @@ public class GunSystemTest : MonoBehaviour
     private void Update()
     {
         _gunSystem.FireTimingMode = _fireTimingMode;
-        List<Bullet> bullets = _gunSystem.Fire();
+        List<BaseBullet> bullets = _gunSystem.Fire();
         if (bullets != null)
         {
             foreach (Bullet b in bullets)

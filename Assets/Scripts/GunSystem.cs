@@ -1,9 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using TMPro;
-using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
 /// <summary>
@@ -170,16 +167,16 @@ public class GunSystem : MonoBehaviour
 
     /// <summary>–C’e‚ÌÀ‘Ì‰»‚©‚ç”­ËŠÖ”‚ÌŒÄ‚Ño‚µ‚Ü‚Å‚ğs‚¤</summary>
     /// <returns>”­–C‚µ‚½–C’eŒQ ¸”s‚µ‚Ä‚¢‚½‚çnull</returns>
-    public List<Bullet> Fire()
+    public List<BaseBullet> Fire()
     {
         if (_fireTimingMode == FireTimingMode.Coinstantaneous)
         {
             if (IsAllReload())
             {
-                List<Bullet> bullets = new List<Bullet>();
+                List<BaseBullet> bullets = new List<BaseBullet>();
                 for (int i = 0; i < _guns.Count; i++)
                 {
-                    Bullet b = _guns[i].Fire();
+                    BaseBullet b = _guns[i].Fire();
                     if (b)
                     {
                         bullets.Add(b);
@@ -193,10 +190,10 @@ public class GunSystem : MonoBehaviour
         {
             if (_coolTime <= 0)
             {
-                Bullet b = _guns[GunNumber].Fire();
+                BaseBullet b = _guns[GunNumber].Fire();
                 if (b)
                 {
-                    List<Bullet> bullets = new List<Bullet>();
+                    List<BaseBullet> bullets = new List<BaseBullet>();
                     bullets.Add(b);
                     _coolTime = _guns.Max(g => g.Bullet.ReloadTime) / _guns.Count;
                     if (GunNumber < _guns.Count - 1)
@@ -213,10 +210,10 @@ public class GunSystem : MonoBehaviour
         }
         else if (_fireTimingMode == FireTimingMode.FullOpen)
         {
-            List<Bullet> bullets = new List<Bullet>();
+            List<BaseBullet> bullets = new List<BaseBullet>();
             for (int i = 0; i < _guns.Count; i++)
             {
-                Bullet b = _guns[i].Fire();
+                BaseBullet b = _guns[i].Fire();
                 if (b)
                 {
                     bullets.Add(b);

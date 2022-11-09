@@ -154,9 +154,9 @@ public class PlayerTurret : MonoBehaviour
         {
             if (_turret)
             {
-                List<Bullet> bullets = _turret?.Fire();
+                List<BaseBullet> bullets = _turret?.Fire();
                 //List<Bullet> bullets = Call(_turret.Fire);
-                foreach (Bullet bullet in bullets)
+                foreach (BaseBullet bullet in bullets)
                 {
                     _collector.Collection(bullet);
                 }

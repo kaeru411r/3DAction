@@ -105,8 +105,8 @@ public class EnemyFireController : MonoBehaviour
                     _sight.eulerAngles = angle.Value;
                     if (Misalignment() <= _accuracy)
                     {
-                        List<Bullet> bullets = _turret.Fire();
-                        foreach (Bullet bullet in bullets)
+                        List<BaseBullet> bullets = _turret.Fire();
+                        foreach (BaseBullet bullet in bullets)
                         {
                             _collector.Collection(bullet);
                         }

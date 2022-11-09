@@ -1,12 +1,19 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// プレイヤーが操作をするためのクラスのベースクラス
 /// プレイヤー操作が有効な時のみ各コンポーネントの関数を実行できる関数を持っている
 /// </summary>
-public abstract class PlayerBase : MonoBehaviour
+public class Player : MonoBehaviour
 {
+
+    /// <summary>マウス移動</summary>
+    public void OnInput(InputAction.CallbackContext context)
+    {
+    }
     protected bool _isActive;
 
     public bool IsActive { get => _isActive; set => _isActive = value; }
