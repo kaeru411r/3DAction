@@ -30,18 +30,18 @@ public class GunSystem : MonoBehaviour
     {
         get
         {
-            if(_guns == null || _guns.Count == 0)
+            if (_guns == null || _guns.Count == 0)
             {
                 return Vector3.zero;
             }
-            if(_guns.Distinct().Count() == 1)
+            if (_guns.Distinct().Count() == 1)
             {
                 return _guns[0].Bullet.Gravity;
             }
             else
             {
                 Vector3 result = new Vector3();
-                foreach(Gun gun in _guns)
+                foreach (Gun gun in _guns)
                 {
                     result += gun.Bullet.Gravity;
                 }
@@ -70,7 +70,8 @@ public class GunSystem : MonoBehaviour
         }
     }
     /// <summary>ñCêg</summary>
-    public Transform Barrel {
+    public Transform Barrel
+    {
         get
         {
             if (!_barrel)
@@ -95,11 +96,12 @@ public class GunSystem : MonoBehaviour
                 }
             }
             return _barrel;
-        } 
+        }
         set => _barrel = value;
     }
     /// <summary>ñCå˚</summary>
-    public Transform Muzzle { 
+    public Transform Muzzle
+    {
         get
         {
             if (!_muzzle)
@@ -114,7 +116,7 @@ public class GunSystem : MonoBehaviour
                     float z = _guns.Sum(g => g.Muzzle.localPosition.z) / _guns.Count;
                     _muzzle.localPosition = new Vector3(x, y, z);
                 }
-                else if(_guns.Count == 1)
+                else if (_guns.Count == 1)
                 {
                     _muzzle = _guns[0].Muzzle;
                 }
@@ -139,6 +141,10 @@ public class GunSystem : MonoBehaviour
         }
         set
         {
+            if (_guns == null)
+            {
+                Debug.LogWarning($"{nameof(_guns)}Ç™ê›íËÇ≥ÇÍÇƒÇ¢Ç‹ÇπÇÒ");
+            }
             if (value >= _guns.Count || value < 0)
             {
                 Debug.LogWarning($"ë∂ç›ÇµÇ»Ç¢indexÇ≈Ç∑ÅB");
@@ -158,13 +164,20 @@ public class GunSystem : MonoBehaviour
 
     private void OnValidate()
     {
-        if (_gunNumber < 0)
+        if (_guns != null)
         {
-            _gunNumber = 0;
-        }
-        else if (_gunNumber >= _guns.Count)
-        {
-            _gunNumber = _guns.Count - 1;
+            if (_guns.Count == 0)
+            {
+                _gunNumber = -1;
+            }
+            else if (_gunNumber < 0)
+            {
+                _gunNumber = 0;
+            }
+            else if (_gunNumber >= _guns.Count)
+            {
+                _gunNumber = _guns.Count - 1;
+            }
         }
     }
 
@@ -199,8 +212,6 @@ public class GunSystem : MonoBehaviour
                 BaseBullet b = _guns[GunNumber].Fire();
                 if (b)
                 {
-                    List<BaseBullet> bullets = new List<BaseBullet>();
-                    bullets.Add(b);
                     _coolTime = _guns.Max(g => g.Bullet.ReloadTime) / _guns.Count;
                     if (GunNumber < _guns.Count - 1)
                     {
@@ -210,7 +221,7 @@ public class GunSystem : MonoBehaviour
                     {
                         GunNumber = 0;
                     }
-                    return bullets;
+                    return new List<BaseBullet> { b };
                 }
             }
         }

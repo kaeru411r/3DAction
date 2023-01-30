@@ -68,14 +68,14 @@ public class EnemyFireController : MonoBehaviour
         if (_targetRb && _targetRb.velocity.magnitude != 0 && _target)
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
-                for (int i = -500; i < 500; i++)
+            for (int i = -500; i < 500; i++)
+            {
+                float? time1 = FringTime(_target.position + _targetRb.velocity * i);
+                if (time1 != null)
                 {
-                    float? time1 = FringTime(_target.position + _targetRb.velocity * i);
-                    if(time1 != null)
-                    {
-                        sb.AppendLine(time1.Value.ToString());
-                    }
+                    sb.AppendLine(time1.Value.ToString());
                 }
+            }
             Debug.Log(sb.ToString());
         }
     }
@@ -91,7 +91,7 @@ public class EnemyFireController : MonoBehaviour
         {
             Vector3 pTarget = _target.position;
 
-            if (!Physics.Raycast(_sight.position, pTarget - _sight.position,out RaycastHit hit, Vector3.Distance(pTarget, _sight.position), _layerMask))
+            if (!Physics.Raycast(_sight.position, pTarget - _sight.position, out RaycastHit hit, Vector3.Distance(pTarget, _sight.position), _layerMask))
             {
                 Vector3? target2 = Prognosis(pTarget);
                 if (target2 == null)
@@ -103,15 +103,15 @@ public class EnemyFireController : MonoBehaviour
                 if (angle != null)
                 {
                     _sight.eulerAngles = angle.Value;
-                    if (Misalignment() <= _accuracy)
+                    if (_turret.Misalignment <= _accuracy)
                     {
                         List<BaseBullet> bullets = _turret.Fire();
-                        foreach (BaseBullet bullet in bullets)
-                        {
-                            _collector.Collection(bullet);
-                        }
                         if (bullets != null)
                         {
+                            foreach (BaseBullet bullet in bullets)
+                            {
+                                _collector.Collection(bullet);
+                            }
                             float ft = FringTime(target2.Value).Value;
                             System.DateTime now = System.DateTime.Now;
                             float time = (now.Hour * 3600) + (now.Minute * 60) + now.Second + now.Millisecond / 1000f + ft;
@@ -173,7 +173,7 @@ public class EnemyFireController : MonoBehaviour
             return null;
         }
         Vector3 dir = target - _muzzle.position;
-        Vector3 angle = new Vector3(Mathf.Atan2(dir.z, dir.y) * radToDig, Mathf.Atan2(dir.x, dir.z) * radToDig, Mathf.Atan2(dir.y, -dir.x) * radToDig);
+        Vector3 angle = new Vector3(0, Mathf.Atan2(dir.x, dir.z) * radToDig, Mathf.Atan2(dir.y, -dir.x) * radToDig);
         float? t = FiringElevation(target);
         if (t != null)
         {

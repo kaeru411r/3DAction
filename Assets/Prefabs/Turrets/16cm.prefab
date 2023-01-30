@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 7066297706077307520}
   - component: {fileID: 4233090048726086118}
   - component: {fileID: 6614938264820527215}
-  - component: {fileID: 119872338498116778}
   m_Layer: 11
   m_Name: Turret
   m_TagString: Untagged
@@ -503,24 +502,6 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
---- !u!114 &119872338498116778
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 548922084311882356}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1808aff5c70572e439d6cf1faadbba73, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _sight: {fileID: 4991454945022242883}
-  _gunMoveSpeed: {x: 0, y: 0}
-  _elevationAngle: 0
-  _depressionAngle: 0
-  _gunSystems:
-  - {fileID: 7726138600431098914}
 --- !u!1 &2005684737118143462
 GameObject:
   m_ObjectHideFlags: 0
@@ -2328,6 +2309,8 @@ GameObject:
   - component: {fileID: 115745102803211026}
   - component: {fileID: 1985904967770163750}
   - component: {fileID: 5026451369294684539}
+  - component: {fileID: 8384396893631098201}
+  - component: {fileID: 8278857571351137314}
   m_Layer: 0
   m_Name: 16cm
   m_TagString: Untagged
@@ -2382,6 +2365,42 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &8384396893631098201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6224576569908875956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c360c602480cd094fb075d115c440b48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _turretMode: 2
+  _pitchMode: 1
+  _sight: {fileID: 4991454945022242883}
+  _speed: {x: 0, y: 0}
+  _turret: {fileID: 8556271322108873426}
+  _barrel: {fileID: 123684245640222042}
+  _elevationAngle: 90
+  _depressionAngle: 90
+--- !u!114 &8278857571351137314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6224576569908875956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1808aff5c70572e439d6cf1faadbba73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _gunSystems:
+  - {fileID: 7726138600431098914}
+  _gunNumber: 0
+  _turretMovement: {fileID: 8384396893631098201}
 --- !u!1 &7533861287644835695
 GameObject:
   m_ObjectHideFlags: 0
@@ -2492,6 +2511,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 86f780396f7faae49a913f75d5b615f4, type: 3}
+--- !u!4 &123684245640222042 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1313539543293691891, guid: 86f780396f7faae49a913f75d5b615f4,
+    type: 3}
+  m_PrefabInstance: {fileID: 1409005922377896617}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4225851108978508126 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2965891222668530679, guid: 86f780396f7faae49a913f75d5b615f4,

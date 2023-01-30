@@ -16,6 +16,5 @@ public class PlayerCaterpillar : MonoBehaviour
             //Call(move, _caterpillarController.Move);
             _caterpillarController.Move(move);
         }
-        //Debug.LogError(_move);
     }
 }

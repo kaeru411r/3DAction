@@ -132,6 +132,11 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 5727445052059872661, guid: e0a32c7a0b09075448b65141a73479d2,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5842743975197925637, guid: e0a32c7a0b09075448b65141a73479d2,
         type: 3}
       propertyPath: m_Mesh
@@ -172,6 +177,11 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6764480201794890766, guid: e0a32c7a0b09075448b65141a73479d2,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 7121054069635324422, guid: e0a32c7a0b09075448b65141a73479d2,
         type: 3}
       propertyPath: m_Mesh
@@ -207,6 +217,11 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 8882111263847671614, guid: e0a32c7a0b09075448b65141a73479d2,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 9025488665808607479, guid: e0a32c7a0b09075448b65141a73479d2,
         type: 3}
       propertyPath: m_Layer
@@ -233,7 +248,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85f77cb0cc55cd6488c6c1471ea6aa8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _turret: {fileID: 4635437472532433246}
+  _turret: {fileID: 3682211162020633046}
   _accuracy: 0
   _aimMode: 0
   _range: 100000
@@ -241,13 +256,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   _target: {fileID: 0}
---- !u!114 &4635437472532433246 stripped
+--- !u!114 &3682211162020633046 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 119872338498116778, guid: e0a32c7a0b09075448b65141a73479d2,
+  m_CorrespondingSourceObject: {fileID: 8278857571351137314, guid: e0a32c7a0b09075448b65141a73479d2,
     type: 3}
   m_PrefabInstance: {fileID: 4755166323938940404}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1702252884942686016}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1808aff5c70572e439d6cf1faadbba73, type: 3}

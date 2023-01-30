@@ -12,15 +12,12 @@ using System;
 /// プレイヤー操作コンポーネント
 /// プレイヤーによる車両の操作を行う
 /// </summary>
-[RequireComponent(typeof(Gun), typeof(CharacterBase))]
 public class PlayerTurret : MonoBehaviour
 {
-    Turret _turret;
-    CharacterBase _characterBase;
-    /// <summary>照準先</summary>
-    Transform _target;
-    /// <summary>サイトオブジェクトのトランスフォーム</summary>
-    Transform _sight;
+    [Tooltip("ターレット")]
+    [SerializeField] Turret _turret;
+    [Tooltip("この車両の" + nameof(CharacterBase))]
+    [SerializeField] CharacterBase _characterBase;
     [Tooltip("レティクル")]
     [SerializeField] Image _crosshair;
     [Tooltip("rayを飛ばす距離")]
@@ -82,13 +79,13 @@ public class PlayerTurret : MonoBehaviour
     private void Start()
     {
         _collector = new GameObjectCollector(name);
-        _turret = GetComponent<Turret>();
-        _characterBase = GetComponent<CharacterBase>();
         _fpsFov = _fpsVCam.m_Lens.FieldOfView;
         _tpsVCam.m_Lens.FieldOfView = _tpsFov;
         _defaltLayerMask = Camera.main.cullingMask;
-        _sight = _turret.Sight;
-        SetTarget();
+        if (!_turret)
+        {
+            Debug.LogWarning($"{nameof(_turret)}が設定されていません");
+        }
         if (_viewMode == ViewMode.FPS)
         {
             _fpsVCam.MoveToTopOfPrioritySubqueue();
@@ -99,15 +96,6 @@ public class PlayerTurret : MonoBehaviour
             _tpsVCam.MoveToTopOfPrioritySubqueue();
         }
     }
-
-    /// <summary>_targetの用意</summary>
-    void SetTarget()
-    {
-        var go = new GameObject();
-        go.name = _targetName;
-        _target = go.transform;
-    }
-
     /// <summary>TPSからスタートする際、変な方向を向いているTPSカメラの向きを正す</summary>
     IEnumerator TPSSetUp()
     {
@@ -231,17 +219,10 @@ public class PlayerTurret : MonoBehaviour
     {
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(_crosshair.rectTransform.position);
-        if (Physics.Raycast(ray, out hit, _distance, _layerMask))
-        {
-            _target.position = hit.point;
-        }
-        else
-        {
-            Vector3 direction = ray.direction;
-            Vector3 position = ray.origin;
-            _target.position = direction * _distance + position;
-        }
-        _sight.LookAt(_target.position);
+
+        Vector3 point = Physics.Raycast(ray, out hit, _distance, _layerMask) ? hit.point : (ray.direction * _distance + ray.origin);
+
+        _turret.Sight.LookAt(point);
     }
 
     /// <summary>マウスでのFPS操作</summary>
@@ -249,8 +230,8 @@ public class PlayerTurret : MonoBehaviour
     {
         Vector3 barrel = _turret.Barrel.localEulerAngles;
         Vector3 turret = _turret.transform.localEulerAngles;
-        Vector2 dif = _sight.localEulerAngles - new Vector3(barrel.x, turret.y);
-        _sight.Rotate(_look.y * _mouseSensitivity.y, _look.x * _mouseSensitivity.x, 0);
+        Vector2 dif = _turret.Sight.localEulerAngles - new Vector3(barrel.x, turret.y);
+        _turret.Sight.Rotate(_look.y * _mouseSensitivity.y, _look.x * _mouseSensitivity.x, 0);
 
         //  ヨー制御
         if (dif.y < -180)
@@ -263,11 +244,11 @@ public class PlayerTurret : MonoBehaviour
         }
         if (dif.y > _maxDeltaRotation.x)    //  sightが大きく動き過ぎないよう制御
         {
-            _sight.Rotate(0, _maxDeltaRotation.x - dif.y, 0);
+            _turret.Sight.Rotate(0, _maxDeltaRotation.x - dif.y, 0);
         }
         else if (dif.y < -_maxDeltaRotation.x)
         {
-            _sight.Rotate(0, -_maxDeltaRotation.x - dif.y, 0);
+            _turret.Sight.Rotate(0, -_maxDeltaRotation.x - dif.y, 0);
         }
 
         //  ピッチ制御
@@ -281,11 +262,11 @@ public class PlayerTurret : MonoBehaviour
         }
         if (dif.x > _maxDeltaRotation.y)    //  sightが大きく動き過ぎないよう制御
         {
-            _sight.Rotate(_maxDeltaRotation.y - dif.x, 0, 0);
+            _turret.Sight.Rotate(_maxDeltaRotation.y - dif.x, 0, 0);
         }
         else if (dif.x < -_maxDeltaRotation.y)
         {
-            _sight.Rotate(-_maxDeltaRotation.y - dif.x, 0, 0);
+            _turret.Sight.Rotate(-_maxDeltaRotation.y - dif.x, 0, 0);
         }
     }
 
@@ -295,7 +276,7 @@ public class PlayerTurret : MonoBehaviour
         Vector2 gunSpeed = _turret.GunMoveSpeed * Time.deltaTime;
         Vector3 barrel = _turret.Barrel.localEulerAngles;
         Vector3 turret = _turret.transform.localEulerAngles;
-        _sight.localEulerAngles = new Vector3(barrel.x + gunSpeed.y * _look.y, turret.y + gunSpeed.x * _look.x);
+        _turret.Sight.localEulerAngles = new Vector3(barrel.x + gunSpeed.y * _look.y, turret.y + gunSpeed.x * _look.x);
     }
 
     /// <summary>FPS時のズーム切り替え</summary>
