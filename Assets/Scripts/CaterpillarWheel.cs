@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CaterpillarWeel : MonoBehaviour
+public class CaterpillarWheel : MonoBehaviour
 {
     Rigidbody _rb;
     [SerializeField] float _length;
@@ -32,13 +32,33 @@ public class CaterpillarWeel : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit, _radius * 2 + _length))
         {
             float distance = Vector3.Distance(pos, hit.point);
-            if (distance < _radius * 2) { }
+            if (distance < _radius * 2)
+            {
+                _rb.transform.Translate(_rb.velocity.normalized * -distance, Space.World);
+                _rb.AddForceAtPosition(_rb.velocity - PointVelocity(_rb.angularVelocity, hit.point), pos + ray.direction * distance, ForceMode.VelocityChange);
+                Debug.Log($"{_rb.velocity}, {_rb.angularVelocity}");
+                Debug.DrawRay(hit.point, -PointVelocity(_rb.angularVelocity, hit.point), Color.red);
+            }
             else
             {
-                Debug.Log(1 - (distance - _radius * 2) / _length);
+                //Debug.Log(1 - (distance - _radius * 2) / _length);
                 _rb.AddForceAtPosition(transform.up * (1 - (distance - _radius * 2) / _length) * _spling, hit.point, ForceMode.Force);
             }
         }
         Debug.DrawRay(ray.origin, ray.direction);
+    }
+
+
+    public static Vector3 PointVelocity(Vector3 anglerVelocity, Vector3 point)
+    {
+        float rx = Vector2.Distance(new Vector2(point.y, point.z), Vector2.zero) * anglerVelocity.x;
+        float ry = Vector2.Distance(new Vector2(point.x, point.z), Vector2.zero) * anglerVelocity.y;
+        float rz = Vector2.Distance(new Vector2(point.y, point.x), Vector2.zero) * anglerVelocity.z;
+
+        Vector2 yz = new Vector2(-point.z, point.y).normalized * rx;
+        Vector2 xz = new Vector2(-point.z, point.x).normalized * ry;
+        Vector2 xy = new Vector2(-point.y, point.x).normalized * rz;
+
+        return new(xy.x + xz.x, yz.x + xy.y, yz.y + xz.y);
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine;
 public class CaterpillarMk3 : MonoBehaviour
 {
     Rigidbody _rb;
-    [SerializeField] CaterpillarWeel _weel;
+    [SerializeField] CaterpillarWheel _weel;
 
     private void Start()
     {
