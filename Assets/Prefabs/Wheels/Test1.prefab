@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _length: 0.3
-  _spling: 1
+  _spling: 0.5
   _shockAbsorber: 0
   _radius: 0.3
   _mass: 0

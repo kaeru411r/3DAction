@@ -16,7 +16,7 @@ public class CaterpillarMk3 : MonoBehaviour
             for (int k = 0; k < 4; k++)
             {
                 Vector3 pos = transform.position + transform.right * (i - 1.5f) + transform.forward * (k - 1.5f) + -transform.up;
-                Instantiate(_weel, pos, Quaternion.identity, transform);
+                Instantiate(_weel, pos, transform.rotation, transform);
             }
         }
     }
