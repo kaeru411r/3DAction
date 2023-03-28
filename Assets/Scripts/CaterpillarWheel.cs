@@ -43,9 +43,9 @@ public class CaterpillarWheel : MonoBehaviour
             if (distance < _radius * 2)
             {
                 Vector3 point = hit.point - pos;
-                Vector3 velocity = _rb.velocity + PointVelocity(_rb.angularVelocity, point);
-                Vector3 force = hit.normal * -Vector3.Dot(hit.normal, velocity);
-                Debug.DrawRay(hit.point, PointVelocity(_rb.angularVelocity, point), Color.red);
+                Vector3 velocity = _rb.GetPointVelocity(hit.point);
+                Vector3 force = hit.normal * Mathf.Min(0, -Vector3.Dot(hit.normal, velocity));
+                Debug.DrawRay(hit.point, _rb.GetPointVelocity(hit.point), Color.red);
                 Debug.DrawRay(hit.point, _rb.velocity, Color.blue);
                 Debug.DrawRay(hit.point, velocity, Color.magenta);
                 Debug.DrawRay(hit.point, force, Color.green);
@@ -62,26 +62,38 @@ public class CaterpillarWheel : MonoBehaviour
         Debug.DrawRay(ray.origin, ray.direction);
     }
 
-
-    Vector3 PointVelocity(Vector3 anglerVelocity, Vector3 point)
+    /// <summary>
+    /// RigidbodyñàÇÃCaterpillarWheelÇÃèWÇ‹ÇË
+    /// </summary>
+    class WheelGorup
     {
-        float rx = Vector2.Distance(new Vector2(point.y, point.z), Vector2.zero) * anglerVelocity.x;
-        float ry = Vector2.Distance(new Vector2(point.x, point.z), Vector2.zero) * -anglerVelocity.y;
-        float rz = Vector2.Distance(new Vector2(point.y, point.x), Vector2.zero) * anglerVelocity.z;
 
-        Vector2 yz = new Vector2(-point.z, point.y).normalized * rx * Mathf.PI;
-        Vector2 xz = new Vector2(-point.z, point.x).normalized * ry * Mathf.PI;
-        Vector2 xy = new Vector2(-point.y, point.x).normalized * rz * Mathf.PI;
+        public WheelGorup(CaterpillarWheel wheels, Rigidbody rigidbody)
+        {
+            _wheels.Add(wheels, false);
+            _rigidbody = rigidbody;
+        }
 
-        Vector3 result = new(xy.x + xz.x, yz.x + xy.y, yz.y + xz.y);
+        public List<CaterpillarWheel> Wheels { get => _wheels.Keys.ToList(); }
+        public Rigidbody Rigidbody { get => _rigidbody; }
 
-        return result;
-    }
+        Dictionary<CaterpillarWheel, bool> _wheels = new Dictionary<CaterpillarWheel, bool>();
+        Rigidbody _rigidbody;
 
-    struct WheelGorup
-    {
-        public CaterpillarWheel[] Wheels { get; set; }
-        public Rigidbody Rigidbody { get; set; }
+        public bool AddWheel(CaterpillarWheel wheel)
+        {
+            if (_rigidbody != wheel.Body) { return false; }
+            if(_wheels.Keys.Contains(wheel)) { return false; }
+
+            _wheels.Add(wheel, false);
+
+            return true;
+        }
+
+        public void Remove(CaterpillarWheel wheel)
+        {
+            _wheels.Remove(wheel);
+        }
     }
 }
 
